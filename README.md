@@ -1,2 +1,3 @@
-# opengl_project
-Repo for an OpenGL project
+# OpenGl Project
+
+This is a testing repo for an OpenGL project.
