@@ -181,12 +181,12 @@ int main()
 	glBindVertexArray(0);			  //unbind vertex Array
 
 	//Create shader
-	Shader mainShader("shaders/shader.vs", "shaders/shader.fs");
+	Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
 
 	//Texture setup
 	unsigned int texture, texture2;
-	texture = generateTexture("resources/textures/container.jpg", false);
-	texture2 = generateTexture("resources/textures/awesomeface.png", true);
+	texture = generateTexture("../resources/textures/container.jpg", false);
+	texture2 = generateTexture("../resources/textures/awesomeface.png", true);
 	mainShader.use();
 	mainShader.setInt("texture1", 0);
 	mainShader.setInt("texture2", 1);
