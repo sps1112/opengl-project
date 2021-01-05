@@ -1,33 +1,33 @@
 //libraries
-#include <glad/glad.h>//first glad
-#include <GLFW/glfw3.h>//then glfw
-#include<stb_image.h> //for loading images
+#include <glad/glad.h>	//first glad
+#include <GLFW/glfw3.h> //then glfw
+#include <stb_image.h>	//for loading images
 
-//glm libraries for math 
-#include<glm/glm/glm.hpp>
-#include<glm/glm/gtc/matrix_transform.hpp>
-#include<glm/glm/gtc/type_ptr.hpp>
+//glm libraries for math
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 
-#include<Shader.h> //shader header
-#include<Camera.h> //camera header
+#include <Shader.h> //shader header
+#include <Camera.h> //camera header
 #include <iostream>
 
 //functions
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void processInput(GLFWwindow* window);
-void processColor(GLFWwindow* window);
-void processDraw(GLFWwindow* window);
-float processSlider(GLFWwindow* window, float sliderValue);
-unsigned int generateTexture(const std::string& name, bool isPNG);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void processInput(GLFWwindow *window);
+void processColor(GLFWwindow *window);
+void processDraw(GLFWwindow *window);
+float processSlider(GLFWwindow *window, float sliderValue);
+unsigned int generateTexture(const std::string &name, bool isPNG);
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 
 //const settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 //camera settings
-Camera camera(glm::vec3(0.0f,0.0f,3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool isFirstMouse = true;
@@ -40,23 +40,23 @@ int main()
 {
 	//glfw initialise
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); //open gl version 3.x
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); //version is 3.3
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);				   //open gl version 3.x
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);				   //version is 3.3
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); //use core profile
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //for Mac
 
 	//window intialize
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGL Window", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGL Window", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
-	glfwMakeContextCurrent(window);//current window
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);//callback set for size change
-	glfwSetCursorPosCallback(window, mouse_callback); //callback for mouse movement
-	glfwSetScrollCallback(window,scroll_callback);//callback for zoom
+	glfwMakeContextCurrent(window);									   //current window
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); //callback set for size change
+	glfwSetCursorPosCallback(window, mouse_callback);				   //callback for mouse movement
+	glfwSetScrollCallback(window, scroll_callback);					   //callback for zoom
 
 	//check GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -65,7 +65,7 @@ int main()
 		return -1;
 	}
 
-	glEnable(GL_DEPTH_TEST);//Enable Z buffering
+	glEnable(GL_DEPTH_TEST); //Enable Z buffering
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//disable cursor
 
 	//Vertex Data
@@ -80,7 +80,7 @@ int main()
 		0,1,2
 	};*/
 
-	//rectangle 
+	//rectangle
 	/*float vertices[] = {
 		//vertices        //colors         //texture coord
 		0.5f,0.5f,0.0f,   1.0f,0.0f,0.0f,  1.0f,1.0f,
@@ -95,75 +95,73 @@ int main()
 
 	//cube vertices with texture
 	float vertices[] = {
-    //vertices            //color         //texture UV
-	-0.5f, -0.5f, -0.5f,  1.0f,0.0f,0.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,1.0f,0.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,0.0f,1.0f, 1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f,0.0f,0.0f, 1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,1.0f,0.0f, 0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,0.0f,1.0f, 0.0f, 0.0f,
+		//vertices            //color         //texture UV
+		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-	-0.5f, -0.5f,  0.5f,  1.0f,0.0f,0.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,1.0f,0.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,0.0f,1.0f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,0.0f,0.0f, 1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,1.0f,0.0f, 0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,0.0f,1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-	-0.5f,  0.5f,  0.5f,  1.0f,0.0f,0.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,1.0f,0.0f, 1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,0.0f,1.0f, 0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  1.0f,0.0f,0.0f, 0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,1.0f,0.0f, 0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,0.0f,1.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f,0.0f,0.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,1.0f,0.0f, 1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,0.0f,1.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f,0.0f,0.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,1.0f,0.0f, 0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,0.0f,1.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,  1.0f,0.0f,0.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f,1.0f,0.0f, 1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f,0.0f,1.0f, 1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f,0.0f,0.0f, 1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f,1.0f,0.0f, 0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f,0.0f,1.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 
-	-0.5f,  0.5f, -0.5f,  1.0f,0.0f,0.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  0.0f,1.0f,0.0f, 1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  0.0f,0.0f,1.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f,0.0f,0.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f,1.0f,0.0f, 0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f,0.0f,1.0f, 0.0f, 1.0f
-	};
+		-0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f};
 	//world POS for each instance of cube
 	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f, 0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(2.0f, 5.0f, -15.0f),
 		glm::vec3(-1.5f, -2.2f, -2.5f),
 		glm::vec3(-3.8f, -2.0f, -12.3f),
 		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(-1.7f, 3.0f, -7.5f),
 		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
+		glm::vec3(1.5f, 2.0f, -2.5f),
+		glm::vec3(1.5f, 0.2f, -1.5f),
+		glm::vec3(-1.3f, 1.0f, -1.5f)};
 
 	//GPU Memory Setup
 	//initialise variables
 	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO); //VAO stores vertex attributes
-	glGenBuffers(1, &VBO); //VBO stores vertex data in bulk
-	glGenBuffers(1, &EBO); //EBO stores indices of vertices
+	glGenBuffers(1, &VBO);		//VBO stores vertex data in bulk
+	glGenBuffers(1, &EBO);		//EBO stores indices of vertices
 	//Bind Local variables
 	//Link VAO
-	glBindVertexArray(VAO);//Link Vertex Array to VAO
+	glBindVertexArray(VAO); //Link Vertex Array to VAO
 	//Link VBO
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);//Link Current Array Buffer to VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);//Map vertices to Array Buffer i.e. VBO
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);										   //Link Current Array Buffer to VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //Map vertices to Array Buffer i.e. VBO
 	/*//Link EBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);//Link Current Element Array Buffer to EBO
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);//Map Vertex Indices to Element Array Buffer i.e. EBO*/
@@ -171,24 +169,24 @@ int main()
 	//layout location,elements in each attribute,data type,to normalize,stride gap,start index
 	/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);//format of vertices to be read
 	glEnableVertexAttribArray(0);//enables Array*/
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 	//Clear Memory
 	//first VBO then VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0); //unbind array buffer
-	glBindVertexArray(0); //unbind vertex Array
+	glBindVertexArray(0);			  //unbind vertex Array
 
 	//Create shader
-	Shader mainShader("shaders/shader.vs", "shaders/shader.fs");
+	Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
 
 	//Texture setup
 	unsigned int texture, texture2;
-	texture = generateTexture("resources/textures/container.jpg", false);
-	texture2 = generateTexture("resources/textures/awesomeface.png", true);
+	texture = generateTexture("../resources/textures/container.jpg", false);
+	texture2 = generateTexture("../resources/textures/awesomeface.png", true);
 	mainShader.use();
 	mainShader.setInt("texture1", 0);
 	mainShader.setInt("texture2", 1);
@@ -281,14 +279,14 @@ int main()
 	return 0;
 }
 
-//check exit input 
-void processInput(GLFWwindow* window)
+//check exit input
+void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
-	if (glfwGetKey(window,GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
 	{
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{
@@ -318,45 +316,45 @@ void processInput(GLFWwindow* window)
 }
 
 //checks for background color
-void processColor(GLFWwindow* window)
+void processColor(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS)
 	{
-		glClearColor(0.5f, 0.1f, 0.1f, 1.0f);//Red
+		glClearColor(0.5f, 0.1f, 0.1f, 1.0f); //Red
 	}
 	else if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
 	{
-		glClearColor(0.1f, 0.5f, 0.1f, 1.0f);//Green
+		glClearColor(0.1f, 0.5f, 0.1f, 1.0f); //Green
 	}
 	else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS)
 	{
-		glClearColor(0.1f, 0.1f, 0.5f, 1.0f);//Blue
+		glClearColor(0.1f, 0.1f, 0.5f, 1.0f); //Blue
 	}
 	else
 	{
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);//Grey
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f); //Grey
 	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 //checks for draw mode
-void processDraw(GLFWwindow* window)
+void processDraw(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//wireframe
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //wireframe
 	}
 	else if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);//point
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); //point
 	}
 	else
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);//fill
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); //fill
 	}
 }
 
-float processSlider(GLFWwindow* window, float sliderValue)
+float processSlider(GLFWwindow *window, float sliderValue)
 {
 	int change = 0;
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -379,7 +377,7 @@ float processSlider(GLFWwindow* window, float sliderValue)
 	return sliderValue;
 }
 
-unsigned int generateTexture(const std::string& name, bool isPNG)
+unsigned int generateTexture(const std::string &name, bool isPNG)
 {
 	unsigned int texture;
 	glGenTextures(1, &texture);
@@ -392,7 +390,7 @@ unsigned int generateTexture(const std::string& name, bool isPNG)
 	//setup data
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(name.c_str(), &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load(name.c_str(), &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		if (isPNG)
@@ -413,7 +411,7 @@ unsigned int generateTexture(const std::string& name, bool isPNG)
 	return texture;
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
 	if (isFirstMouse)
 	{
@@ -436,14 +434,14 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	}
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
 
 	camera.ProcessMouseScroll(yoffset);
 }
 
 //callback on size changee
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 }
