@@ -1,15 +1,16 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-//libraries
-#include<glad/glad.h>
+// glm libraries for maths
+#include <glad/glad.h>
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
 
-#include<vector>
+#include <vector>
 
-//camera movement directions
-enum Camera_Movement {
+// camera movement directions
+enum Camera_Movement
+{
 	FORWARD,
 	BACKWARD,
 	LEFT,
@@ -18,36 +19,39 @@ enum Camera_Movement {
 	DOWN
 };
 
-//default values
+// default values
 const float YAW = -90.0f;
 const float PITCH = 0.0f;
 const float SPEED = 2.5f;
 const float SENSITIVITY = 0.1f;
 const float ZOOM = 45.0f;
+const float MAXZOOM = 60.0f;
+const float MINZOOM = 1.0f;
 
+// Camer Class
 class Camera
 {
 public:
-	//DATA SETUP
+	// DATA SETUP
 
-	//VECTOR DATA
-	glm::vec3 Position; // world POS of camera
-	glm::vec3 Front; // forward Direction from camera
-	glm::vec3 Right; //Right from Camera
-	glm::vec3 Up; // Up from Camera
-	glm::vec3 WorldUp; //Direction of world Up
+	// VECTOR DATA
+	glm::vec3 Position; // World POS of camera
+	glm::vec3 Front;	// Forward Direction from camera
+	glm::vec3 Right;	// Right from Camera
+	glm::vec3 Up;		// Up from Camera
+	glm::vec3 WorldUp;	// Direction of world Up
 
-	//ANGLE DATA
-	float Yaw; //angle from top
-	float Pitch;//angle from side
+	// ANGLE DATA
+	float Yaw;	 // angle from top
+	float Pitch; // angle from side
 
-	//MOTION DATA
+	// MOTION DATA
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Zoom;
 
-	//Vector constructor
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) :Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+	// Vector constructor
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 	{
 		Position = position;
 		WorldUp = up;
@@ -56,8 +60,8 @@ public:
 		updateCameraVectors();
 	}
 
-	//scalar constructor
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) :Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+	// Component constructor
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 	{
 		Position = glm::vec3(posX, posY, posZ);
 		WorldUp = glm::vec3(upX, upY, upZ);
@@ -66,11 +70,12 @@ public:
 		updateCameraVectors();
 	}
 
-	//returns view matrix
+	// returns view matrix
 	glm::mat4 GetViewMatrix()
 	{
-		//custom lookAt function
-		/*glm::mat4 translation=glm::mat4(1.0f);
+		// Custom lookAt function
+		/*
+		glm::mat4 translation=glm::mat4(1.0f);
 		translation[3][0] = -Position.x;
 		translation[3][1] = -Position.y;
 		translation[3][2] = -Position.z;
@@ -84,11 +89,12 @@ public:
 		rotation[0][2] = -Front.x;
 		rotation[1][2] = -Front.y;
 		rotation[2][2] = -Front.z;
-		return rotation * translation;*/
+		return rotation * translation;
+		*/
 		return glm::lookAt(Position, Position + Front, Up);
 	}
 
-	//processes camera movement from keyboard
+	// processes camera movement from keyboard
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime)
 	{
 		float velocity = MovementSpeed * deltaTime;
@@ -116,10 +122,10 @@ public:
 		{
 			Position += -Up * velocity;
 		}
-		//Position.y = 0.0f; //for FPS CAMERA
+		// Position.y = 0.0f; //for FPS CAMERA
 	}
 
-	//process Camera rotation from mouse
+	// process Camera rotation from mouse
 	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
 	{
 		xoffset *= MouseSensitivity;
@@ -142,23 +148,22 @@ public:
 		updateCameraVectors();
 	}
 
-	//processes Camera Zoom from scroll wheel
+	// processes Camera Zoom from scroll wheel
 	void ProcessMouseScroll(float yoffset)
 	{
 		Zoom -= (float)yoffset;
-		if (Zoom < 1.0f)
+		if (Zoom < MINZOOM)
 		{
-			Zoom = 1.0f;
+			Zoom = MINZOOM;
 		}
-		if (Zoom > 60.0f)
+		if (Zoom > MAXZOOM)
 		{
-			Zoom = 60.0f;
+			Zoom = MAXZOOM;
 		}
 	}
 
 private:
-
-	//updates front,right and up vectors from angles
+	// updates front,right and up vectors from angles
 	void updateCameraVectors()
 	{
 		glm::vec3 front;
@@ -166,11 +171,9 @@ private:
 		front.y = sin(glm::radians(Pitch));
 		front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 		Front = glm::normalize(front);
-
 		Right = glm::normalize(glm::cross(Front, WorldUp));
 		Up = glm::normalize(glm::cross(Right, Front));
 	}
 };
 
 #endif // !CAMERA_H
-

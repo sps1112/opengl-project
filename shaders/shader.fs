@@ -10,5 +10,5 @@ uniform float slider;
 
 void main()
 {
-	FragColor=mix(texture(texture1,TexCoord),texture(texture2,TexCoord),slider)*vec4(ourColor,1.0f);
+	FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), slider) * vec4(ourColor, 1.0f);
 }
