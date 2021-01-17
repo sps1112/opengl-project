@@ -145,6 +145,7 @@ int main()
 		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f};
 
 	// World POS for each instance of cube
+	/*
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(2.0f, 5.0f, -15.0f),
@@ -156,6 +157,12 @@ int main()
 		glm::vec3(1.5f, 2.0f, -2.5f),
 		glm::vec3(1.5f, 0.2f, -1.5f),
 		glm::vec3(-1.3f, 1.0f, -1.5f)};
+	*/
+
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f, 0.0f, 0.0f)};
+
+	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 	// GPU Memory Setup
 	// initialise variables
@@ -187,6 +194,13 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+
 	// Clear Memory
 	// first VBO then VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // unbind array buffer
@@ -194,6 +208,8 @@ int main()
 
 	// Create shader
 	Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
+	Shader lightingShader("../shaders/shader_light.vs", "../shaders/shader_light.fs");
+	Shader sourceShader("../shaders/shader_source.vs", "../shaders/shader_source.fs");
 
 	// Texture setup
 	unsigned int texture, texture2;
@@ -257,25 +273,43 @@ int main()
 		projection = glm::perspective(glm::radians(camera.Zoom), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
 		mainShader.setMat4("projection", projection);
 
+		glm::mat4 lightModel = glm::mat4(1.0f);
+		lightModel = glm::translate(lightModel, lightPos);
+		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+		sourceShader.use();
+		sourceShader.setMat4("model", lightModel);
+		sourceShader.setMat4("view", view);
+		sourceShader.setMat4("projection", projection);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		lightingShader.use();
+		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+		lightingShader.setMat4("view", view);
+		lightingShader.setMat4("projection", projection);
+
 		// Bind Data
 		glBindVertexArray(VAO); // bind vertex array to VAO
 		// glDrawArrays(GL_TRIANGLES, 0, 3); // draw using vertices
 
-		for (unsigned int i = 0; i < 10; i++)
+		for (unsigned int i = 0; i < 1; i++)
 		{
 			// model matrix :: LOCAL TO WORLD
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 20.0f * (i + 1);
-			if (i % 2 == 0)
+			if ((i + 1) % 2 == 0)
 			{
+				// std::cout << "rotate" << std::endl;
 				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			}
 			else
 			{
+				// std::cout << "not rotate" << std::endl;
 				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			}
 			mainShader.setMat4("model", model);
+			lightingShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
