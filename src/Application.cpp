@@ -160,9 +160,9 @@ int main()
 	*/
 
 	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f, 0.0f, 0.0f)};
+		glm::vec3(0.0f, 0.0f, -1.5f)};
 
-	glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+	glm::vec3 lightPos(1.2f, 1.0f, 0.0f);
 
 	// GPU Memory Setup
 	// initialise variables
@@ -194,6 +194,7 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
+	// Setup VAO for the light source
 	unsigned int lightVAO;
 	glGenVertexArrays(1, &lightVAO);
 	glBindVertexArray(lightVAO);
@@ -207,8 +208,11 @@ int main()
 	glBindVertexArray(0);			  // unbind vertex Array
 
 	// Create shader
+	// Standard Shader
 	Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
+	// Lighted Object Shader
 	Shader lightingShader("../shaders/shader_light.vs", "../shaders/shader_light.fs");
+	// Light Source Shader
 	Shader sourceShader("../shaders/shader_source.vs", "../shaders/shader_source.fs");
 
 	// Texture setup
@@ -273,6 +277,7 @@ int main()
 		projection = glm::perspective(glm::radians(camera.Zoom), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
 		mainShader.setMat4("projection", projection);
 
+		// Draw Light Source
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::translate(lightModel, lightPos);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
@@ -280,8 +285,10 @@ int main()
 		sourceShader.setMat4("model", lightModel);
 		sourceShader.setMat4("view", view);
 		sourceShader.setMat4("projection", projection);
+		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
+		// Use Lighting Shader
 		lightingShader.use();
 		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
 		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
