@@ -100,6 +100,7 @@ int main()
 	*/
 
 	// Cube vertices with texture
+	/*
 	float vertices[] = {
 		// vertices            // color         // texture UV
 		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -143,6 +144,7 @@ int main()
 		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f};
+	*/
 
 	// World POS for each instance of cube
 	/*
@@ -159,10 +161,55 @@ int main()
 		glm::vec3(-1.3f, 1.0f, -1.5f)};
 	*/
 
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f, 0.0f, -1.5f)};
+	float vertices[] = {
+		// vertices         // normal
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
 
-	glm::vec3 lightPos(1.2f, 1.0f, 0.0f);
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+
+		-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
+
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f, 0.0f, -4.0f)};
+
+	// glm::vec3 lightPos(2.5f, 0.0f, -1.5f);
+	glm::vec3 lightPos(1.5f, 1.0f, -2.5f);
 
 	// GPU Memory Setup
 	// initialise variables
@@ -187,19 +234,27 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);//format of vertices to be read
 	glEnableVertexAttribArray(0);//enables Array
 	*/
+
+	/*
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
+	*/
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// Setup VAO for the light source
 	unsigned int lightVAO;
 	glGenVertexArrays(1, &lightVAO);
 	glBindVertexArray(lightVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 
 	// Clear Memory
@@ -212,6 +267,8 @@ int main()
 	Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
 	// Lighted Object Shader
 	Shader lightingShader("../shaders/shader_light.vs", "../shaders/shader_light.fs");
+	// Gouraud Shader
+	Shader gouraudShader("../shaders/shader_gouraud.vs", "../shaders/shader_gouraud.fs");
 	// Light Source Shader
 	Shader sourceShader("../shaders/shader_source.vs", "../shaders/shader_source.fs");
 
@@ -230,6 +287,7 @@ int main()
 	int sliderLoc = glGetUniformLocation(mainShader.ID, "slider");
 	mainShader.setFloat("timePeriod", timePeriod);
 	float timeGap = 0.0f;
+	float angleVal = 0.0f;
 
 	// Render loop
 	while (!glfwWindowShouldClose(window))
@@ -279,6 +337,24 @@ int main()
 
 		// Draw Light Source
 		glm::mat4 lightModel = glm::mat4(1.0f);
+		// float angleVal = 360.0f * timeGap / timePeriod;
+		if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
+		{
+			angleVal += deltaTime * (360.0f / timePeriod);
+			if (angleVal > 360)
+			{
+				angleVal -= 360;
+			}
+		}
+		if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
+		{
+			angleVal -= deltaTime * (360.0f / timePeriod);
+			if (angleVal < 0)
+			{
+				angleVal += 360;
+			}
+		}
+		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
 		lightModel = glm::translate(lightModel, lightPos);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 		sourceShader.use();
@@ -288,12 +364,29 @@ int main()
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		// Use Lighting Shader
-		lightingShader.use();
-		lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-		lightingShader.setMat4("view", view);
-		lightingShader.setMat4("projection", projection);
+		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
+		{
+			// Use Gouraud Shader
+			gouraudShader.use();
+			gouraudShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+			gouraudShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+			glm::vec3 newLightPos(lightModel * glm::vec4(1.0f));
+			gouraudShader.setVec3("lightPos", newLightPos);
+			gouraudShader.setVec3("viewPos", camera.Position);
+			gouraudShader.setMat4("view", view);
+			gouraudShader.setMat4("projection", projection);
+		}
+		else
+		{
+			// Use Lighting Shader
+			lightingShader.use();
+			lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+			lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+			lightingShader.setVec3("lightPos", glm::vec3(lightModel * glm::vec4(1.0f)));
+			lightingShader.setVec3("viewPos", camera.Position);
+			lightingShader.setMat4("view", view);
+			lightingShader.setMat4("projection", projection);
+		}
 
 		// Bind Data
 		glBindVertexArray(VAO); // bind vertex array to VAO
@@ -304,19 +397,18 @@ int main()
 			// model matrix :: LOCAL TO WORLD
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * (i + 1);
+			float angle = 10.0f * (i + 1);
 			if ((i + 1) % 2 == 0)
 			{
-				// std::cout << "rotate" << std::endl;
 				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			}
 			else
 			{
-				// std::cout << "not rotate" << std::endl;
-				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+				// model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			}
 			mainShader.setMat4("model", model);
 			lightingShader.setMat4("model", model);
+			gouraudShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
