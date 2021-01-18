@@ -10,6 +10,7 @@ struct Material
 struct Light
 {
     vec3 position;
+    
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -42,6 +43,7 @@ void main()
     float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
     vec3 specular = light.specular * (spec * (vec3(texture(material.specular,TexCoords))));
 
+    // Emmision Lighting
     vec3 emmision=vec3(0.0f);
     if(texture(material.specular,TexCoords).r==0.0)
     {
