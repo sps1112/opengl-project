@@ -364,13 +364,16 @@ int main()
 		glBindVertexArray(lightVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
+		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+		glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
+		glm::vec3 newLightPos(lightModel * glm::vec4(1.0f));
+
 		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
 		{
 			// Use Gouraud Shader
 			gouraudShader.use();
-			gouraudShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-			gouraudShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-			glm::vec3 newLightPos(lightModel * glm::vec4(1.0f));
+			gouraudShader.setVec3("lightColor", lightColor);
+			gouraudShader.setVec3("objectColor", objectColor);
 			gouraudShader.setVec3("lightPos", newLightPos);
 			gouraudShader.setVec3("viewPos", camera.Position);
 			gouraudShader.setMat4("view", view);
@@ -380,9 +383,9 @@ int main()
 		{
 			// Use Lighting Shader
 			lightingShader.use();
-			lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-			lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-			lightingShader.setVec3("lightPos", glm::vec3(lightModel * glm::vec4(1.0f)));
+			lightingShader.setVec3("objectColor", objectColor);
+			lightingShader.setVec3("lightColor", lightColor);
+			lightingShader.setVec3("lightPos", newLightPos);
 			lightingShader.setVec3("viewPos", camera.Position);
 			lightingShader.setMat4("view", view);
 			lightingShader.setMat4("projection", projection);
