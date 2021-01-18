@@ -52,7 +52,7 @@ void main()
     float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
     vec3 specular = light.specular * (spec * (vec3(texture(material.specular,TexCoords))));
     
-    // Check for smooth edge
+    // Check for hard edge(smooth edge default)
     if(check)
     {
         if(theta>light.cutoff)

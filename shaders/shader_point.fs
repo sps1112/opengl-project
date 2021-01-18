@@ -59,8 +59,8 @@ void main()
         emmision = vec3(texture(material.emmision,TexCoords));
     }
 
-    // Check for attenuation
-    if(check)
+    // Check for attenuation(default true)
+    if(!check)
     {
         ambient *= attenuation;
         diffuse *= attenuation;

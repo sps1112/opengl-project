@@ -332,8 +332,8 @@ int main()
 	// Texture Shader
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_texture.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_directional.fs");
-	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_point.fs");
-	Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_spotlight.fs");
+	Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_point.fs");
+	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_spotlight.fs");
 
 	// Texture setup
 	unsigned int texture, texture2;
@@ -509,11 +509,7 @@ int main()
 			textureShader.setVec3("light.diffuse", lightColor * 0.5f);
 			textureShader.setVec3("light.specular", glm::vec3(1.0f));
 
-			// textureShader.setVec3("light.position", newLightPos);
-
-			// textureShader.setVec3("light.direction", glm::vec3(0.0f, -0.0f, -1.0f));
-
-			/*
+			textureShader.setVec3("light.position", newLightPos);
 			if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
 			{
 				textureShader.setBool("check", true);
@@ -525,8 +521,10 @@ int main()
 			textureShader.setFloat("light.constant", 1.0f);
 			textureShader.setFloat("light.linear", 0.22f);
 			textureShader.setFloat("light.quadratic", 0.20f);
-			*/
-			textureShader.setVec3("light.position", camera.Position);
+
+			// textureShader.setVec3("light.direction", glm::vec3(0.0f, -0.0f, -1.0f));
+
+			/*textureShader.setVec3("light.position", camera.Position);
 			textureShader.setVec3("light.direction", camera.Front);
 			textureShader.setFloat("light.cutoff", glm::cos(glm::radians(12.5f)));
 			textureShader.setFloat("light.outerCutoff", glm::cos(glm::radians(20.0f)));
@@ -537,7 +535,7 @@ int main()
 			else
 			{
 				textureShader.setBool("check", false);
-			}
+			}*/
 		}
 
 		// Bind Data
