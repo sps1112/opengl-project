@@ -271,6 +271,8 @@ int main()
 	Shader gouraudShader("../shaders/shader_gouraud.vs", "../shaders/shader_gouraud.fs");
 	// Light Source Shader
 	Shader sourceShader("../shaders/shader_source.vs", "../shaders/shader_source.fs");
+	// Material Shader
+	Shader materialShader("../shaders/shader_material.vs", "../shaders/shader_material.fs");
 
 	// Texture setup
 	unsigned int texture, texture2;
@@ -338,7 +340,7 @@ int main()
 		// Draw Light Source
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		// float angleVal = 360.0f * timeGap / timePeriod;
-		if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
 		{
 			angleVal += deltaTime * (360.0f / timePeriod);
 			if (angleVal > 360)
@@ -346,7 +348,7 @@ int main()
 				angleVal -= 360;
 			}
 		}
-		if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS)
+		if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
 		{
 			angleVal -= deltaTime * (360.0f / timePeriod);
 			if (angleVal < 0)
@@ -381,7 +383,7 @@ int main()
 			gouraudShader.setMat4("view", view);
 			gouraudShader.setMat4("projection", projection);
 		}
-		else
+		else if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
 		{
 			// Use Lighting Shader
 			lightingShader.use();
@@ -391,6 +393,25 @@ int main()
 			lightingShader.setVec3("viewPos", camera.Position);
 			lightingShader.setMat4("view", view);
 			lightingShader.setMat4("projection", projection);
+		}
+		else
+		{
+			// Use Material Shader
+			materialShader.use();
+			materialShader.setVec3("objectColor", objectColor);
+			materialShader.setVec3("lightColor", lightColor);
+			materialShader.setVec3("lightPos", newLightPos);
+			materialShader.setVec3("viewPos", camera.Position);
+			materialShader.setMat4("view", view);
+			materialShader.setMat4("projection", projection);
+			materialShader.setVec3("material.ambient", objectColor);
+			materialShader.setVec3("material.diffuse", objectColor);
+			materialShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+			materialShader.setFloat("material.shininess", 32);
+			materialShader.setVec3("light.ambient", lightColor * 0.2f);
+			materialShader.setVec3("light.diffuse", lightColor * 0.5f);
+			materialShader.setVec3("light.specular", glm::vec3(1.0f));
+			materialShader.setVec3("light.position", newLightPos);
 		}
 
 		// Bind Data
