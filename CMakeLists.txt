@@ -5,6 +5,7 @@ project(opengl-project)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 find_package(OpenGL REQUIRED)
 find_package(GLFW3 REQUIRED)
+find_package(ASSIMP REQUIRED)
 
 include_directories(includes)
 if(WIN32)
@@ -17,6 +18,11 @@ add_executable(
     src/Application.cpp
     src/glad.c
     src/stb_image.cpp
+
+    includes/Shader.h
+    includes/Camera.h
+    includes/Mesh.h
+    includes/Model.h
 )
 
 target_link_libraries(opengl-project ${CMAKE_DL_LIBS})
