@@ -651,7 +651,7 @@ int main()
 			}
 			mainShader.setMat4("model", model);
 			lightingShader.setMat4("model", model);
-			gouraudShader.setMat4("model", model);
+			// gouraudShader.setMat4("model", model);
 			textureShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
