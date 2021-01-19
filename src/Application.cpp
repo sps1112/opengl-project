@@ -100,6 +100,7 @@ int main()
 	*/
 
 	// Cube vertices with texture
+	/*
 	float vertices[] = {
 		// vertices            // color         // texture UV
 		-0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -143,8 +144,10 @@ int main()
 		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f};
+	*/
 
 	// World POS for each instance of cube
+	/*
 	glm::vec3 cubePositions[] = {
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(2.0f, 5.0f, -15.0f),
@@ -156,6 +159,117 @@ int main()
 		glm::vec3(1.5f, 2.0f, -2.5f),
 		glm::vec3(1.5f, 0.2f, -1.5f),
 		glm::vec3(-1.3f, 1.0f, -1.5f)};
+	*/
+	/*
+	float vertices[] = {
+		// vertices         // normal
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f,
+
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+
+		-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f,
+
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f,
+
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
+		*/
+
+	float vertices[] = {
+		// positions          // normals           // texture coords
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+
+		-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
+
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f, 0.0f, -2.0f),
+		glm::vec3(2.0f, 5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f, 3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f, 2.0f, -2.5f),
+		glm::vec3(1.5f, 0.2f, -1.5f),
+		glm::vec3(-1.3f, 1.0f, -1.5f)};
+
+	// glm::vec3 lightPos(2.5f, 0.0f, -1.5f);
+	glm::vec3 lightPos(1.5f, 0.25f, -2.0f);
+
+	glm::vec3 pointLightPositions[] = {
+		glm::vec3(0.7f, 0.2f, 2.0f),
+		glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f, 2.0f, -12.0f),
+		glm::vec3(0.0f, 0.0f, -3.0f)};
 
 	// GPU Memory Setup
 	// initialise variables
@@ -180,6 +294,16 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);//format of vertices to be read
 	glEnableVertexAttribArray(0);//enables Array
 	*/
+
+	/*
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	*/
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
@@ -187,21 +311,54 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
+	// Setup VAO for the light source
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+
 	// Clear Memory
 	// first VBO then VAO
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // unbind array buffer
 	glBindVertexArray(0);			  // unbind vertex Array
 
 	// Create shader
+	// Standard Shader
 	Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
+	// Lighted Object Shader
+	Shader lightingShader("../shaders/shader_light.vs", "../shaders/shader_light.fs");
+	// Gouraud Shader
+	Shader gouraudShader("../shaders/shader_gouraud.vs", "../shaders/shader_gouraud.fs");
+	// Light Source Shader
+	Shader sourceShader("../shaders/shader_source.vs", "../shaders/shader_source.fs");
+	// Material Shader
+	Shader materialShader("../shaders/shader_material.vs", "../shaders/shader_material.fs");
+	// Texture Shader
+	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_texture.fs");
+	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_directional.fs");
+	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_point.fs");
+	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_spotlight.fs");
+	Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_scene.fs");
 
 	// Texture setup
 	unsigned int texture, texture2;
 	texture = generateTexture("../resources/textures/container.jpg", false);
 	texture2 = generateTexture("../resources/textures/awesomeface.png", true);
+	unsigned int diffusionMap, specularMap, specularMapColor, emmisionMap;
+	diffusionMap = generateTexture("../resources/textures/container2.png", true);
+	specularMap = generateTexture("../resources/textures/container2_specular.png", true);
+	specularMapColor = generateTexture("../resources/textures/container2_specular_color.png", true);
+	emmisionMap = generateTexture("../resources/textures/matrix.jpg", false);
 	mainShader.use();
-	mainShader.setInt("texture1", 0);
-	mainShader.setInt("texture2", 1);
+	// mainShader.setInt("texture1", 0);
+	// mainShader.setInt("texture2", 1);
+	textureShader.use();
+	textureShader.setInt("material.diffuse", 0);
+	textureShader.setInt("material.specular", 1);
+	// textureShader.setInt("material.specular", 2);
+	textureShader.setInt("material.emmision", 3);
 
 	// Values setup
 	float sliderValue = 0.5f;
@@ -210,6 +367,7 @@ int main()
 	int sliderLoc = glGetUniformLocation(mainShader.ID, "slider");
 	mainShader.setFloat("timePeriod", timePeriod);
 	float timeGap = 0.0f;
+	float angleVal = 0.0f;
 
 	// Render loop
 	while (!glfwWindowShouldClose(window))
@@ -230,10 +388,20 @@ int main()
 		processDraw(window);
 
 		// bind textures
+
+		// glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, texture);
+		// glActiveTexture(GL_TEXTURE1);
+		// glBindTexture(GL_TEXTURE_2D, texture2);
+
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, diffusionMap);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+		glBindTexture(GL_TEXTURE_2D, specularMap);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, specularMapColor);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, emmisionMap);
 
 		// use Shader
 		mainShader.use();
@@ -257,6 +425,212 @@ int main()
 		projection = glm::perspective(glm::radians(camera.Zoom), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
 		mainShader.setMat4("projection", projection);
 
+		// Draw Light Source
+		glm::mat4 lightModel = glm::mat4(1.0f);
+		// float angleVal = 360.0f * timeGap / timePeriod;
+		if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
+		{
+			angleVal += deltaTime * (360.0f / timePeriod);
+			if (angleVal > 360)
+			{
+				angleVal -= 360;
+			}
+		}
+		if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
+		{
+			angleVal -= deltaTime * (360.0f / timePeriod);
+			if (angleVal < 0)
+			{
+				angleVal += 360;
+			}
+		}
+		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+		/*lightModel = glm::translate(lightModel, lightPos);
+		lightModel = glm::scale(lightModel, glm::vec3(0.2f));*/
+
+		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+		sourceShader.use();
+		sourceShader.setMat4("view", view);
+		sourceShader.setMat4("projection", projection);
+		sourceShader.setVec3("sourceColor", lightColor);
+		glBindVertexArray(lightVAO);
+		for (int i = 0; i < 4; i++)
+		{
+			glm::mat4 model = lightModel;
+			model = glm::translate(model, pointLightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.2f));
+			sourceShader.setMat4("model", model);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
+		glm::vec3 newLightPos(lightModel * glm::vec4(1.0f));
+
+		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
+		{
+			/*// Use Gouraud Shader
+			gouraudShader.use();
+			gouraudShader.setVec3("lightColor", lightColor);
+			gouraudShader.setVec3("objectColor", objectColor);
+			gouraudShader.setVec3("lightPos", newLightPos);
+			gouraudShader.setVec3("viewPos", camera.Position);
+			gouraudShader.setMat4("view", view);
+			gouraudShader.setMat4("projection", projection);*/
+			// Use Lighting Shader
+			lightingShader.use();
+			lightingShader.setVec3("objectColor", objectColor);
+			lightingShader.setVec3("lightColor", lightColor);
+			lightingShader.setVec3("lightPos", newLightPos);
+			lightingShader.setVec3("viewPos", camera.Position);
+			lightingShader.setMat4("view", view);
+			lightingShader.setMat4("projection", projection);
+		}
+		else if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
+		{
+			// Use Material Shader
+			materialShader.use();
+			materialShader.setVec3("objectColor", objectColor);
+			materialShader.setVec3("lightColor", lightColor);
+			materialShader.setVec3("lightPos", newLightPos);
+			materialShader.setVec3("viewPos", camera.Position);
+			materialShader.setMat4("view", view);
+			materialShader.setMat4("projection", projection);
+			materialShader.setVec3("material.ambient", objectColor);
+			materialShader.setVec3("material.diffuse", objectColor);
+			materialShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+			materialShader.setFloat("material.shininess", 64);
+			materialShader.setVec3("light.ambient", lightColor * 0.2f);
+			materialShader.setVec3("light.diffuse", lightColor * 0.5f);
+			materialShader.setVec3("light.specular", glm::vec3(1.0f));
+			materialShader.setVec3("light.position", newLightPos);
+		}
+		else
+		{
+			// Use Material Shader
+			textureShader.use();
+			textureShader.setVec3("viewPos", camera.Position);
+			textureShader.setMat4("view", view);
+			textureShader.setMat4("projection", projection);
+			textureShader.setVec3("material.ambient", objectColor);
+			textureShader.setVec3("material.diffuse", objectColor);
+			textureShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+			textureShader.setFloat("material.shininess", 32);
+
+			/*
+			// Single Light System
+			textureShader.setVec3("light.ambient", lightColor * 0.2f);
+			textureShader.setVec3("light.diffuse", lightColor * 0.5f);
+			textureShader.setVec3("light.specular", glm::vec3(1.0f));
+			*/
+
+			// Point Light
+			/*
+				textureShader.setVec3("light.position", newLightPos);
+				if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+				{
+					textureShader.setBool("check", true);
+				}
+				else
+				{
+					textureShader.setBool("check", false);
+				}
+				textureShader.setFloat("light.constant", 1.0f);
+				textureShader.setFloat("light.linear", 0.22f);
+				textureShader.setFloat("light.quadratic", 0.20f);
+				*/
+
+			// Directional Light
+			/*
+				textureShader.setVec3("light.direction", glm::vec3(0.0f, -0.0f, -1.0f));
+				*/
+
+			// SpotLight
+			/*
+			textureShader.setVec3("light.position", camera.Position);
+			textureShader.setVec3("light.direction", camera.Front);
+			textureShader.setFloat("light.cutoff", glm::cos(glm::radians(12.5f)));
+			textureShader.setFloat("light.outerCutoff", glm::cos(glm::radians(20.0f)));
+			if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+			{
+				textureShader.setBool("check", true);
+			}
+			else
+			{
+				textureShader.setBool("check", false);
+			}
+			*/
+
+			// Multi Light System
+			textureShader.setVec3("dirLight.direction", glm::vec3(0.5f, -1.0f, -0.7f));
+			textureShader.setVec3("dirLight.ambient", lightColor * 0.1f);
+			textureShader.setVec3("dirLight.diffuse", lightColor * 0.25f);
+			textureShader.setVec3("dirLight.specular", glm::vec3(0.5f));
+
+			lightModel = glm::mat4(1.0f);
+			lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+			lightModel = glm::translate(lightModel, pointLightPositions[0]);
+			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+			newLightPos = (lightModel * glm::vec4(1.0f));
+
+			textureShader.setVec3("pointLights[0].position", newLightPos);
+			textureShader.setFloat("pointLights[0].constant", 1.0f);
+			textureShader.setFloat("pointLights[0].linear", 0.22f);
+			textureShader.setFloat("pointLights[0].quadratic", 0.20f);
+			textureShader.setVec3("pointLights[0].ambient", lightColor * 0.05f);
+			textureShader.setVec3("pointLights[0].diffuse", lightColor * 0.4f);
+			textureShader.setVec3("pointLights[0].specular", glm::vec3(1.0f));
+
+			lightModel = glm::mat4(1.0f);
+			lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+			lightModel = glm::translate(lightModel, pointLightPositions[0]);
+			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+			newLightPos = (lightModel * glm::vec4(1.0f));
+
+			textureShader.setVec3("pointLights[1].position", newLightPos);
+			textureShader.setFloat("pointLights[1].constant", 1.0f);
+			textureShader.setFloat("pointLights[1].linear", 0.22f);
+			textureShader.setFloat("pointLights[1].quadratic", 0.20f);
+			textureShader.setVec3("pointLights[1].ambient", lightColor * 0.05f);
+			textureShader.setVec3("pointLights[1].diffuse", lightColor * 0.4f);
+			textureShader.setVec3("pointLights[1].specular", glm::vec3(0.5f));
+
+			lightModel = glm::mat4(1.0f);
+			lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+			lightModel = glm::translate(lightModel, pointLightPositions[0]);
+			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+			newLightPos = (lightModel * glm::vec4(1.0f));
+
+			textureShader.setVec3("pointLights[2].position", newLightPos);
+			textureShader.setFloat("pointLights[2].constant", 1.0f);
+			textureShader.setFloat("pointLights[2].linear", 0.22f);
+			textureShader.setFloat("pointLights[2].quadratic", 0.20f);
+			textureShader.setVec3("pointLights[2].ambient", lightColor * 0.05f);
+			textureShader.setVec3("pointLights[2].diffuse", lightColor * 0.4f);
+			textureShader.setVec3("pointLights[2].specular", glm::vec3(0.5f));
+
+			lightModel = glm::mat4(1.0f);
+			lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+			lightModel = glm::translate(lightModel, pointLightPositions[0]);
+			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+			newLightPos = (lightModel * glm::vec4(1.0f));
+
+			textureShader.setVec3("pointLights[3].position", newLightPos);
+			textureShader.setFloat("pointLights[3].constant", 1.0f);
+			textureShader.setFloat("pointLights[3].linear", 0.22f);
+			textureShader.setFloat("pointLights[3].quadratic", 0.20f);
+			textureShader.setVec3("pointLights[3].ambient", lightColor * 0.05f);
+			textureShader.setVec3("pointLights[3].diffuse", lightColor * 0.4f);
+			textureShader.setVec3("pointLights[3].specular", glm::vec3(0.5f));
+
+			textureShader.setVec3("spotLight.position", camera.Position);
+			textureShader.setVec3("spotLight.direction", camera.Front);
+			textureShader.setFloat("spotLight.cutoff", glm::cos(glm::radians(12.5f)));
+			textureShader.setFloat("spotLight.outerCutoff", glm::cos(glm::radians(20.0f)));
+			textureShader.setVec3("spotLight.ambient", lightColor * 0.05f);
+			textureShader.setVec3("spotLight.diffuse", lightColor * 0.3f);
+			textureShader.setVec3("spotLight.specular", glm::vec3(0.5f));
+		}
+
 		// Bind Data
 		glBindVertexArray(VAO); // bind vertex array to VAO
 		// glDrawArrays(GL_TRIANGLES, 0, 3); // draw using vertices
@@ -266,16 +640,19 @@ int main()
 			// model matrix :: LOCAL TO WORLD
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * (i + 1);
-			if (i % 2 == 0)
+			float angle = 10.0f * (i + 1);
+			if ((i + 1) % 2 == 0)
 			{
-				model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+				// model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			}
 			else
 			{
 				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			}
 			mainShader.setMat4("model", model);
+			lightingShader.setMat4("model", model);
+			// gouraudShader.setMat4("model", model);
+			textureShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
