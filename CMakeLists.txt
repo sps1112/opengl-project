@@ -34,4 +34,5 @@ target_link_libraries(
 target_link_libraries(opengl-project glfw3)
 else()
 target_link_libraries(opengl-project glfw)
+target_link_libraries(opengl-project assimp)
 endif()
