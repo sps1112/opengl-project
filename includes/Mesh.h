@@ -16,13 +16,16 @@ struct Vertex
 {
     glm::vec3 Position;
     glm::vec3 Normal;
-    glm::vec3 TexCoords;
+    glm::vec2 TexCoords;
+    glm::vec3 Tangent;
+    glm::vec3 Bitangent;
 };
 
 struct Texture
 {
     unsigned int id;
     string type;
+    string path;
 };
 
 class Mesh
@@ -32,6 +35,8 @@ public:
     vector<Vertex> vertices;
     vector<unsigned int> indices;
     vector<Texture> textures;
+    unsigned int VAO;
+
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
     {
         this->vertices = vertices;
@@ -44,6 +49,8 @@ public:
     {
         unsigned int diffusedNR = 1;
         unsigned int specularNR = 1;
+        unsigned int normalNR = 1;
+        unsigned int heightNR = 1;
         for (unsigned int i = 0; i < textures.size(); i++)
         {
             glActiveTexture(GL_TEXTURE0 + i);
@@ -56,6 +63,14 @@ public:
             else if (name == "texture_specular")
             {
                 number = std::to_string(specularNR++);
+            }
+            else if (name == "texture_normal")
+            {
+                number = std::to_string(normalNR++);
+            }
+            else if (name == "texture_height")
+            {
+                number = std::to_string(heightNR++);
             }
             shader.setFloat(("material." + name + number).c_str(), i);
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
@@ -70,7 +85,7 @@ public:
 
 private:
     // render data
-    unsigned int VAO, VBO, EBO;
+    unsigned int VBO, EBO;
 
     void setupMesh()
     {
@@ -95,6 +110,12 @@ private:
         // vertex Texture coordinates
         glEnableVertexAttribArray(2);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, TexCoords));
+        // vertex Tangents
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Tangent));
+        // vertex Bitangents
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Bitangent));
         // free memory
         glBindVertexArray(0);
     }
