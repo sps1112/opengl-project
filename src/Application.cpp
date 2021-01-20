@@ -9,8 +9,11 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 
 // Custom Headers
-#include <Shader.h> // shader header
-#include <Camera.h> // camera header
+#include <Shader.h>		// shader header
+#include <Camera.h>		// camera header
+#include <Model.h>		// model header
+#include <FileSystem.h> // Filesystem header
+
 #include <iostream>
 
 // function declarations
@@ -69,6 +72,7 @@ int main()
 
 	glEnable(GL_DEPTH_TEST); // Enable Z buffering
 	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// disable cursor
+	stbi_set_flip_vertically_on_load(true); // set before loading model
 
 	// Vertex Data
 	// Triangle
@@ -205,7 +209,7 @@ int main()
 		-0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
 		-0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f};
 		*/
-
+	/*
 	float vertices[] = {
 		// positions          // normals           // texture coords
 		-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
@@ -262,6 +266,9 @@ int main()
 		glm::vec3(1.5f, 0.2f, -1.5f),
 		glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+		*/
+	/*
+
 	// glm::vec3 lightPos(2.5f, 0.0f, -1.5f);
 	glm::vec3 lightPos(1.5f, 0.25f, -2.0f);
 
@@ -270,7 +277,8 @@ int main()
 		glm::vec3(2.3f, -3.3f, -4.0f),
 		glm::vec3(-4.0f, 2.0f, -12.0f),
 		glm::vec3(0.0f, 0.0f, -3.0f)};
-
+		*/
+	/*
 	// GPU Memory Setup
 	// initialise variables
 	unsigned int VBO, VAO, EBO;
@@ -283,6 +291,8 @@ int main()
 	// Link VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);										   //Link Current Array Buffer to VBO
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //Map vertices to Array Buffer i.e. VBO
+	*/
+
 	/*
 	//Link EBO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);//Link Current Element Array Buffer to EBO
@@ -304,6 +314,7 @@ int main()
 	glEnableVertexAttribArray(2);
 	*/
 
+	/*
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
@@ -324,6 +335,8 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // unbind array buffer
 	glBindVertexArray(0);			  // unbind vertex Array
 
+	*/
+
 	// Create shader
 	// Standard Shader
 	Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
@@ -336,12 +349,14 @@ int main()
 	// Material Shader
 	Shader materialShader("../shaders/shader_material.vs", "../shaders/shader_material.fs");
 	// Texture Shader
-	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_texture.fs");
+	Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_texture.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_directional.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_point.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_spotlight.fs");
-	Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_scene.fs");
+	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_scene.fs");
 
+	Model ourModel(FileSystem::getPath("../resources/models/backpack/backpack.obj"));
+	/*
 	// Texture setup
 	unsigned int texture, texture2;
 	texture = generateTexture("../resources/textures/container.jpg", false);
@@ -359,13 +374,14 @@ int main()
 	textureShader.setInt("material.specular", 1);
 	// textureShader.setInt("material.specular", 2);
 	textureShader.setInt("material.emmision", 3);
+	*/
 
 	// Values setup
 	float sliderValue = 0.5f;
 	float timePeriod = 3.0f;
-	int gapLoc = glGetUniformLocation(mainShader.ID, "timeGap");
-	int sliderLoc = glGetUniformLocation(mainShader.ID, "slider");
-	mainShader.setFloat("timePeriod", timePeriod);
+	// int gapLoc = glGetUniformLocation(mainShader.ID, "timeGap");
+	// int sliderLoc = glGetUniformLocation(mainShader.ID, "slider");
+	// mainShader.setFloat("timePeriod", timePeriod);
 	float timeGap = 0.0f;
 	float angleVal = 0.0f;
 
@@ -394,6 +410,7 @@ int main()
 		// glActiveTexture(GL_TEXTURE1);
 		// glBindTexture(GL_TEXTURE_2D, texture2);
 
+		/*
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffusionMap);
 		glActiveTexture(GL_TEXTURE1);
@@ -402,12 +419,15 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, specularMapColor);
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, emmisionMap);
+		*/
 
+		/*
 		// use Shader
 		mainShader.use();
 		sliderValue = processSlider(window, sliderValue);
 		glUniform1f(sliderLoc, sliderValue);
 		glUniform1f(gapLoc, timeGap);
+		*/
 
 		// view matrix :: WORLD TO VIEW
 		glm::mat4 view;
@@ -424,6 +444,8 @@ int main()
 		*/
 		projection = glm::perspective(glm::radians(camera.Zoom), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
 		mainShader.setMat4("projection", projection);
+
+		/*
 
 		// Draw Light Source
 		glm::mat4 lightModel = glm::mat4(1.0f);
@@ -445,10 +467,12 @@ int main()
 			}
 		}
 		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+		*/
+
 		/*lightModel = glm::translate(lightModel, lightPos);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));*/
 
-		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+		/*glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 		sourceShader.use();
 		sourceShader.setMat4("view", view);
 		sourceShader.setMat4("projection", projection);
@@ -465,6 +489,7 @@ int main()
 
 		glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 		glm::vec3 newLightPos(lightModel * glm::vec4(1.0f));
+		*/
 
 		if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS)
 		{
@@ -477,15 +502,15 @@ int main()
 			gouraudShader.setMat4("view", view);
 			gouraudShader.setMat4("projection", projection);*/
 			// Use Lighting Shader
-			lightingShader.use();
+			/*lightingShader.use();
 			lightingShader.setVec3("objectColor", objectColor);
 			lightingShader.setVec3("lightColor", lightColor);
 			lightingShader.setVec3("lightPos", newLightPos);
 			lightingShader.setVec3("viewPos", camera.Position);
 			lightingShader.setMat4("view", view);
-			lightingShader.setMat4("projection", projection);
+			lightingShader.setMat4("projection", projection);*/
 		}
-		else if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
+		/*	else if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS)
 		{
 			// Use Material Shader
 			materialShader.use();
@@ -503,10 +528,10 @@ int main()
 			materialShader.setVec3("light.diffuse", lightColor * 0.5f);
 			materialShader.setVec3("light.specular", glm::vec3(1.0f));
 			materialShader.setVec3("light.position", newLightPos);
-		}
+		}*/
 		else
 		{
-			// Use Material Shader
+			/*// Use Material Shader
 			textureShader.use();
 			textureShader.setVec3("viewPos", camera.Position);
 			textureShader.setMat4("view", view);
@@ -514,7 +539,7 @@ int main()
 			textureShader.setVec3("material.ambient", objectColor);
 			textureShader.setVec3("material.diffuse", objectColor);
 			textureShader.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-			textureShader.setFloat("material.shininess", 32);
+			textureShader.setFloat("material.shininess", 32);*/
 
 			/*
 			// Single Light System
@@ -559,7 +584,7 @@ int main()
 				textureShader.setBool("check", false);
 			}
 			*/
-
+			/*
 			// Multi Light System
 			textureShader.setVec3("dirLight.direction", glm::vec3(0.5f, -1.0f, -0.7f));
 			textureShader.setVec3("dirLight.ambient", lightColor * 0.1f);
@@ -629,12 +654,14 @@ int main()
 			textureShader.setVec3("spotLight.ambient", lightColor * 0.05f);
 			textureShader.setVec3("spotLight.diffuse", lightColor * 0.3f);
 			textureShader.setVec3("spotLight.specular", glm::vec3(0.5f));
+			*/
 		}
-
+		/*
 		// Bind Data
 		glBindVertexArray(VAO); // bind vertex array to VAO
 		// glDrawArrays(GL_TRIANGLES, 0, 3); // draw using vertices
-
+		*/
+		/*
 		for (unsigned int i = 0; i < 10; i++)
 		{
 			// model matrix :: LOCAL TO WORLD
@@ -655,6 +682,7 @@ int main()
 			textureShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+		*/
 
 		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // draw using vertices and indices
 		// glBindVertexArray(0); //unbind vertex array
@@ -663,11 +691,12 @@ int main()
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	/*
 	// delete memory
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
-
+	*/
 	// terminate program
 	glfwTerminate();
 	return 0;
