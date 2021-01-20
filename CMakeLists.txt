@@ -8,6 +8,7 @@ find_package(GLFW3 REQUIRED)
 find_package(ASSIMP REQUIRED)
 
 include_directories(includes)
+include_directories(configuration)
 if(WIN32)
 link_directories(lib)
 endif()
@@ -23,6 +24,7 @@ add_executable(
     includes/Camera.h
     includes/Mesh.h
     includes/Model.h
+    includes/FileSystem.h
 )
 
 target_link_libraries(opengl-project ${CMAKE_DL_LIBS})
@@ -32,6 +34,7 @@ target_link_libraries(
         ${glfw_LIBRARIES}
 )
 target_link_libraries(opengl-project glfw3)
+target_link_libraries(opengl-project assimp)
 else()
 target_link_libraries(opengl-project glfw)
 target_link_libraries(opengl-project assimp)
