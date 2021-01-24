@@ -13,6 +13,8 @@
 #include <Camera.h>		// camera header
 #include <Model.h>		// model header
 #include <FileSystem.h> // Filesystem header
+#include <Utils.h>		// Utility header
+#include <Primitive.h>	// Primitive header
 
 #include <iostream>
 
@@ -22,7 +24,6 @@ void processInput(GLFWwindow *window);
 void processColor(GLFWwindow *window);
 void processDraw(GLFWwindow *window);
 float processSlider(GLFWwindow *window, float sliderValue);
-unsigned int generateTexture(const std::string &name, bool isPNG);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 
@@ -367,13 +368,13 @@ int main()
 	/*
 	// Texture setup
 	unsigned int texture, texture2;
-	texture = generateTexture("../resources/textures/container.jpg", false);
-	texture2 = generateTexture("../resources/textures/awesomeface.png", true);
+	texture = LoadTexture(FileSystem::getPath("resources/textures /container.jpg").c_str());
+	texture2 = LoadTexture(FileSystem::getPath("resources/textures/awesomeface.png").c_str());
 	unsigned int diffusionMap, specularMap, specularMapColor, emmisionMap;
-	diffusionMap = generateTexture("../resources/textures/container2.png", true);
-	specularMap = generateTexture("../resources/textures/container2_specular.png", true);
-	specularMapColor = generateTexture("../resources/textures/container2_specular_color.png", true);
-	emmisionMap = generateTexture("../resources/textures/matrix.jpg", false);
+	diffusionMap = LoadTexture(FileSystem::getPath("resources/textures/container2.png").c_str());
+	specularMap = LoadTexture(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
+	specularMapColor = LoadTexture(FileSystem::getPath("resources/textures/container2_specular_color.png").c_str());
+	emmisionMap = LoadTexture(FileSystem::getPath("resources/textures/matrix.jpg").c_str());
 	mainShader.use();
 	// mainShader.setInt("texture1", 0);
 	// mainShader.setInt("texture2", 1);
@@ -935,50 +936,8 @@ float processSlider(GLFWwindow *window, float sliderValue)
 		change = -1;
 	}
 	sliderValue += change * deltaTime;
-	if (sliderValue > 1.0f)
-	{
-		sliderValue = 1.0f;
-	}
-	else if (sliderValue < 0.0f)
-	{
-		sliderValue = 0.0f;
-	}
+	sliderValue = glm::clamp(sliderValue, 0.0f, 1.0f);
 	return sliderValue;
-}
-
-// Genearates texture from file path and file type
-unsigned int generateTexture(const std::string &name, bool isPNG)
-{
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// setup texture wrap
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// setup data
-	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load(name.c_str(), &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		if (isPNG)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		}
-		else
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		}
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
-	return texture;
 }
 
 // callback for mouse movement
