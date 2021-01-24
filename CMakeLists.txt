@@ -28,6 +28,8 @@ add_executable(
     includes/Mesh.h
     includes/Model.h
     includes/FileSystem.h
+    includes/Utils.h
+    includes/Primitive.h
 )
 
 target_link_libraries(opengl-project ${CMAKE_DL_LIBS})
