@@ -337,7 +337,9 @@ int main()
 
 	*/
 
-	Model ourModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
+	// Model ourModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
+	Primitive primitive1(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
+	Primitive primitive2(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 
 	// Create shader
 	// Standard Shader
@@ -589,7 +591,7 @@ int main()
 		modelShader.setVec3("spotLight.diffuse", lightColor * 0.3f);
 		modelShader.setVec3("spotLight.specular", glm::vec3(0.5f));
 
-		ourModel.Draw(modelShader);
+		// ourModel.Draw(modelShader);
 
 		/*
 

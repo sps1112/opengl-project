@@ -7,7 +7,11 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 
 #include <Shader.h>
+#include <FileReader.h>
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -37,7 +41,7 @@ public:
     unsigned int VAO;
     Primitive(const char *path)
     {
-        SetupData();
+        SetupData(path);
         SetupPrimitive();
     }
 
@@ -53,8 +57,34 @@ public:
 private:
     // render data
     unsigned int VBO, EBO;
-    void SetupData()
+    void SetupData(const char *path)
     {
+        std::string pathString;
+        std::ifstream file;
+        file.open(path);
+        std::stringstream statsStream;
+        statsStream << file.rdbuf();
+        file.close();
+        pathString = statsStream.str();
+        const char *fileData = pathString.c_str();
+        std::cout << path << std::endl;
+        int pathLength = GetCharArrayLength(path);
+        std::cout << pathLength << std::endl;
+        std::cout << GetCharArrayLength(".2d") << std::endl;
+        int endIndex1 = GetStartIndexString(path, ".2d");
+        std::cout << "Index 1 is " << endIndex1 << std::endl;
+        int endIndex2 = GetStartIndexString(path, ".3d");
+        std::cout << "Index 2 is " << endIndex2 << std::endl;
+        if (GetEndIndexString(path, ".2d") == GetLineEndIndex(path, 0))
+        {
+            std::cout << "Yes " << GetEndIndexString(path, ".2d") << " " << GetLineEndIndex(path, 0) << std::endl;
+        }
+        else
+        {
+            std::cout << "No " << GetEndIndexString(path, ".2d") << " " << GetLineEndIndex(path, 0) << std::endl;
+        }
+        char *Line1 = GetLine(fileData, 0);
+        std::cout << Line1 << std::endl;
     }
 
     void SetupPrimitive()
