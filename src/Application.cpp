@@ -1,3 +1,11 @@
+#ifdef __linux__
+#define SYSTEM_TYPE 0
+#elif _WIN32
+#define SYSTEM_TYPE 1
+#else
+#define SYSTEM_TYPE 3
+#endif
+
 // Library headers
 #include <glad/glad.h>	// first glad
 #include <GLFW/glfw3.h> // then glfw
@@ -340,22 +348,34 @@ int main()
 
 	// Create shader
 	// Standard Shader
-	Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
+	// Shader mainShader("../shaders/shader.vs", "../shaders/shader.fs");
+	Shader mainShader(FileSystem::getPath("shaders/shader.vs").c_str(), FileSystem::getPath("shaders/shader.fs").c_str());
+
 	// Lighted Object Shader
-	Shader lightingShader("../shaders/shader_light.vs", "../shaders/shader_light.fs");
+	// Shader lightingShader("../shaders/shader_light.vs", "../shaders/shader_light.fs");
+	Shader lightingShader(FileSystem::getPath("shaders/shader_light.vs").c_str(), FileSystem::getPath("shaders/shader_light.fs").c_str());
+
 	// Gouraud Shader
-	Shader gouraudShader("../shaders/shader_gouraud.vs", "../shaders/shader_gouraud.fs");
+	// Shader gouraudShader("../shaders/shader_gouraud.vs", "../shaders/shader_gouraud.fs");
+	Shader gouraudShader(FileSystem::getPath("shaders/shader_gouraud.vs").c_str(), FileSystem::getPath("shaders/shader_gouraud.fs").c_str());
+
 	// Light Source Shader
-	Shader sourceShader("../shaders/shader_source.vs", "../shaders/shader_source.fs");
+	// Shader sourceShader("../shaders/shader_source.vs", "../shaders/shader_source.fs");
+	Shader sourceShader(FileSystem::getPath("shaders/shader_source.vs").c_str(), FileSystem::getPath("shaders/shader_source.fs").c_str());
+
 	// Material Shader
-	Shader materialShader("../shaders/shader_material.vs", "../shaders/shader_material.fs");
+	// Shader materialShader("../shaders/shader_material.vs", "../shaders/shader_material.fs");
+	Shader materialShader(FileSystem::getPath("shaders/shader_material.vs").c_str(), FileSystem::getPath("shaders/shader_material.fs").c_str());
+
 	// Texture Shader
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_texture.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_directional.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_point.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_spotlight.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_scene.fs");
-	Shader modelShader("../shaders/shader_model.vs", "../shaders/shader_model.fs");
+
+	// Model Shader
+	Shader modelShader(FileSystem::getPath("shaders/shader_model.vs").c_str(), FileSystem::getPath("shaders/shader_model.fs").c_str());
 
 	/*
 	// Texture setup
