@@ -1,11 +1,3 @@
-#ifdef __linux__
-#define SYSTEM_TYPE 0
-#elif _WIN32
-#define SYSTEM_TYPE 1
-#else
-#define SYSTEM_TYPE 3
-#endif
-
 // Library headers
 #include <glad/glad.h>	// first glad
 #include <GLFW/glfw3.h> // then glfw

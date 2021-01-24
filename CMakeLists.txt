@@ -43,6 +43,9 @@ target_link_libraries(opengl-project glfw)
 target_link_libraries(opengl-project assimp)
 endif()
 
+configure_file(configuration/root_directory.h.in configuration/root_directory.h)
+include_directories(${CMAKE_BINARY_DIR}/configuration)
+
 if(WIN32)
 add_custom_command(TARGET opengl-project POST_BUILD   
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
