@@ -30,6 +30,7 @@ add_executable(
     includes/FileSystem.h
     includes/Utils.h
     includes/Primitive.h
+    includes/FileReader.h
 )
 
 target_link_libraries(opengl-project ${CMAKE_DL_LIBS})
