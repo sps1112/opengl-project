@@ -42,3 +42,10 @@ else()
 target_link_libraries(opengl-project glfw)
 target_link_libraries(opengl-project assimp)
 endif()
+
+if(WIN32)
+add_custom_command(TARGET opengl-project POST_BUILD   
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/lib/assimp-vc142-mtd.dll"
+        $<TARGET_FILE_DIR:opengl-project>)    
+endif()
