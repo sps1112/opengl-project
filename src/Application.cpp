@@ -17,6 +17,7 @@
 #include <Primitive.h>	// Primitive header
 
 #include <iostream>
+#include <vector>
 
 // function declarations
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -338,9 +339,9 @@ int main()
 	*/
 
 	// Model ourModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
-	Model ourModel(FileSystem::getPath("resources/models/sphere/sphere.obj"));
+	// Model ourModel(FileSystem::getPath("resources/models/sphere/sphere.obj"));
 	Primitive primitive1(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
-	Primitive primitive2(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
+	// Primitive primitive2(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 	Log("data setup finished");
 
 	// Create shader
@@ -359,6 +360,7 @@ int main()
 	// Material Shader
 	Shader materialShader(FileSystem::getPath("shaders/shader_material.vs").c_str(), FileSystem::getPath("shaders/shader_material.fs").c_str());
 
+	Shader shader2D(FileSystem::getPath("shaders/shader_2d.vs").c_str(), FileSystem::getPath("shaders/shader_2d.fs").c_str());
 	// Texture Shader
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_texture.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_directional.fs");
@@ -369,6 +371,14 @@ int main()
 	// Model Shader
 	Shader modelShader(FileSystem::getPath("shaders/shader_model.vs").c_str(), FileSystem::getPath("shaders/shader_model.fs").c_str());
 	Log("shader data setup");
+
+	vector<pTexture> textures;
+	pTexture mainTexture;
+	mainTexture.id = LoadTexture(FileSystem::getPath("resources/textures/awesomeface.png").c_str());
+	Log("Texture loaded");
+	mainTexture.type = "texture_diffuse";
+	textures.push_back(mainTexture);
+	primitive1.SetupTextures(textures);
 	/*
 	// Texture setup
 	unsigned int texture, texture2;
@@ -510,7 +520,7 @@ int main()
 			model = glm::translate(model, pointLightPositions[i]);
 			model = glm::scale(model, glm::vec3(0.2f));
 			sourceShader.setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			// glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
 		glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
@@ -594,7 +604,9 @@ int main()
 		modelShader.setVec3("spotLight.diffuse", lightColor * 0.3f);
 		modelShader.setVec3("spotLight.specular", glm::vec3(0.5f));
 
-		ourModel.Draw(modelShader);
+		// ourModel.Draw(modelShader);
+		shader2D.use();
+		primitive1.Draw(shader2D);
 
 		/*
 

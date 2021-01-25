@@ -158,14 +158,156 @@ private:
 
     void ProcessData(char *fileData)
     {
-        int phase = 0;
         int lineStartIndex = 0;
         char *lineI = GetLine(fileData, lineStartIndex);
+        char targetChar = ' ';
+        char *whitespace = ConvertToCharArray(std::string(" ").c_str());
         if (is2D)
         {
             Vertex2D vertexArray[vertexCount];
             for (int i = 0; i < vertexCount; i++)
             {
+                lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+                lineI = GetLine(fileData, lineStartIndex);
+                std::string target = "v " + std::to_string(i) + " ";
+                char *val[3];
+                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
+                for (int i = 0; i < 3; i++)
+                {
+                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
+                    lineI = GetLine(lineI, startIndex);
+                    if (i == 2)
+                    {
+                        val[i] = lineI;
+                    }
+                    else
+                    {
+                        int endIndex = GetEndIndexString(lineI, whitespace);
+                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
+                    }
+                }
+                std::cout << val[0] << "x" << std::endl;
+                std::cout << val[1] << "x" << std::endl;
+                std::cout << val[2] << "x" << std::endl;
+                glm::vec3 pos;
+                pos.x = ConvertToFloat(val[0]);
+                pos.y = ConvertToFloat(val[1]);
+                pos.z = ConvertToFloat(val[2]);
+                vertexArray[i].Position = pos;
+            }
+            Log("Position set");
+            lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+            for (int i = 0; i < vertexCount; i++)
+            {
+                lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+                lineI = GetLine(fileData, lineStartIndex);
+                std::string target = "c " + std::to_string(i) + " ";
+                char *val[3];
+                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
+                for (int i = 0; i < 3; i++)
+                {
+                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
+                    lineI = GetLine(lineI, startIndex);
+                    if (i == 2)
+                    {
+                        val[i] = lineI;
+                    }
+                    else
+                    {
+                        int endIndex = GetEndIndexString(lineI, whitespace);
+                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
+                    }
+                }
+                std::cout << val[0] << "x" << std::endl;
+                std::cout << val[1] << "x" << std::endl;
+                std::cout << val[2] << "x" << std::endl;
+                glm::vec3 col;
+                col.x = ConvertToFloat(val[0]);
+                col.y = ConvertToFloat(val[1]);
+                col.z = ConvertToFloat(val[2]);
+                vertexArray[i].Color = col;
+            }
+            Log("Color set");
+            lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+            for (int i = 0; i < vertexCount; i++)
+            {
+                lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+                lineI = GetLine(fileData, lineStartIndex);
+                std::string target = "t " + std::to_string(i) + " ";
+                char *val[2];
+                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
+                for (int i = 0; i < 2; i++)
+                {
+                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
+                    lineI = GetLine(lineI, startIndex);
+                    if (i == 1)
+                    {
+                        val[i] = lineI;
+                    }
+                    else
+                    {
+                        int endIndex = GetEndIndexString(lineI, whitespace);
+                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
+                    }
+                }
+                std::cout << val[0] << "x" << std::endl;
+                std::cout << val[1] << "x" << std::endl;
+                glm::vec2 tex;
+                tex.x = ConvertToFloat(val[0]);
+                tex.y = ConvertToFloat(val[1]);
+                vertexArray[i].TexCoord = tex;
+            }
+            Log("Texture set");
+            for (int i = 0; i < vertexCount; i++)
+            {
+                vertices2D.push_back(vertexArray[i]);
+            }
+            lineStartIndex = SkipLines(fileData, lineStartIndex, 3);
+            int i = 0;
+            while (((char)fileData[lineStartIndex]) != '\0')
+            {
+                lineI = GetLine(fileData, lineStartIndex);
+                std::cout << lineI << std::endl;
+
+                std::string target = "i " + std::to_string(i) + " ";
+                char *val[3];
+                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
+                for (int i = 0; i < 3; i++)
+                {
+                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
+                    lineI = GetLine(lineI, startIndex);
+                    if (i == 2)
+                    {
+                        val[i] = lineI;
+                    }
+                    else
+                    {
+                        int endIndex = GetEndIndexString(lineI, whitespace);
+                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
+                    }
+                }
+                std::cout << val[0] << "x" << std::endl;
+                std::cout << val[1] << "x" << std::endl;
+                std::cout << val[2] << "x" << std::endl;
+
+                unsigned int a, b, c;
+                a = (unsigned int)ConvertToFloat(val[0]);
+                b = (unsigned int)ConvertToFloat(val[1]);
+                c = (unsigned int)ConvertToFloat(val[2]);
+                indices.push_back(a);
+                indices.push_back(b);
+                indices.push_back(c);
+                lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+                i++;
+            }
+            Log("Indices set");
+            if (((char)fileData[lineStartIndex]) == '\0')
+            {
+                std::cout << "End" << std::endl;
+            }
+            else
+            {
+                std::cout << "Not end " << ((char)fileData[lineStartIndex]) << "x" << std::endl;
             }
         }
         else
