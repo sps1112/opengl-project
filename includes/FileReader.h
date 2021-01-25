@@ -5,16 +5,6 @@
 #include <sstream>
 
 // Calculates length of character array
-int GetCharArrayLength(const char *charArray)
-{
-    int index = 0;
-    while ((char)charArray[index] != '\0')
-    {
-        index++;
-    }
-    return (index + 1);
-}
-
 int GetCharArrayLength(char *charArray)
 {
     int index = 0;
@@ -25,17 +15,28 @@ int GetCharArrayLength(char *charArray)
     return (index + 1);
 }
 
-// Converts character Array to string
-std::string ConvertToString(const char *charArray)
+int GetCharArrayLength(const char *charArray)
 {
-    std::string s = "";
-    for (int i = 0; i < GetCharArrayLength(charArray); i++)
+    int index = 0;
+    while ((char)charArray[index] != '\0')
     {
-        s = s + charArray[i];
+        index++;
     }
-    return s;
+    return (index + 1);
 }
 
+char *ConvertToCharArray(const char *charArray)
+{
+    int length = GetCharArrayLength(charArray);
+    char *newArray = new char[length];
+    for (int i = 0; i < length; i++)
+    {
+        *(newArray + i) = *(charArray + i);
+    }
+    return newArray;
+}
+
+// Converts character Array to string
 std::string ConvertToString(char *charArray)
 {
     std::string s = "";
@@ -49,27 +50,37 @@ std::string ConvertToString(char *charArray)
 // Converts chararcter array to float ("70" to 70.0)
 float ConvertToFloat(const char *charArray)
 {
-    std::string s = ConvertToString(charArray);
+    std::string s = ConvertToString(ConvertToCharArray(charArray));
     std::stringstream ss(s);
     float value{0};
     ss >> value;
     return value;
 }
 
-// Gets Single Line from a starting Index till '\n'
-char *GetLine(const char *charList, int startIndex)
+bool CompareCharArray(char *a, char *b)
 {
-    char *newLine = new char[GetCharArrayLength(charList)];
-    int index = startIndex;
-    while ((char)charList[index] != '\n')
+    bool isEqual = true;
+    int l1 = GetCharArrayLength(a);
+    int l2 = GetCharArrayLength(b);
+    if (l1 != l2)
     {
-        newLine[index - startIndex] = charList[index];
-        index++;
+        isEqual = false;
     }
-    newLine[index - startIndex] = '\0';
-    return newLine;
+    else
+    {
+        for (int i = 0; i < l1; i++)
+        {
+            if (*(a + i) != *(b + i))
+            {
+                isEqual = false;
+                break;
+            }
+        }
+    }
+    return isEqual;
 }
 
+// Gets Single Line from a starting Index till '\n'
 char *GetLine(char *charList, int startIndex)
 {
     char *newLine = new char[GetCharArrayLength(charList)];
@@ -85,16 +96,6 @@ char *GetLine(char *charList, int startIndex)
 }
 
 // Gets ending index of a line from a starting Index
-int GetLineEndIndex(const char *charList, int startIndex)
-{
-    int index = startIndex;
-    while ((char)charList[index] != '\n')
-    {
-        index++;
-    }
-    return index;
-}
-
 int GetLineEndIndex(char *charList, int startIndex)
 {
     int index = startIndex;
@@ -106,18 +107,13 @@ int GetLineEndIndex(char *charList, int startIndex)
 }
 
 // Gets starting index of next line from a starting Index
-int GetLineStartIndex(const char *charList, int startIndex)
-{
-    return (GetLineEndIndex(charList, startIndex) + 1);
-}
-
 int GetLineStartIndex(char *charList, int startIndex)
 {
     return (GetLineEndIndex(charList, startIndex) + 1);
 }
 
 // Get starting Index of a char array in another char array
-int GetStartIndexString(char *mainCharArray, const char *targetCharArray)
+int GetStartIndexString(char *mainCharArray, char *targetCharArray)
 {
     int mainLength = GetCharArrayLength(mainCharArray);
     int targetLength = GetCharArrayLength(targetCharArray);
@@ -168,73 +164,8 @@ int GetStartIndexString(char *mainCharArray, const char *targetCharArray)
     return -1;
 }
 
-// Get starting Index of a char array in another char array
-int GetStartIndexString(const char *mainCharArray, const char *targetCharArray)
-{
-    int mainLength = GetCharArrayLength(mainCharArray);
-    int targetLength = GetCharArrayLength(targetCharArray);
-    if (mainLength >= targetLength)
-    {
-        int index = 0;
-        bool isChecking = false;
-        bool hasIndex = false;
-        int stringIndex = -1;
-        int targetIndex = 0;
-        while ((char)mainCharArray[index] != '\0')
-        {
-            if (isChecking)
-            {
-                if (targetIndex < targetLength - 1)
-                {
-                    if (mainCharArray[index] != targetCharArray[targetIndex])
-                    {
-                        isChecking = false;
-                    }
-                }
-                else
-                {
-                    hasIndex = true;
-                    stringIndex = index - (targetLength - 1);
-                    break;
-                }
-            }
-            if (!isChecking)
-            {
-                if (mainCharArray[index] == targetCharArray[0])
-                {
-                    isChecking = true;
-                    targetIndex = 0;
-                }
-            }
-            index++;
-            if (isChecking)
-            {
-                targetIndex++;
-            }
-        }
-        return stringIndex;
-    }
-    std::cout << "INVALID TARGET STRING" << std::endl;
-    return -1;
-}
-
 // Get ending Index of a char array in another char array
-int GetEndIndexString(char *mainCharArray, const char *targetCharArray)
-{
-    int mainLength = GetCharArrayLength(mainCharArray);
-    int targetLength = GetCharArrayLength(targetCharArray);
-    if (mainLength >= targetLength)
-    {
-        int index = GetStartIndexString(mainCharArray, targetCharArray);
-        index += targetLength - 1;
-        return index;
-    }
-    std::cout << "INVALID TARGET STRING" << std::endl;
-    return -1;
-}
-
-// Get ending Index of a char array in another char array
-int GetEndIndexString(const char *mainCharArray, const char *targetCharArray)
+int GetEndIndexString(char *mainCharArray, char *targetCharArray)
 {
     int mainLength = GetCharArrayLength(mainCharArray);
     int targetLength = GetCharArrayLength(targetCharArray);
