@@ -77,34 +77,6 @@ int main()
 	stbi_set_flip_vertically_on_load(true); // set before loading model
 
 	// Vertex Data
-	// Triangle
-	/*
-	float vertices[] = {
-		// vertices         // colors
-		-0.5f,-0.5f,0.0f, 1.0f,0.0f,0.0f,
-		0.0f,0.5f,0.0f,   0.0f,1.0f,0.0f,
-		0.5f,-0.5f,0.0f,  0.0f,0.0f,1.0f
-	};
-	unsigned int indices[] = {
-		0,1,2
-	};
-	*/
-
-	// Rectangle
-	/*
-	float vertices[] = {
-		//vertices        //colors         //texture coord
-		0.5f,0.5f,0.0f,   1.0f,0.0f,0.0f,  1.0f,1.0f,
-		0.5f,-0.5f,0.0f,  0.0f,1.0f,0.0f,  1.0f,0.0f,
-		-0.5f,-0.5f,0.0f, 0.0f,0.0f,1.0f,  0.0f,0.0f,
-		-0.5f,0.5f,0.0f,  1.0f,1.0f,1.0f,  0.0f,1.0f
-	};
-	unsigned int indices[] = {
-		0,1,3,
-		1,2,3
-	};
-	*/
-
 	// Cube vertices with texture
 	/*
 	float vertices[] = {
@@ -341,7 +313,8 @@ int main()
 	// Model ourModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
 	// Model ourModel(FileSystem::getPath("resources/models/sphere/sphere.obj"));
 	Primitive primitive1(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
-	// Primitive primitive2(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
+	Primitive primitive2(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
+	// primitive2.PrintVertex();
 	Log("data setup finished");
 
 	// Create shader
@@ -361,6 +334,9 @@ int main()
 	Shader materialShader(FileSystem::getPath("shaders/shader_material.vs").c_str(), FileSystem::getPath("shaders/shader_material.fs").c_str());
 
 	Shader shader2D(FileSystem::getPath("shaders/shader_2d.vs").c_str(), FileSystem::getPath("shaders/shader_2d.fs").c_str());
+	Shader modelShader(FileSystem::getPath("shaders/shader_3d.vs").c_str(), FileSystem::getPath("shaders/shader_3d.fs").c_str());
+	Shader shader3D(FileSystem::getPath("shaders/shader_3d.vs").c_str(), FileSystem::getPath("shaders/shader_3d_col.fs").c_str());
+
 	// Texture Shader
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_texture.fs");
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_directional.fs");
@@ -369,16 +345,30 @@ int main()
 	// Shader textureShader("../shaders/shader_texture.vs", "../shaders/shader_scene.fs");
 
 	// Model Shader
-	Shader modelShader(FileSystem::getPath("shaders/shader_model.vs").c_str(), FileSystem::getPath("shaders/shader_model.fs").c_str());
+	// Shader modelShader(FileSystem::getPath("shaders/shader_model.vs").c_str(), FileSystem::getPath("shaders/shader_model.fs").c_str());
 	Log("shader data setup");
 
-	vector<pTexture> textures;
+	/*vector<pTexture> textures;
 	pTexture mainTexture;
 	mainTexture.id = LoadTexture(FileSystem::getPath("resources/textures/awesomeface.png").c_str());
 	Log("Texture loaded");
 	mainTexture.type = "texture_diffuse";
 	textures.push_back(mainTexture);
-	primitive1.SetupTextures(textures);
+	primitive1.SetupTextures(textures);*/
+
+	vector<pTexture> textures3D;
+	pTexture diffuse, specular, emmision;
+	diffuse.id = LoadTexture(FileSystem::getPath("resources/textures/container2.png").c_str());
+	diffuse.type = "texture_diffuse";
+	textures3D.push_back(diffuse);
+	specular.id = LoadTexture(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
+	specular.type = "texture_specular";
+	textures3D.push_back(specular);
+	emmision.id = LoadTexture(FileSystem::getPath("resources/textures/matrix.jpg").c_str());
+	emmision.type = "texture_emmision";
+	textures3D.push_back(emmision);
+	primitive2.SetupTextures(textures3D);
+
 	/*
 	// Texture setup
 	unsigned int texture, texture2;
@@ -520,7 +510,7 @@ int main()
 			model = glm::translate(model, pointLightPositions[i]);
 			model = glm::scale(model, glm::vec3(0.2f));
 			sourceShader.setMat4("model", model);
-			// glDrawArrays(GL_TRIANGLES, 0, 36);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
 		glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
@@ -605,8 +595,25 @@ int main()
 		modelShader.setVec3("spotLight.specular", glm::vec3(0.5f));
 
 		// ourModel.Draw(modelShader);
-		shader2D.use();
-		primitive1.Draw(shader2D);
+
+		// shader2D.use();
+		// primitive1.Draw(shader2D);
+		/*glm::mat4 model3D(1.0f);
+		model3D = glm::translate(model3D, glm::vec3(0.0f, -1.0f, -2.0f));
+		shader3D.use();
+		shader3D.setMat4("model", model3D);
+		shader3D.setMat4("view", view);
+		shader3D.setMat4("projection", projection);
+		shader3D.setVec3("viewPos", camera.Position);
+		shader3D.setVec3("material.ambient", objectColor);
+		shader3D.setVec3("material.diffuse", objectColor);
+		shader3D.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		shader3D.setFloat("material.shininess", 64);
+		shader3D.setVec3("light.ambient", lightColor * 0.2f);
+		shader3D.setVec3("light.diffuse", lightColor * 0.5f);
+		shader3D.setVec3("light.specular", glm::vec3(1.0f));
+		shader3D.setVec3("light.position", newLightPos);*/
+		primitive2.Draw(modelShader);
 
 		/*
 
