@@ -338,8 +338,10 @@ int main()
 	*/
 
 	// Model ourModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
+	Model ourModel(FileSystem::getPath("resources/models/sphere/sphere.obj"));
 	Primitive primitive1(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
 	Primitive primitive2(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
+	Log("data setup finished");
 
 	// Create shader
 	// Standard Shader
@@ -366,7 +368,7 @@ int main()
 
 	// Model Shader
 	Shader modelShader(FileSystem::getPath("shaders/shader_model.vs").c_str(), FileSystem::getPath("shaders/shader_model.fs").c_str());
-
+	Log("shader data setup");
 	/*
 	// Texture setup
 	unsigned int texture, texture2;
@@ -415,6 +417,7 @@ int main()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0); // unbind array buffer
 	glBindVertexArray(0);			  // unbind vertex Array
+	Log("Setup finished");
 
 	// Render loop
 	while (!glfwWindowShouldClose(window))
@@ -591,7 +594,7 @@ int main()
 		modelShader.setVec3("spotLight.diffuse", lightColor * 0.3f);
 		modelShader.setVec3("spotLight.specular", glm::vec3(0.5f));
 
-		// ourModel.Draw(modelShader);
+		ourModel.Draw(modelShader);
 
 		/*
 
@@ -839,6 +842,7 @@ int main()
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	Log("Loop finished");
 	/*
 	// delete memory
 	glDeleteVertexArrays(1, &VAO);

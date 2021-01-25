@@ -49,4 +49,9 @@ unsigned int LoadTexture(const char *path)
 
     return textureID;
 }
+
+void Log(const char *message)
+{
+    std::cout << message << "\n";
+}
 #endif

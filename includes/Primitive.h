@@ -8,6 +8,7 @@
 
 #include <Shader.h>
 #include <FileReader.h>
+#include <Utils.h>
 
 #include <iostream>
 #include <fstream>
@@ -67,24 +68,18 @@ private:
         file.close();
         pathString = statsStream.str();
         const char *fileData = pathString.c_str();
-        std::cout << path << std::endl;
+
         int pathLength = GetCharArrayLength(path);
-        std::cout << pathLength << std::endl;
-        std::cout << GetCharArrayLength(".2d") << std::endl;
-        int endIndex1 = GetStartIndexString(path, ".2d");
-        std::cout << "Index 1 is " << endIndex1 << std::endl;
-        int endIndex2 = GetStartIndexString(path, ".3d");
-        std::cout << "Index 2 is " << endIndex2 << std::endl;
-        if (GetEndIndexString(path, ".2d") == GetLineEndIndex(path, 0))
+        std::cout << path << std::endl;
+        const char *extension = GetLine(ConvertToCharArray(path), pathLength - 4);
+        if (CompareCharArray(ConvertToCharArray(extension), ConvertToCharArray(".2d")))
         {
-            std::cout << "Yes " << GetEndIndexString(path, ".2d") << " " << GetLineEndIndex(path, 0) << std::endl;
+            Log("Is 2D");
         }
-        else
+        else if (CompareCharArray(ConvertToCharArray(extension), ConvertToCharArray(".3d")))
         {
-            std::cout << "No " << GetEndIndexString(path, ".2d") << " " << GetLineEndIndex(path, 0) << std::endl;
+            Log("Is 3D");
         }
-        char *Line1 = GetLine(fileData, 0);
-        std::cout << Line1 << std::endl;
     }
 
     void SetupPrimitive()
