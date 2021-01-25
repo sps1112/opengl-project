@@ -48,9 +48,9 @@ std::string ConvertToString(char *charArray)
 }
 
 // Converts chararcter array to float ("70" to 70.0)
-float ConvertToFloat(const char *charArray)
+float ConvertToFloat(char *charArray)
 {
-    std::string s = ConvertToString(ConvertToCharArray(charArray));
+    std::string s = ConvertToString(charArray);
     std::stringstream ss(s);
     float value{0};
     ss >> value;
@@ -95,6 +95,56 @@ char *GetLine(char *charList, int startIndex)
     return newLine;
 }
 
+// Returns part of line from start to end index(excluding the endIndex)
+char *GetLinePart(char *line, int startIndex, int endIndex)
+{
+    int length = endIndex - startIndex;
+    char *newLine = new char[length + 1];
+    if (length >= 0 && length <= GetCharArrayLength(line) && startIndex >= 0 && endIndex < GetCharArrayLength(line))
+    {
+        for (int i = 0; i < length; i++)
+        {
+            char c = *(line + startIndex + i);
+            *(newLine + i) = *(line + startIndex + i);
+        }
+        *(newLine + length) = '\0';
+    }
+    return newLine;
+}
+
+int GetCharIndex(char *charList, char targetChar)
+{
+    int targetIndex = -1;
+    int length = GetCharArrayLength(charList);
+    for (int i = 0; i < length; i++)
+    {
+        if (*(charList + i) == targetChar)
+        {
+            targetIndex = i;
+            break;
+        }
+    }
+    return targetIndex;
+}
+
+int GetOtherCharIndex(char *charList, int startIndex, char targetChar)
+{
+    int otherIndex = -1;
+    int length = GetCharArrayLength(charList);
+    if (startIndex > 0 && startIndex < length)
+    {
+        for (int i = startIndex; i < length; i++)
+        {
+            if (*(charList + i) != targetChar)
+            {
+                otherIndex = i;
+                break;
+            }
+        }
+    }
+    return otherIndex;
+}
+
 // Gets ending index of a line from a starting Index
 int GetLineEndIndex(char *charList, int startIndex)
 {
@@ -119,7 +169,6 @@ int GetStartIndexString(char *mainCharArray, char *targetCharArray)
     int targetLength = GetCharArrayLength(targetCharArray);
     if (mainLength >= targetLength)
     {
-        std::cout << "Inside if body" << std::endl;
         int index = 0;
         bool isChecking = false;
         bool hasIndex = false;
@@ -147,7 +196,6 @@ int GetStartIndexString(char *mainCharArray, char *targetCharArray)
             {
                 if (mainCharArray[index] == targetCharArray[0])
                 {
-                    std::cout << "found" << std::endl;
                     isChecking = true;
                     targetIndex = 0;
                 }
@@ -177,6 +225,15 @@ int GetEndIndexString(char *mainCharArray, char *targetCharArray)
     }
     std::cout << "INVALID TARGET STRING" << std::endl;
     return -1;
+}
+
+int SkipLines(char *charArray, int startIndex, int lines)
+{
+    for (int i = 0; i < lines; i++)
+    {
+        startIndex = GetLineStartIndex(charArray, startIndex);
+    }
+    return startIndex;
 }
 
 #endif
