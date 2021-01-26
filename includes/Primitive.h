@@ -39,8 +39,9 @@ struct pTexture
     std::string type;
 };
 
-glm::vec3 GetVec3(char *fileData, char itemType, bool is3D, int lineStartIndex, int vertexIndex);
-glm::vec2 GetVec2(char *fileData, char itemType, bool is3D, int lineStartIndex, int vertexIndex);
+glm::vec3 GetVec3(char *fileData, char itemType, bool is2D, int lineStartIndex, int vertexIndex);
+glm::vec2 GetVec2(char *fileData, char itemType, bool is2D, int lineStartIndex, int vertexIndex);
+bool CheckNextLine(char *fileData, int lineStartIndex);
 
 class Primitive
 {
@@ -94,7 +95,6 @@ public:
                 number = std::to_string(emmisionNR++);
             }
             shader.setFloat(("material." + name + number).c_str(), i);
-            std::cout << "material." << name << number << std::endl;
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
         glActiveTexture(GL_TEXTURE0);
@@ -172,86 +172,21 @@ private:
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                lineI = GetLine(fileData, lineStartIndex);
-                std::string target = "v " + std::to_string(i) + " ";
-                char *val[3];
-                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                for (int i = 0; i < 3; i++)
-                {
-                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                    lineI = GetLine(lineI, startIndex);
-                    if (i == 2)
-                    {
-                        val[i] = lineI;
-                    }
-                    else
-                    {
-                        endIndex = GetEndIndexString(lineI, whitespace);
-                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                    }
-                }
-                glm::vec3 pos;
-                pos.x = ConvertToFloat(val[0]);
-                pos.y = ConvertToFloat(val[1]);
-                pos.z = ConvertToFloat(val[2]);
-                vertexArray[i].Position = pos;
+                vertexArray[i].Position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
             }
             // Vertex Set
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                lineI = GetLine(fileData, lineStartIndex);
-                std::string target = "c " + std::to_string(i) + " ";
-                char *val[3];
-                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                for (int i = 0; i < 3; i++)
-                {
-                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                    lineI = GetLine(lineI, startIndex);
-                    if (i == 2)
-                    {
-                        val[i] = lineI;
-                    }
-                    else
-                    {
-                        endIndex = GetEndIndexString(lineI, whitespace);
-                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                    }
-                }
-                glm::vec3 col;
-                col.x = ConvertToFloat(val[0]);
-                col.y = ConvertToFloat(val[1]);
-                col.z = ConvertToFloat(val[2]);
-                vertexArray[i].Color = col;
+                vertexArray[i].Color = GetVec3(fileData, 'c', is2D, lineStartIndex, i);
             }
             // Color Set
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                lineI = GetLine(fileData, lineStartIndex);
-                std::string target = "t " + std::to_string(i) + " ";
-                char *val[2];
-                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                for (int i = 0; i < 2; i++)
-                {
-                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                    lineI = GetLine(lineI, startIndex);
-                    if (i == 1)
-                    {
-                        val[i] = lineI;
-                    }
-                    else
-                    {
-                        endIndex = GetEndIndexString(lineI, whitespace);
-                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                    }
-                }
-                glm::vec2 tex;
-                tex.x = ConvertToFloat(val[0]);
-                tex.y = ConvertToFloat(val[1]);
-                vertexArray[i].TexCoord = tex;
+                vertexArray[i].TexCoord = GetVec2(fileData, 't', is2D, lineStartIndex, i);
             }
             // Texture Set
             for (int i = 0; i < vertexCount; i++)
@@ -310,238 +245,49 @@ private:
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                lineI = GetLine(fileData, lineStartIndex);
-                std::string target = "v ";
-                if (i < 10)
-                {
-                    target += "0" + std::to_string(i) + " ";
-                }
-                else
-                {
-                    target += std::to_string(i) + " ";
-                }
-                char *val[3];
-                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                for (int i = 0; i < 3; i++)
-                {
-                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                    lineI = GetLine(lineI, startIndex);
-                    if (i == 2)
-                    {
-                        val[i] = lineI;
-                    }
-                    else
-                    {
-                        endIndex = GetEndIndexString(lineI, whitespace);
-                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                    }
-                }
-                glm::vec3 pos;
-                pos.x = ConvertToFloat(val[0]);
-                pos.y = ConvertToFloat(val[1]);
-                pos.z = ConvertToFloat(val[2]);
-                vertexArray[i].Position = pos;
+                vertexArray[i].Position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
             }
             Log("Position set");
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                lineI = GetLine(fileData, lineStartIndex);
-                std::string target = "n ";
-                if (i < 10)
-                {
-                    target += "0" + std::to_string(i) + " ";
-                }
-                else
-                {
-                    target += std::to_string(i) + " ";
-                }
-                char *val[3];
-                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                for (int i = 0; i < 3; i++)
-                {
-                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                    lineI = GetLine(lineI, startIndex);
-                    if (i == 2)
-                    {
-                        val[i] = lineI;
-                    }
-                    else
-                    {
-                        endIndex = GetEndIndexString(lineI, whitespace);
-                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                    }
-                }
-                glm::vec3 norm;
-                norm.x = ConvertToFloat(val[0]);
-                norm.y = ConvertToFloat(val[1]);
-                norm.z = ConvertToFloat(val[2]);
-                vertexArray[i].Normal = norm;
+                vertexArray[i].Normal = GetVec3(fileData, 'n', is2D, lineStartIndex, i);
             }
             Log("Normal set");
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                lineI = GetLine(fileData, lineStartIndex);
-                std::string target = "t ";
-                if (i < 10)
-                {
-                    target += "0" + std::to_string(i) + " ";
-                }
-                else
-                {
-                    target += std::to_string(i) + " ";
-                }
-                char *val[2];
-                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                for (int i = 0; i < 2; i++)
-                {
-                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                    lineI = GetLine(lineI, startIndex);
-                    if (i == 1)
-                    {
-                        val[i] = lineI;
-                    }
-                    else
-                    {
-                        endIndex = GetEndIndexString(lineI, whitespace);
-                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                    }
-                }
-                glm::vec2 tex;
-                tex.x = ConvertToFloat(val[0]);
-                tex.y = ConvertToFloat(val[1]);
-                vertexArray[i].TexCoord = tex;
+                vertexArray[i].TexCoord = GetVec2(fileData, 't', is2D, lineStartIndex, i);
             }
             Log("Texture coords set");
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                lineI = GetLine(fileData, lineStartIndex);
-                std::string target = "c ";
-                if (i < 10)
-                {
-                    target += "0" + std::to_string(i) + " ";
-                }
-                else
-                {
-                    target += std::to_string(i) + " ";
-                }
-                char *val[3];
-                int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                for (int i = 0; i < 3; i++)
-                {
-                    int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                    lineI = GetLine(lineI, startIndex);
-                    if (i == 2)
-                    {
-                        val[i] = lineI;
-                    }
-                    else
-                    {
-                        endIndex = GetEndIndexString(lineI, whitespace);
-                        val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                    }
-                }
-                glm::vec3 col;
-                col.x = ConvertToFloat(val[0]);
-                col.y = ConvertToFloat(val[1]);
-                col.z = ConvertToFloat(val[2]);
-                vertexArray[i].Color = col;
+                vertexArray[i].Color = GetVec3(fileData, 'c', is2D, lineStartIndex, i);
             }
             Log("Color set");
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
-            char testChar = ((char)fileData[SkipLines(fileData, lineStartIndex, 1)]);
-            if (testChar != ' ' && testChar != '\0' && testChar != '\n')
+            if (CheckNextLine(fileData, lineStartIndex))
             {
                 for (int i = 0; i < vertexCount; i++)
                 {
                     lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                    lineI = GetLine(fileData, lineStartIndex);
-                    std::string target = "T ";
-                    if (i < 10)
-                    {
-                        target += "0" + std::to_string(i) + " ";
-                    }
-                    else
-                    {
-                        target += std::to_string(i) + " ";
-                    }
-                    char *val[3];
-                    int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                    for (int i = 0; i < 3; i++)
-                    {
-                        int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                        lineI = GetLine(lineI, startIndex);
-                        if (i == 2)
-                        {
-                            val[i] = lineI;
-                        }
-                        else
-                        {
-                            endIndex = GetEndIndexString(lineI, whitespace);
-                            val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                        }
-                    }
-                    glm::vec3 tang;
-                    tang.x = ConvertToFloat(val[0]);
-                    tang.y = ConvertToFloat(val[1]);
-                    tang.z = ConvertToFloat(val[2]);
-                    vertexArray[i].Tangent = tang;
+                    vertexArray[i].Tangent = GetVec3(fileData, 'T', is2D, lineStartIndex, i);
                 }
                 Log("Tangent set");
             }
-            else
-            {
-                Log("Outside");
-            }
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
-            testChar = ((char)fileData[SkipLines(fileData, lineStartIndex, 1)]);
-            if (testChar != ' ' && testChar != '\0' && testChar != '\n')
+            if (CheckNextLine(fileData, lineStartIndex))
             {
                 for (int i = 0; i < vertexCount; i++)
                 {
                     lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-                    lineI = GetLine(fileData, lineStartIndex);
-                    std::string target = "b ";
-                    if (i < 10)
-                    {
-                        target += "0" + std::to_string(i) + " ";
-                    }
-                    else
-                    {
-                        target += std::to_string(i) + " ";
-                    }
-                    char *val[3];
-                    int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
-                    for (int i = 0; i < 3; i++)
-                    {
-                        int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                        lineI = GetLine(lineI, startIndex);
-                        if (i == 2)
-                        {
-                            val[i] = lineI;
-                        }
-                        else
-                        {
-                            endIndex = GetEndIndexString(lineI, whitespace);
-                            val[i] = GetLinePart(lineI, 0, endIndex - 1);
-                        }
-                    }
-                    glm::vec3 bitang;
-                    bitang.x = ConvertToFloat(val[0]);
-                    bitang.y = ConvertToFloat(val[1]);
-                    bitang.z = ConvertToFloat(val[2]);
-                    vertexArray[i].Bitangent = bitang;
+                    vertexArray[i].Bitangent = GetVec3(fileData, 'b', is2D, lineStartIndex, i);
                 }
                 Log("Bitangent set");
-            }
-            else
-            {
-                Log("Outside");
             }
             for (int i = 0; i < vertexCount; i++)
             {
@@ -612,14 +358,13 @@ private:
     }
 };
 
-glm::vec3 GetVec3(char *fileData, char itemType, bool is3D, int lineStartIndex, int vertexIndex)
+glm::vec3 GetVec3(char *fileData, char itemType, bool is2D, int lineStartIndex, int vertexIndex)
 {
     char targetChar = ' ';
     char *whitespace = ConvertToCharArray(std::string(" ").c_str());
-    lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
     char *lineI = GetLine(fileData, lineStartIndex);
-    std::string target = std::string(itemType, 0) + " ";
-    if (is3D)
+    std::string target = std::string(1, itemType) + " ";
+    if (!is2D)
     {
         if (vertexIndex < 10)
         {
@@ -650,14 +395,13 @@ glm::vec3 GetVec3(char *fileData, char itemType, bool is3D, int lineStartIndex, 
     return a;
 }
 
-glm::vec2 GetVec2(char *fileData, char itemType, bool is3D, int lineStartIndex, int vertexIndex)
+glm::vec2 GetVec2(char *fileData, char itemType, bool is2D, int lineStartIndex, int vertexIndex)
 {
     char targetChar = ' ';
     char *whitespace = ConvertToCharArray(std::string(" ").c_str());
-    lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
     char *lineI = GetLine(fileData, lineStartIndex);
-    std::string target = std::string(itemType, 0) + " ";
-    if (is3D)
+    std::string target = std::string(1, itemType) + " ";
+    if (!is2D)
     {
         if (vertexIndex < 10)
         {
@@ -685,5 +429,12 @@ glm::vec2 GetVec2(char *fileData, char itemType, bool is3D, int lineStartIndex, 
     a.x = ConvertToFloat(val[0]);
     a.y = ConvertToFloat(val[1]);
     return a;
+}
+
+bool CheckNextLine(char *fileData, int lineStartIndex)
+{
+    char testChar = ((char)fileData[SkipLines(fileData, lineStartIndex, 1)]);
+    bool status = (testChar != ' ' && testChar != '\0' && testChar != '\n');
+    return status;
 }
 #endif
