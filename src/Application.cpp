@@ -27,6 +27,7 @@ void processDraw(GLFWwindow *window);
 float processSlider(GLFWwindow *window, float sliderValue);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
+void setScene(Shader &shader, glm::vec3 lightColor, float angleVal, glm::vec3 pointLightPositions[], int numberOfLights);
 
 // Const settings
 const unsigned int SCR_WIDTH = 800;
@@ -83,17 +84,15 @@ int main()
 	Shader shader2D(FileSystem::getPath("shaders/primitive/shader_2d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_2d.fs").c_str());
 	// Light Source Shader
 	Shader sourceShader(FileSystem::getPath("shaders/primitive/shader_source.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_source.fs").c_str());
-	// Shader colorShader(FileSystem::getPath("shaders/shader_source.vs").c_str(), FileSystem::getPath("shaders/shader_source.fs").c_str());
-	// Shader textureShader(FileSystem::getPath("shaders/shader_source.vs").c_str(), FileSystem::getPath("shaders/shader_source.fs").c_str());
-	// Shader materialShader(FileSystem::getPath("shaders/shader_source.vs").c_str(), FileSystem::getPath("shaders/shader_source.fs").c_str());
-	// Shader modelShader(FileSystem::getPath("shaders/shader_source.vs").c_str(), FileSystem::getPath("shaders/shader_source.fs").c_str());
+	Shader shader3D(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_mat.fs").c_str());
+	// Shader shader(FileSystem::getPath("shaders/shader_source.vs").c_str(), FileSystem::getPath("shaders/shader_source.fs").c_str());
 
 	vector<pTexture> textures2D;
 	pTexture mainTex;
 	mainTex.id = LoadTexture(FileSystem::getPath("resources/textures/awesomeface.png").c_str());
 	mainTex.type = "texture_diffuse";
 	textures2D.push_back(mainTex);
-	// triangle.SetupTextures(textures2D);
+	triangle.SetupTextures(textures2D);
 
 	vector<pTexture> textures3D;
 	pTexture diffuse, specular, emmision;
@@ -106,6 +105,10 @@ int main()
 	emmision.id = LoadTexture(FileSystem::getPath("resources/textures/matrix.jpg").c_str());
 	emmision.type = "texture_emmision";
 	textures3D.push_back(emmision);
+	testCube.SetupTextures(textures3D);
+
+	glm::vec3 lightColor(1.0f);
+	glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 
 	glm::vec3 pointLightPositions[] = {
 		glm::vec3(0.7f, 0.2f, 2.0f),
@@ -190,6 +193,15 @@ int main()
 			sourceShader.setMat4("model", model);
 			lightObject.Draw(sourceShader);
 		}
+		shader3D.use();
+		shader3D.setMat4("view", view);
+		shader3D.setMat4("projection", projection);
+
+		setScene(shader3D, lightColor, angleVal, pointLightPositions, 4);
+		shader3D.setFloat("material.shininess", 64);
+		shader3D.setVec3("material.ambient", objectColor);
+		shader3D.setVec3("material.diffuse", objectColor);
+		shader3D.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
@@ -198,8 +210,8 @@ int main()
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 15.0f * (i);
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			sourceShader.setMat4("model", model);
-			testCube.Draw(sourceShader);
+			shader3D.setMat4("model", model);
+			testCube.Draw(shader3D);
 		}
 		// shader2D.use();
 		// triangle.Draw(shader2D);
@@ -341,4 +353,95 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+}
+
+// Sets the Scene Light Properties
+void setScene(Shader &shader, glm::vec3 lightColor, float angleVal, glm::vec3 pointLightPositions[], int numberOfLights)
+{
+	shader.setVec3("dirLight.direction", glm::vec3(0.5f, -1.0f, -0.7f));
+	shader.setVec3("dirLight.ambient", lightColor * 0.1f);
+	shader.setVec3("dirLight.diffuse", lightColor * 0.25f);
+	shader.setVec3("dirLight.specular", glm::vec3(0.5f));
+
+	/*for (int i = 0; i < numberOfLights; i++)
+	{
+		glm::mat4 lightModel = glm::mat4(1.0f);
+		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+		lightModel = glm::translate(lightModel, pointLightPositions[i]);
+		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+		glm::vec3 newLightPos = (lightModel * glm::vec4(1.0f));
+
+		std::string lightName = "pointLights[" + std::to_string(i) + "].";
+		shader.setVec3(lightName + "position", newLightPos);
+		shader.setFloat(lightName + "constant", 1.0f);
+		shader.setFloat(lightName + "linear", 0.22f);
+		shader.setFloat(lightName + "quadratic", 0.20f);
+		shader.setVec3(lightName + "ambient", lightColor * 0.05f);
+		shader.setVec3(lightName + "diffuse", lightColor * 0.4f);
+		shader.setVec3(lightName + "specular", glm::vec3(1.0f));
+	}*/
+
+	glm::mat4 lightModel = glm::mat4(1.0f);
+	lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+	lightModel = glm::translate(lightModel, pointLightPositions[0]);
+	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+	glm::vec3 newLightPos = (lightModel * glm::vec4(1.0f));
+
+	shader.setVec3("pointLights[0].position", newLightPos);
+	shader.setFloat("pointLights[0].constant", 1.0f);
+	shader.setFloat("pointLights[0].linear", 0.22f);
+	shader.setFloat("pointLights[0].quadratic", 0.20f);
+	shader.setVec3("pointLights[0].ambient", lightColor * 0.05f);
+	shader.setVec3("pointLights[0].diffuse", lightColor * 0.4f);
+	shader.setVec3("pointLights[0].specular", glm::vec3(1.0f));
+
+	lightModel = glm::mat4(1.0f);
+	lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+	lightModel = glm::translate(lightModel, pointLightPositions[0]);
+	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+	newLightPos = (lightModel * glm::vec4(1.0f));
+
+	shader.setVec3("pointLights[1].position", newLightPos);
+	shader.setFloat("pointLights[1].constant", 1.0f);
+	shader.setFloat("pointLights[1].linear", 0.22f);
+	shader.setFloat("pointLights[1].quadratic", 0.20f);
+	shader.setVec3("pointLights[1].ambient", lightColor * 0.05f);
+	shader.setVec3("pointLights[1].diffuse", lightColor * 0.4f);
+	shader.setVec3("pointLights[1].specular", glm::vec3(0.5f));
+
+	lightModel = glm::mat4(1.0f);
+	lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+	lightModel = glm::translate(lightModel, pointLightPositions[0]);
+	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+	newLightPos = (lightModel * glm::vec4(1.0f));
+
+	shader.setVec3("pointLights[2].position", newLightPos);
+	shader.setFloat("pointLights[2].constant", 1.0f);
+	shader.setFloat("pointLights[2].linear", 0.22f);
+	shader.setFloat("pointLights[2].quadratic", 0.20f);
+	shader.setVec3("pointLights[2].ambient", lightColor * 0.05f);
+	shader.setVec3("pointLights[2].diffuse", lightColor * 0.4f);
+	shader.setVec3("pointLights[2].specular", glm::vec3(0.5f));
+
+	lightModel = glm::mat4(1.0f);
+	lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+	lightModel = glm::translate(lightModel, pointLightPositions[0]);
+	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+	newLightPos = (lightModel * glm::vec4(1.0f));
+
+	shader.setVec3("pointLights[3].position", newLightPos);
+	shader.setFloat("pointLights[3].constant", 1.0f);
+	shader.setFloat("pointLights[3].linear", 0.22f);
+	shader.setFloat("pointLights[3].quadratic", 0.20f);
+	shader.setVec3("pointLights[3].ambient", lightColor * 0.05f);
+	shader.setVec3("pointLights[3].diffuse", lightColor * 0.4f);
+	shader.setVec3("pointLights[3].specular", glm::vec3(0.5f));
+
+	shader.setVec3("spotLight.position", camera.Position);
+	shader.setVec3("spotLight.direction", camera.Front);
+	shader.setFloat("spotLight.cutoff", glm::cos(glm::radians(12.5f)));
+	shader.setFloat("spotLight.outerCutoff", glm::cos(glm::radians(20.0f)));
+	shader.setVec3("spotLight.ambient", lightColor * 0.05f);
+	shader.setVec3("spotLight.diffuse", lightColor * 0.3f);
+	shader.setVec3("spotLight.specular", glm::vec3(0.5f));
 }
