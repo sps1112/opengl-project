@@ -21,6 +21,7 @@
 
 // function declarations
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+bool checkInput(GLFWwindow *window, int key);
 void processInput(GLFWwindow *window);
 void processColor(GLFWwindow *window);
 void processDraw(GLFWwindow *window);
@@ -166,7 +167,7 @@ int main()
 
 		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 		glm::mat4 lightModel = glm::mat4(1.0f);
-		if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS)
+		if (checkInput(window, GLFW_KEY_KP_ADD))
 		{
 			angleVal += deltaTime * (360.0f / timePeriod);
 			if (angleVal > 360)
@@ -174,7 +175,7 @@ int main()
 				angleVal -= 360;
 			}
 		}
-		if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
+		if (checkInput(window, GLFW_KEY_KP_SUBTRACT))
 		{
 			angleVal -= deltaTime * (360.0f / timePeriod);
 			if (angleVal < 0)
@@ -240,36 +241,41 @@ int main()
 	return 0;
 }
 
+bool checkInput(GLFWwindow *window, int key)
+{
+	return (glfwGetKey(window, key) == GLFW_PRESS);
+}
+
 // check exit input
 void processInput(GLFWwindow *window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (checkInput(window, GLFW_KEY_ESCAPE))
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS)
+	if (checkInput(window, GLFW_KEY_LEFT_ALT))
 	{
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		if (checkInput(window, GLFW_KEY_W))
 		{
 			camera.ProcessKeyboard(FORWARD, deltaTime);
 		}
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		if (checkInput(window, GLFW_KEY_S))
 		{
 			camera.ProcessKeyboard(BACKWARD, deltaTime);
 		}
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		if (checkInput(window, GLFW_KEY_A))
 		{
 			camera.ProcessKeyboard(LEFT, deltaTime);
 		}
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		if (checkInput(window, GLFW_KEY_D))
 		{
 			camera.ProcessKeyboard(RIGHT, deltaTime);
 		}
-		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+		if (checkInput(window, GLFW_KEY_UP))
 		{
 			camera.ProcessKeyboard(UP, deltaTime);
 		}
-		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		if (checkInput(window, GLFW_KEY_DOWN))
 		{
 			camera.ProcessKeyboard(DOWN, deltaTime);
 		}
@@ -279,15 +285,15 @@ void processInput(GLFWwindow *window)
 // checks for background color
 void processColor(GLFWwindow *window)
 {
-	if (glfwGetKey(window, GLFW_KEY_KP_1) == GLFW_PRESS)
+	if (checkInput(window, GLFW_KEY_KP_1))
 	{
 		glClearColor(0.5f, 0.1f, 0.1f, 1.0f); // Red
 	}
-	else if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS)
+	else if (checkInput(window, GLFW_KEY_KP_2))
 	{
 		glClearColor(0.1f, 0.5f, 0.1f, 1.0f); // Green
 	}
-	else if (glfwGetKey(window, GLFW_KEY_KP_3) == GLFW_PRESS)
+	else if (checkInput(window, GLFW_KEY_KP_3))
 	{
 		glClearColor(0.1f, 0.1f, 0.5f, 1.0f); // Blue
 	}
@@ -301,11 +307,11 @@ void processColor(GLFWwindow *window)
 // checks for draw mode
 void processDraw(GLFWwindow *window)
 {
-	if (glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS)
+	if (checkInput(window, GLFW_KEY_KP_7))
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe
 	}
-	else if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS)
+	else if (checkInput(window, GLFW_KEY_KP_9))
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // point
 	}
@@ -319,11 +325,11 @@ void processDraw(GLFWwindow *window)
 float processSlider(GLFWwindow *window, float sliderValue)
 {
 	int change = 0;
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	if (checkInput(window, GLFW_KEY_LEFT))
 	{
 		change = +1;
 	}
-	else if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	else if (checkInput(window, GLFW_KEY_RIGHT))
 	{
 		change = -1;
 	}
@@ -345,7 +351,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 	float yOffset = lastY - ypos; // y is reversed
 	lastX = xpos;
 	lastY = ypos;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	if (checkInput(window, GLFW_KEY_LEFT_CONTROL))
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		camera.ProcessMouseMovement(xOffset, yOffset);
