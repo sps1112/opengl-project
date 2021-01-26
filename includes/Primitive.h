@@ -168,7 +168,7 @@ private:
         char *whitespace = ConvertToCharArray(std::string(" ").c_str());
         if (is2D)
         {
-            Vertex2D vertexArray[vertexCount];
+            Vertex2D *vertexArray = new Vertex2D[vertexCount];
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
@@ -240,10 +240,11 @@ private:
                 std::cout << "Not end " << ((char)fileData[lineStartIndex]) << "x" << std::endl;
             }
             */
+            delete[] vertexArray;
         }
         else
         {
-            Vertex3D vertexArray[vertexCount];
+            Vertex3D *vertexArray = new Vertex3D[vertexCount];
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
@@ -295,6 +296,7 @@ private:
             {
                 vertices3D.push_back(vertexArray[i]);
             }
+            delete[] vertexArray;
         }
     }
 
