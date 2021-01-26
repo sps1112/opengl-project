@@ -81,11 +81,13 @@ int main()
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 	Primitive testCube(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 
+	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
+
 	Shader shader2D(FileSystem::getPath("shaders/primitive/shader_2d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_2d.fs").c_str());
 	// Light Source Shader
 	Shader sourceShader(FileSystem::getPath("shaders/primitive/shader_source.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_source.fs").c_str());
-	Shader shader3D(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_mat.fs").c_str());
-	// Shader shader(FileSystem::getPath("shaders/shader_source.vs").c_str(), FileSystem::getPath("shaders/shader_source.fs").c_str());
+	Shader shader3D(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_scene.fs").c_str());
+	Shader modelShader(FileSystem::getPath("shaders/light/shader_model.vs").c_str(), FileSystem::getPath("shaders/light/shader_model.fs").c_str());
 
 	vector<pTexture> textures2D;
 	pTexture mainTex;
@@ -198,6 +200,7 @@ int main()
 		shader3D.setMat4("projection", projection);
 
 		setScene(shader3D, lightColor, angleVal, pointLightPositions, 4);
+		shader3D.setVec3("viewPos", camera.Position);
 		shader3D.setFloat("material.shininess", 64);
 		shader3D.setVec3("material.ambient", objectColor);
 		shader3D.setVec3("material.diffuse", objectColor);
@@ -211,8 +214,19 @@ int main()
 			float angle = 15.0f * (i);
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			shader3D.setMat4("model", model);
-			testCube.Draw(shader3D);
+			// testCube.Draw(shader3D);
 		}
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -0.5, -1.5f));
+		modelShader.use();
+		modelShader.setMat4("view", view);
+		modelShader.setMat4("projection", projection);
+		modelShader.setVec3("viewPos", camera.Position);
+		modelShader.setFloat("material.shininess", 64);
+		modelShader.setMat4("model", model);
+		setScene(modelShader, lightColor, angleVal, pointLightPositions, 4);
+		mainModel.Draw(modelShader);
+
 		// shader2D.use();
 		// triangle.Draw(shader2D);
 
@@ -220,7 +234,6 @@ int main()
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-	Log("Loop finished");
 
 	// terminate program
 	glfwTerminate();
@@ -363,7 +376,7 @@ void setScene(Shader &shader, glm::vec3 lightColor, float angleVal, glm::vec3 po
 	shader.setVec3("dirLight.diffuse", lightColor * 0.25f);
 	shader.setVec3("dirLight.specular", glm::vec3(0.5f));
 
-	/*for (int i = 0; i < numberOfLights; i++)
+	for (int i = 0; i < numberOfLights; i++)
 	{
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -379,63 +392,7 @@ void setScene(Shader &shader, glm::vec3 lightColor, float angleVal, glm::vec3 po
 		shader.setVec3(lightName + "ambient", lightColor * 0.05f);
 		shader.setVec3(lightName + "diffuse", lightColor * 0.4f);
 		shader.setVec3(lightName + "specular", glm::vec3(1.0f));
-	}*/
-
-	glm::mat4 lightModel = glm::mat4(1.0f);
-	lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
-	lightModel = glm::translate(lightModel, pointLightPositions[0]);
-	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-	glm::vec3 newLightPos = (lightModel * glm::vec4(1.0f));
-
-	shader.setVec3("pointLights[0].position", newLightPos);
-	shader.setFloat("pointLights[0].constant", 1.0f);
-	shader.setFloat("pointLights[0].linear", 0.22f);
-	shader.setFloat("pointLights[0].quadratic", 0.20f);
-	shader.setVec3("pointLights[0].ambient", lightColor * 0.05f);
-	shader.setVec3("pointLights[0].diffuse", lightColor * 0.4f);
-	shader.setVec3("pointLights[0].specular", glm::vec3(1.0f));
-
-	lightModel = glm::mat4(1.0f);
-	lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
-	lightModel = glm::translate(lightModel, pointLightPositions[0]);
-	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-	newLightPos = (lightModel * glm::vec4(1.0f));
-
-	shader.setVec3("pointLights[1].position", newLightPos);
-	shader.setFloat("pointLights[1].constant", 1.0f);
-	shader.setFloat("pointLights[1].linear", 0.22f);
-	shader.setFloat("pointLights[1].quadratic", 0.20f);
-	shader.setVec3("pointLights[1].ambient", lightColor * 0.05f);
-	shader.setVec3("pointLights[1].diffuse", lightColor * 0.4f);
-	shader.setVec3("pointLights[1].specular", glm::vec3(0.5f));
-
-	lightModel = glm::mat4(1.0f);
-	lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
-	lightModel = glm::translate(lightModel, pointLightPositions[0]);
-	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-	newLightPos = (lightModel * glm::vec4(1.0f));
-
-	shader.setVec3("pointLights[2].position", newLightPos);
-	shader.setFloat("pointLights[2].constant", 1.0f);
-	shader.setFloat("pointLights[2].linear", 0.22f);
-	shader.setFloat("pointLights[2].quadratic", 0.20f);
-	shader.setVec3("pointLights[2].ambient", lightColor * 0.05f);
-	shader.setVec3("pointLights[2].diffuse", lightColor * 0.4f);
-	shader.setVec3("pointLights[2].specular", glm::vec3(0.5f));
-
-	lightModel = glm::mat4(1.0f);
-	lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
-	lightModel = glm::translate(lightModel, pointLightPositions[0]);
-	lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-	newLightPos = (lightModel * glm::vec4(1.0f));
-
-	shader.setVec3("pointLights[3].position", newLightPos);
-	shader.setFloat("pointLights[3].constant", 1.0f);
-	shader.setFloat("pointLights[3].linear", 0.22f);
-	shader.setFloat("pointLights[3].quadratic", 0.20f);
-	shader.setVec3("pointLights[3].ambient", lightColor * 0.05f);
-	shader.setVec3("pointLights[3].diffuse", lightColor * 0.4f);
-	shader.setVec3("pointLights[3].specular", glm::vec3(0.5f));
+	}
 
 	shader.setVec3("spotLight.position", camera.Position);
 	shader.setVec3("spotLight.direction", camera.Front);

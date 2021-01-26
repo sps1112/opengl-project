@@ -1,9 +1,9 @@
 #version 330 core
 struct Material
 {
-    sampler2D diffuse;
-    sampler2D specular;
-    sampler2D emmision;
+    sampler2D texture_diffuse1;
+    sampler2D texture_specular1;
+    sampler2D texture_emmision1;
     float shininess;
 };
 
@@ -79,22 +79,18 @@ void main()
     }
 
     // 3:- SpotLight
-    // result+=CalculateSpotLight(spotLight,norm,FragPos,viewDir);
+    result+=CalculateSpotLight(spotLight,norm,FragPos,viewDir);
 
     // Other effects
     vec3 emmision=vec3(0.0f);
-    if(texture(material.specular,TexCoords).r==0.0)
+    if(texture(material.texture_specular1,TexCoords).r==0.0)
     {
-        emmision = vec3(texture(material.emmision,TexCoords));
+        emmision = vec3(texture(material.texture_emmision1,TexCoords));
     }
     
     // Resultant Lighting
     result += (emmision);
     FragColor=vec4(result, 1.0f); 
-
-    // No Lighting
-    /*vec3 result=vec3(texture(material.diffuse,TexCoords));
-    FragColor=vec4(result, 1.0f);*/
 }
 
 vec3 CalculateDirLight(DirLight light,vec3 normal, vec3 viewDir)
@@ -153,14 +149,14 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
 
 vec3 GetAmbient(vec3 ambient)
 {
-    vec3 final = ambient * vec3(texture(material.diffuse,TexCoords));
+    vec3 final = ambient * vec3(texture(material.texture_diffuse1,TexCoords));
     return final;
 }
 
 vec3 GetDiffuse(vec3 normal, vec3 lightDir, vec3 diffuse)
 {
     float diff = max(dot(normal, lightDir), 0.0f);
-    vec3 final = diffuse * (diff * vec3(texture(material.diffuse,TexCoords)));
+    vec3 final = diffuse * (diff * vec3(texture(material.texture_diffuse1,TexCoords)));
     return final;
 }
 
@@ -168,6 +164,6 @@ vec3 GetSpecular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 specular)
 {
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-    vec3 final = specular * (spec * (vec3(texture(material.specular,TexCoords))));
+    vec3 final = specular * (spec * (vec3(texture(material.texture_specular1,TexCoords))));
     return final;
 }

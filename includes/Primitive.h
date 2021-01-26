@@ -129,7 +129,7 @@ private:
         const char *fileData = pathString.c_str();
 
         int pathLength = GetCharArrayLength(path);
-        std::cout << path << std::endl;
+        // std::cout << path << std::endl;
         char *extension = GetLine(ConvertToCharArray(path), pathLength - 4);
         if (CompareCharArray(extension, ConvertToCharArray(".2d")))
         {
@@ -156,7 +156,7 @@ private:
             count++;
         }
         count -= 2;
-        std::cout << "Count is " << count << std::endl;
+        // std::cout << "Count is " << count << std::endl;
         return count;
     }
 
@@ -199,7 +199,7 @@ private:
             while (((char)fileData[lineStartIndex]) != '\0')
             {
                 lineI = GetLine(fileData, lineStartIndex);
-                std::cout << lineI << std::endl;
+                // std::cout << lineI << std::endl;
 
                 std::string target = "i " + std::to_string(i) + " ";
                 char *val[3];
@@ -229,6 +229,7 @@ private:
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
                 i++;
             }
+            /*
             // Indices Set
             if (((char)fileData[lineStartIndex]) == '\0')
             {
@@ -238,6 +239,7 @@ private:
             {
                 std::cout << "Not end " << ((char)fileData[lineStartIndex]) << "x" << std::endl;
             }
+            */
         }
         else
         {
@@ -247,28 +249,28 @@ private:
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
                 vertexArray[i].Position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
             }
-            Log("Position set");
+            // Log("Position set");
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
                 vertexArray[i].Normal = GetVec3(fileData, 'n', is2D, lineStartIndex, i);
             }
-            Log("Normal set");
+            // Log("Normal set");
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
                 vertexArray[i].TexCoord = GetVec2(fileData, 't', is2D, lineStartIndex, i);
             }
-            Log("Texture coords set");
+            // Log("Texture coords set");
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             for (int i = 0; i < vertexCount; i++)
             {
                 lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
                 vertexArray[i].Color = GetVec3(fileData, 'c', is2D, lineStartIndex, i);
             }
-            Log("Color set");
+            // Log("Color set");
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             if (CheckNextLine(fileData, lineStartIndex))
             {
@@ -277,7 +279,7 @@ private:
                     lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
                     vertexArray[i].Tangent = GetVec3(fileData, 'T', is2D, lineStartIndex, i);
                 }
-                Log("Tangent set");
+                // Log("Tangent set");
             }
             lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
             if (CheckNextLine(fileData, lineStartIndex))
@@ -287,7 +289,7 @@ private:
                     lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
                     vertexArray[i].Bitangent = GetVec3(fileData, 'b', is2D, lineStartIndex, i);
                 }
-                Log("Bitangent set");
+                // Log("Bitangent set");
             }
             for (int i = 0; i < vertexCount; i++)
             {
