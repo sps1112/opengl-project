@@ -22,6 +22,14 @@ add_executable(
     src/Application.cpp
     src/glad.c
     src/stb_image.cpp
+    src/Shader.cpp
+    src/Camera.cpp
+    src/Mesh.cpp
+    src/Model.cpp
+    src/FileSystem.cpp
+    src/Utils.cpp
+    src/Primitive.cpp
+    src/FileReader.cpp
 
     includes/Shader.h
     includes/Camera.h
