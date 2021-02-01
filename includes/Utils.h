@@ -10,5 +10,6 @@
 
 unsigned int LoadTexture(const char *path);
 void Log(const char *message);
+void Log(std::string message);
 
 #endif

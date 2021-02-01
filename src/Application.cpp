@@ -20,6 +20,8 @@
 #include <vector>
 
 // function declarations
+void setupGLFW(int major, int minor);
+void setupData(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 bool checkInput(GLFWwindow *window, int key);
 void processInput(GLFWwindow *window);
@@ -47,42 +49,33 @@ float deltaTime = 0.0f;
 // main function
 int main()
 {
-	// glfw initialise
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);				   // open gl version 3.x
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);				   // version is 3.3
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // use core profile
-	// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);		   // for Mac
-
+	// OpenGL version 3.3
+	setupGLFW(3, 3);
 	// Window intialize
 	GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGL Window", NULL, NULL);
 	if (window == NULL)
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+		Log("Failed to create GLFW window");
 		glfwTerminate();
 		return -1;
 	}
-	glfwMakeContextCurrent(window);									   // current window
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // callback set for size change
-	glfwSetCursorPosCallback(window, mouse_callback);				   // callback for mouse movement
-	glfwSetScrollCallback(window, scroll_callback);					   // callback for zoom
-
+	setupData(window);
 	// check GLAD
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cout << "Failed to intialize GLAD" << std::endl;
+		Log("Failed to intialize GLAD");
 		return -1;
 	}
 
-	glEnable(GL_DEPTH_TEST); // Enable Z buffering
-	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// disable cursor
+	glEnable(GL_DEPTH_TEST);				// Enable Z buffering
 	stbi_set_flip_vertically_on_load(true); // set before loading model
 
 	Primitive triangle(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 	Primitive testCube(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 
-	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
+	// Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
+	Model mainModel(FileSystem::getPath("resources/models/sphere/sphere.obj"));
 
 	Shader shader2D(FileSystem::getPath("shaders/primitive/shader_2d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_2d.fs").c_str());
 	// Light Source Shader
@@ -161,7 +154,7 @@ int main()
 		// projection matrix:: VIEW TO CLIPPED
 		glm::mat4 projection;
 		/*
-		FOV = 45 degrees, RATIO = HEIGHT/WIDTH, Near Plane = 0.1, Far Plane = 100.0
+		FOV = X degrees, RATIO =WIDTH/HEIGHT, Near Plane = 0.1, Far Plane = 100.0
 		*/
 		projection = glm::perspective(glm::radians(camera.Zoom), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
 
@@ -215,7 +208,10 @@ int main()
 			float angle = 15.0f * (i);
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			shader3D.setMat4("model", model);
-			// testCube.Draw(shader3D);
+			if (checkInput(window, GLFW_KEY_KP_4))
+			{
+				testCube.Draw(shader3D);
+			}
 		}
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, glm::vec3(0.0f, -0.5, -1.5f));
@@ -228,8 +224,11 @@ int main()
 		setScene(modelShader, lightColor, angleVal, pointLightPositions, 4);
 		mainModel.Draw(modelShader);
 
-		// shader2D.use();
-		// triangle.Draw(shader2D);
+		if (checkInput(window, GLFW_KEY_KP_5))
+		{
+			shader2D.use();
+			triangle.Draw(shader2D);
+		}
 
 		// call events
 		glfwSwapBuffers(window);
@@ -239,6 +238,25 @@ int main()
 	// terminate program
 	glfwTerminate();
 	return 0;
+}
+
+void setupGLFW(int major, int minor)
+{
+	// glfw initialise
+	glfwInit();
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);			   // open gl version 3.x
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);			   // version is 3.3
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // use core profile
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);		   // for Mac
+}
+
+void setupData(GLFWwindow *window)
+{
+	glfwMakeContextCurrent(window);									   // current window
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // callback set for size change
+	glfwSetCursorPosCallback(window, mouse_callback);				   // callback for mouse movement
+	glfwSetScrollCallback(window, scroll_callback);					   // callback for zoom
+																	   //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// disable cursor
 }
 
 bool checkInput(GLFWwindow *window, int key)

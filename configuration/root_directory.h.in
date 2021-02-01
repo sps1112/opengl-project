@@ -1,1 +1,4 @@
+#ifndef ROOTDIR_H
+#define ROOTDIR_H
 const char *logl_root = "${CMAKE_SOURCE_DIR}";
+#endif
