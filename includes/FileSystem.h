@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cstdlib>
+#include "root_directory.h"
 
 class FileSystem
 {

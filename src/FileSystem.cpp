@@ -1,5 +1,4 @@
 #include <FileSystem.h>
-#include "root_directory.h"
 
 std::string FileSystem::getPath(const std::string &path)
 {
