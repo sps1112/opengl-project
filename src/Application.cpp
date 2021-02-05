@@ -8,6 +8,11 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>
 
+// imgui headers
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+
 // Custom Headers
 #include <Shader.h>		// shader header
 #include <Camera.h>		// camera header
@@ -26,7 +31,9 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 bool checkInput(GLFWwindow *window, int key);
 void processInput(GLFWwindow *window);
 void processColor(GLFWwindow *window);
-void processDraw(GLFWwindow *window);
+void setColor(float r, float g, float b, float a);
+void processDraw(bool *isLine, bool *isPoint, bool *isFill);
+void setDraw(int choice);
 float processSlider(GLFWwindow *window, float sliderValue);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
@@ -45,6 +52,10 @@ bool isFirstMouse = true;
 // Frame settings
 float lastFrameTime = 0.0f;
 float deltaTime = 0.0f;
+
+// Input Values
+bool canMoveCamera = false;
+bool canRotateCamera = false;
 
 // main function
 int main()
@@ -69,6 +80,16 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);				// Enable Z buffering
 	stbi_set_flip_vertically_on_load(true); // set before loading model
+
+	// Setup ImGui
+	const char *glsl_version = "#version 330";
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+	ImGuiIO &io = ImGui::GetIO();
+	(void)io;
+	ImGui::StyleColorsDark();
 
 	Primitive triangle(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
@@ -130,8 +151,45 @@ int main()
 	float timeGap = 0.0f;
 	float angleVal = 0.0f;
 
+	// UI Data
+	bool showTraingle = false;
+	bool showCubes = false;
+	ImVec4 backgroundColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+
+	bool renderLines = false;
+	bool renderPoint = false;
+	bool renderFill = true;
+
+	bool pRenderLine;
+	bool pRenderPoint;
+	bool pRenderFill;
+
+	bool showFrameRate = false;
+
+	float posX, posY, posZ, rotX, rotY, rotZ, sclX, sclY, sclZ;
+	posX = 0;
+	posY = 0;
+	posZ = 0;
+	rotX = 0;
+	rotY = 0;
+	rotZ = 0;
+	sclX = 1;
+	sclY = 1;
+	sclZ = 1;
+	bool globalRotation = false;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		// Setup bools
+		pRenderLine = renderLines;
+		pRenderPoint = renderPoint;
+		pRenderFill = renderFill;
+
+		// Setup Imgui Frame data
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		// delta time refresh
 		float currentFrameTime = glfwGetTime();
 		deltaTime = currentFrameTime - lastFrameTime;
@@ -144,8 +202,10 @@ int main()
 
 		// input commands
 		processInput(window);
-		processColor(window);
-		processDraw(window);
+		// processColor(window);
+		setColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+		// processDraw(window);
+		processDraw(&renderLines, &renderPoint, &renderFill);
 
 		// view matrix :: WORLD TO VIEW
 		glm::mat4 view;
@@ -208,13 +268,39 @@ int main()
 			float angle = 15.0f * (i);
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			shader3D.setMat4("model", model);
-			if (checkInput(window, GLFW_KEY_KP_4))
+			if (showCubes)
 			{
 				testCube.Draw(shader3D);
 			}
 		}
+
+		if (showTraingle)
+		{
+			shader2D.use();
+			triangle.Draw(shader2D);
+		}
+
+		// Setup matrices
+		glm::vec3 objectPos(posX, posY, posZ);
+		glm::vec3 objectRot(rotX, rotY, rotZ);
+		glm::vec3 objectScale(sclX, sclY, sclZ);
 		glm::mat4 model(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, -0.5, -1.5f));
+		model = glm::translate(model, objectPos);
+		if (!globalRotation)
+		{
+			model = glm::rotate(model, glm::radians(objectRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = glm::rotate(model, glm::radians(objectRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		}
+		else
+		{
+			glm::mat4 modelY = glm::rotate(model, glm::radians(objectRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			glm::mat4 modelX = glm::rotate(model, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+			glm::mat4 modelZ = glm::rotate(model, glm::radians(objectRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			model = modelX * modelY * modelZ * model;
+		}
+		model = glm::scale(model, objectScale);
+
 		modelShader.use();
 		modelShader.setMat4("view", view);
 		modelShader.setMat4("projection", projection);
@@ -224,16 +310,90 @@ int main()
 		setScene(modelShader, lightColor, angleVal, pointLightPositions, 4);
 		mainModel.Draw(modelShader);
 
-		if (checkInput(window, GLFW_KEY_KP_5))
+		// Render your GUI
+		ImGui::Begin("Debug Window");
+		ImGui::Text("Setup OpenGL Render Data:-");
+		ImGui::Checkbox("Show Cubes", &showCubes);
+		ImGui::Checkbox("Show Triangle", &showTraingle);
+		ImGui::ColorEdit3("Background Color", (float *)&backgroundColor);
+		ImGui::Text("Fill Mode:- ");
+		ImGui::SameLine();
+		ImGui::Checkbox("Fill", &renderFill);
+		ImGui::SameLine();
+		ImGui::Checkbox("Line", &renderLines);
+		ImGui::SameLine();
+		ImGui::Checkbox("Point", &renderPoint);
+		ImGui::Checkbox("Show FrameRate", &showFrameRate);
+		if (showFrameRate)
 		{
-			shader2D.use();
-			triangle.Draw(shader2D);
+			ImGui::SameLine();
+			int val = (int)(1.0f / deltaTime);
+			ImGui::Text("FrameRate:- %d", val);
 		}
+		ImGui::SliderFloat("Light Rotation", &angleVal, 0.0f, 360.0f);
+		ImGui::Checkbox("Move Camera", &canMoveCamera);
+		ImGui::Checkbox("Rotate Camera", &canRotateCamera);
+		ImGui::Checkbox("GlobalRotation", &globalRotation);
+		ImGui::Text("Set Transform:- ");
+		ImGui::Text("Position: ");
+		ImGui::SliderFloat("X##1", &posX, -5.0f, 5.0f);
+		ImGui::SliderFloat("Y##1", &posY, -5.0f, 5.0f);
+		ImGui::SliderFloat("Z##1", &posZ, -5.0f, 5.0f);
+		ImGui::Text("Rotation: ");
+		ImGui::SliderFloat("X##2", &rotX, -360.0f, 360.0f);
+		ImGui::SliderFloat("Y##2", &rotY, -360.0f, 360.0f);
+		ImGui::SliderFloat("Z##2", &rotZ, -360.0f, 360.0f);
+		ImGui::Text("Scale: ");
+		ImGui::SliderFloat("X##3", &sclX, 0.0f, 5.0f);
+		ImGui::SliderFloat("Y##3", &sclY, 0.0f, 5.0f);
+		ImGui::SliderFloat("Z##3", &sclZ, 0.0f, 5.0f);
+		if (ImGui::Button("Reset Object"))
+		{
+			posX = 0;
+			posY = 0;
+			posZ = 0;
+			rotX = 0;
+			rotY = 0;
+			rotZ = 0;
+			sclX = 1;
+			sclY = 1;
+			sclZ = 1;
+		}
+		ImGui::End();
+
+		// Check bools
+		if (renderFill != pRenderFill && renderFill)
+		{
+			renderLines = false;
+			renderPoint = false;
+		}
+		else if (renderPoint != pRenderPoint && renderPoint)
+		{
+			renderLines = false;
+			renderFill = false;
+		}
+		else if (renderLines != pRenderLine && renderLines)
+		{
+			renderFill = false;
+			renderPoint = false;
+		}
+		if (!renderFill && !renderLines && !renderPoint)
+		{
+			renderFill = true;
+		}
+
+		// Render calls imgui
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		// call events
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	// Terminate Imgui
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	// terminate program
 	glfwTerminate();
@@ -271,7 +431,7 @@ void processInput(GLFWwindow *window)
 	{
 		glfwSetWindowShouldClose(window, true);
 	}
-	if (checkInput(window, GLFW_KEY_LEFT_ALT))
+	if (canMoveCamera)
 	{
 		if (checkInput(window, GLFW_KEY_W))
 		{
@@ -305,38 +465,57 @@ void processColor(GLFWwindow *window)
 {
 	if (checkInput(window, GLFW_KEY_KP_1))
 	{
-		glClearColor(0.5f, 0.1f, 0.1f, 1.0f); // Red
+		setColor(0.5f, 0.1f, 0.1f, 1.0f); // Red
 	}
 	else if (checkInput(window, GLFW_KEY_KP_2))
 	{
-		glClearColor(0.1f, 0.5f, 0.1f, 1.0f); // Green
+		setColor(0.1f, 0.5f, 0.1f, 1.0f); // Green
 	}
 	else if (checkInput(window, GLFW_KEY_KP_3))
 	{
-		glClearColor(0.1f, 0.1f, 0.5f, 1.0f); // Blue
+		setColor(0.1f, 0.1f, 0.5f, 1.0f); // Blue
 	}
 	else
 	{
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f); // Grey
+		setColor(0.1f, 0.1f, 0.1f, 1.0f); // Grey
 	}
+}
+
+// Sets color of background
+void setColor(float r, float g, float b, float a)
+{
+	glClearColor(r, g, b, a); // Grey
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 // checks for draw mode
-void processDraw(GLFWwindow *window)
+void processDraw(bool *isLine, bool *isPoint, bool *isFill)
 {
-	if (checkInput(window, GLFW_KEY_KP_7))
+	int choice = 2;
+	if (*isLine)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe
+		choice = 0;
 	}
-	else if (checkInput(window, GLFW_KEY_KP_9))
+	else if (*isPoint)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT); // point
+		choice = 1;
 	}
-	else
+	setDraw(choice);
+}
+
+// Sets Draw Mode
+void setDraw(int choice)
+{
+	GLenum fillMode = GL_FILL;
+	if (choice == 0)
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // fill
+		fillMode = GL_LINE; // wireframe
 	}
+	else if (choice == 1)
+	{
+		fillMode = GL_POINT; // wireframe
+	}
+	glPolygonMode(GL_FRONT_AND_BACK, fillMode);
 }
 
 // Process slider value for which texture tor use
@@ -369,9 +548,9 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 	float yOffset = lastY - ypos; // y is reversed
 	lastX = xpos;
 	lastY = ypos;
-	if (checkInput(window, GLFW_KEY_LEFT_CONTROL))
+	if (canRotateCamera)
 	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		camera.ProcessMouseMovement(xOffset, yOffset);
 	}
 	else
