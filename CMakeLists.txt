@@ -39,6 +39,14 @@ add_executable(
     includes/Utils.h
     includes/Primitive.h
     includes/FileReader.h
+
+    includes/imgui/imgui.cpp
+    includes/imgui/imgui_draw.cpp
+    includes/imgui/imgui_demo.cpp
+    includes/imgui/imgui_widgets.cpp
+    includes/imgui/imgui_tables.cpp
+    includes/imgui/imgui_impl_glfw.cpp
+    includes/imgui/imgui_impl_opengl3.cpp
 )
 
 target_link_libraries(opengl-project ${CMAKE_DL_LIBS})
