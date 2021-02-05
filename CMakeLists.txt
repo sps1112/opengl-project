@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION "3.16.3")
 
 project(opengl-project)
 
+if(MSVC)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+endif(MSVC)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 find_package(OpenGL REQUIRED)
 find_package(GLFW3 REQUIRED)
