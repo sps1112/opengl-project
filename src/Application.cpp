@@ -550,8 +550,8 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 	lastY = ypos;
 	if (canRotateCamera)
 	{
-		// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		camera.ProcessMouseMovement(xOffset, yOffset);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		camera.ProcessMouseMovement(xOffset, yOffset, deltaTime);
 	}
 	else
 	{

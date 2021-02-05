@@ -75,10 +75,10 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 }
 
 // process Camera rotation from mouse
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+void Camera::ProcessMouseMovement(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch)
 {
-    xoffset *= MouseSensitivity;
-    yoffset *= MouseSensitivity;
+    xoffset *= MouseSensitivity * deltaTime * 60;
+    yoffset *= MouseSensitivity * deltaTime * 60;
 
     Yaw += xoffset;
     Pitch += yoffset;

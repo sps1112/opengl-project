@@ -7,6 +7,7 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 
 #include <vector>
+#include <iostream>
 
 // camera movement directions
 enum Camera_Movement
@@ -59,7 +60,7 @@ public:
 	// processes camera movement from keyboard
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
 	// process Camera rotation from mouse
-	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
+	void ProcessMouseMovement(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch = true);
 	// processes Camera Zoom from scroll wheel
 	void ProcessMouseScroll(float yoffset);
 
