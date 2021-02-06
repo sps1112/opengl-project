@@ -7,6 +7,8 @@
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>
+#include <glm/glm/gtc/quaternion.hpp>
+#include <glm/glm/gtx/quaternion.hpp>
 
 // imgui headers
 #include <imgui/imgui.h>
@@ -30,11 +32,10 @@ void setupData(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 bool checkInput(GLFWwindow *window, int key);
 void processInput(GLFWwindow *window);
-void processColor(GLFWwindow *window);
 void setColor(float r, float g, float b, float a);
 void processDraw(bool *isLine, bool *isPoint, bool *isFill);
 void setDraw(int choice);
-float processSlider(GLFWwindow *window, float sliderValue);
+void processMouse(GLFWwindow *window);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void setScene(Shader &shader, glm::vec3 lightColor, float angleVal, glm::vec3 pointLightPositions[], int numberOfLights);
@@ -44,7 +45,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // Camera settings
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool isFirstMouse = true;
@@ -56,6 +57,10 @@ float deltaTime = 0.0f;
 // Input Values
 bool canMoveCamera = false;
 bool canRotateCamera = false;
+
+bool toRotateCamera = false;
+float xOff = 0;
+float yOff = 0;
 
 // main function
 int main()
@@ -95,8 +100,8 @@ int main()
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 	Primitive testCube(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 
-	// Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
-	Model mainModel(FileSystem::getPath("resources/models/sphere/sphere.obj"));
+	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
+	// Model mainModel(FileSystem::getPath("resources/models/teapot/teapot.obj"));
 
 	Shader shader2D(FileSystem::getPath("shaders/primitive/shader_2d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_2d.fs").c_str());
 	// Light Source Shader
@@ -202,10 +207,9 @@ int main()
 
 		// input commands
 		processInput(window);
-		// processColor(window);
 		setColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
-		// processDraw(window);
 		processDraw(&renderLines, &renderPoint, &renderFill);
+		processMouse(window);
 
 		// view matrix :: WORLD TO VIEW
 		glm::mat4 view;
@@ -286,18 +290,20 @@ int main()
 		glm::vec3 objectScale(sclX, sclY, sclZ);
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, objectPos);
+		/*glm::quat rotQuat(glm::radians(objectRot));
+		model = glm::mat4(rotQuat) * model;*/
 		if (!globalRotation)
 		{
 			model = glm::rotate(model, glm::radians(objectRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-			model = glm::rotate(model, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
 			model = glm::rotate(model, glm::radians(objectRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			model = glm::rotate(model, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
 		}
 		else
 		{
 			glm::mat4 modelY = glm::rotate(model, glm::radians(objectRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-			glm::mat4 modelX = glm::rotate(model, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
 			glm::mat4 modelZ = glm::rotate(model, glm::radians(objectRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
-			model = modelX * modelY * modelZ * model;
+			glm::mat4 modelX = glm::rotate(model, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+			model = (modelX * (modelZ * (modelY * model)));
 		}
 		model = glm::scale(model, objectScale);
 
@@ -460,27 +466,6 @@ void processInput(GLFWwindow *window)
 	}
 }
 
-// checks for background color
-void processColor(GLFWwindow *window)
-{
-	if (checkInput(window, GLFW_KEY_KP_1))
-	{
-		setColor(0.5f, 0.1f, 0.1f, 1.0f); // Red
-	}
-	else if (checkInput(window, GLFW_KEY_KP_2))
-	{
-		setColor(0.1f, 0.5f, 0.1f, 1.0f); // Green
-	}
-	else if (checkInput(window, GLFW_KEY_KP_3))
-	{
-		setColor(0.1f, 0.1f, 0.5f, 1.0f); // Blue
-	}
-	else
-	{
-		setColor(0.1f, 0.1f, 0.1f, 1.0f); // Grey
-	}
-}
-
 // Sets color of background
 void setColor(float r, float g, float b, float a)
 {
@@ -506,7 +491,7 @@ void processDraw(bool *isLine, bool *isPoint, bool *isFill)
 // Sets Draw Mode
 void setDraw(int choice)
 {
-	GLenum fillMode = GL_FILL;
+	unsigned int fillMode = GL_FILL;
 	if (choice == 0)
 	{
 		fillMode = GL_LINE; // wireframe
@@ -516,23 +501,6 @@ void setDraw(int choice)
 		fillMode = GL_POINT; // wireframe
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, fillMode);
-}
-
-// Process slider value for which texture tor use
-float processSlider(GLFWwindow *window, float sliderValue)
-{
-	int change = 0;
-	if (checkInput(window, GLFW_KEY_LEFT))
-	{
-		change = +1;
-	}
-	else if (checkInput(window, GLFW_KEY_RIGHT))
-	{
-		change = -1;
-	}
-	sliderValue += change * deltaTime;
-	sliderValue = glm::clamp(sliderValue, 0.0f, 1.0f);
-	return sliderValue;
 }
 
 // callback for mouse movement
@@ -548,15 +516,23 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 	float yOffset = lastY - ypos; // y is reversed
 	lastX = xpos;
 	lastY = ypos;
+	xOff = xOffset;
+	yOff = yOffset;
+}
+
+void processMouse(GLFWwindow *window)
+{
 	if (canRotateCamera)
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		camera.ProcessMouseMovement(xOffset, yOffset, deltaTime);
+		camera.ProcessMouseMovement(xOff, yOff, deltaTime);
 	}
 	else
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
+	xOff = 0;
+	yOff = 0;
 }
 
 // callback for the mouse scroll wheel
