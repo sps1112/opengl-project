@@ -16,6 +16,7 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 // Custom Headers
+#include <Renderer.h>	// Renderer header
 #include <Shader.h>		// shader header
 #include <Camera.h>		// camera header
 #include <Model.h>		// model header
@@ -26,29 +27,17 @@
 #include <iostream>
 #include <vector>
 
-// function declarations
-void setupGLFW(int major, int minor);
-void setupData(GLFWwindow *window);
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-bool checkInput(GLFWwindow *window, int key);
-void processInput(GLFWwindow *window);
-void setColor(float r, float g, float b, float a);
-void processDraw(bool *isLine, bool *isPoint, bool *isFill);
-void setDraw(int choice);
-void processMouse(GLFWwindow *window);
-void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
-void setScene(Shader &shader, glm::vec3 lightColor, float angleVal, glm::vec3 pointLightPositions[], int numberOfLights);
-
 // Const settings
+const int majorVersion = 3;
+const int minorVersion = 3;
+const char *windowTitle = "OpenGL Window";
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+Renderer renderer(majorVersion, minorVersion, SCR_WIDTH, SCR_HEIGHT);
+
 // Camera settings
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-bool isFirstMouse = true;
+glm::vec3 cameraPos(0.0f, 0.0f, 5.0f);
 
 // Frame settings
 float lastFrameTime = 0.0f;
@@ -58,39 +47,35 @@ float deltaTime = 0.0f;
 bool canMoveCamera = false;
 bool canRotateCamera = false;
 
-bool toRotateCamera = false;
-float xOff = 0;
-float yOff = 0;
-
 // main function
 int main()
 {
-	// OpenGL version 3.3
-	setupGLFW(3, 3);
-	// Window intialize
-	GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGL Window", NULL, NULL);
-	if (window == NULL)
+	renderer.SetupGLFW();
+	renderer.CreateWindow(windowTitle);
+	if (renderer.window == NULL)
 	{
-		Log("Failed to create GLFW window");
-		glfwTerminate();
+		renderer.TerminateGLFW();
 		return -1;
 	}
-	setupData(window);
+	renderer.SetData();
 	// check GLAD
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	if (!renderer.checkGLAD())
 	{
-		Log("Failed to intialize GLAD");
+		renderer.TerminateGLFW();
 		return -1;
 	}
 
 	glEnable(GL_DEPTH_TEST);				// Enable Z buffering
 	stbi_set_flip_vertically_on_load(true); // set before loading model
+	Camera localCam(cameraPos);
+	renderer.SetCamera(localCam);
 
 	// Setup ImGui
-	const char *glsl_version = "#version 330";
+	std::string versionText = "#version " + std::to_string(majorVersion) + std::to_string(minorVersion) + "0";
+	const char *glsl_version = versionText.c_str();
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplGlfw_InitForOpenGL(renderer.window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 	ImGuiIO &io = ImGui::GetIO();
 	(void)io;
@@ -182,8 +167,8 @@ int main()
 	sclY = 1;
 	sclZ = 1;
 	bool globalRotation = false;
-
-	while (!glfwWindowShouldClose(window))
+	Log("To Start loop");
+	while (!glfwWindowShouldClose(renderer.window))
 	{
 		// Setup bools
 		pRenderLine = renderLines;
@@ -206,40 +191,24 @@ int main()
 		}
 
 		// input commands
-		processInput(window);
-		setColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
-		processDraw(&renderLines, &renderPoint, &renderFill);
-		processMouse(window);
+		renderer.ProcessInput(canMoveCamera, deltaTime);
+		renderer.SetColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
+		renderer.ProcessDraw(renderLines, renderPoint, renderFill);
+		renderer.ProcessMouse(canRotateCamera, deltaTime);
 
 		// view matrix :: WORLD TO VIEW
 		glm::mat4 view;
-		view = camera.GetViewMatrix();
+		view = (*(renderer.GetCamera())).GetViewMatrix();
 
 		// projection matrix:: VIEW TO CLIPPED
 		glm::mat4 projection;
 		/*
 		FOV = X degrees, RATIO =WIDTH/HEIGHT, Near Plane = 0.1, Far Plane = 100.0
 		*/
-		projection = glm::perspective(glm::radians(camera.Zoom), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(renderer.GetZoom()), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
 
 		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 		glm::mat4 lightModel = glm::mat4(1.0f);
-		if (checkInput(window, GLFW_KEY_KP_ADD))
-		{
-			angleVal += deltaTime * (360.0f / timePeriod);
-			if (angleVal > 360)
-			{
-				angleVal -= 360;
-			}
-		}
-		if (checkInput(window, GLFW_KEY_KP_SUBTRACT))
-		{
-			angleVal -= deltaTime * (360.0f / timePeriod);
-			if (angleVal < 0)
-			{
-				angleVal += 360;
-			}
-		}
 		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
 		sourceShader.use();
 		sourceShader.setMat4("view", view);
@@ -257,8 +226,8 @@ int main()
 		shader3D.setMat4("view", view);
 		shader3D.setMat4("projection", projection);
 
-		setScene(shader3D, lightColor, angleVal, pointLightPositions, 4);
-		shader3D.setVec3("viewPos", camera.Position);
+		shader3D.SetScene(lightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
+		shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		shader3D.setFloat("material.shininess", 64);
 		shader3D.setVec3("material.ambient", objectColor);
 		shader3D.setVec3("material.diffuse", objectColor);
@@ -305,15 +274,27 @@ int main()
 			glm::mat4 modelX = glm::rotate(model, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
 			model = (modelX * (modelZ * (modelY * model)));
 		}
+		/*glm::mat4 rotationMat(1.0f);
+		rotationMat = glm::rotate(rotationMat, glm::radians(objectRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		rotationMat = glm::rotate(rotationMat, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		rotationMat = glm::rotate(rotationMat, glm::radians(objectRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		if (!globalRotation)
+		{
+			model = model * rotationMat;
+		}
+		else
+		{
+			model = rotationMat * model;
+		}*/
 		model = glm::scale(model, objectScale);
 
 		modelShader.use();
 		modelShader.setMat4("view", view);
 		modelShader.setMat4("projection", projection);
-		modelShader.setVec3("viewPos", camera.Position);
+		modelShader.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		modelShader.setFloat("material.shininess", 64);
 		modelShader.setMat4("model", model);
-		setScene(modelShader, lightColor, angleVal, pointLightPositions, 4);
+		modelShader.SetScene(lightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
 		mainModel.Draw(modelShader);
 
 		// Render your GUI
@@ -393,7 +374,7 @@ int main()
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		// call events
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(renderer.window);
 		glfwPollEvents();
 	}
 	// Terminate Imgui
@@ -402,182 +383,7 @@ int main()
 	ImGui::DestroyContext();
 
 	// terminate program
-	glfwTerminate();
+	renderer.TerminateGLFW();
+	Log("End");
 	return 0;
-}
-
-void setupGLFW(int major, int minor)
-{
-	// glfw initialise
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);			   // open gl version 3.x
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);			   // version is 3.3
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // use core profile
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);		   // for Mac
-}
-
-void setupData(GLFWwindow *window)
-{
-	glfwMakeContextCurrent(window);									   // current window
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // callback set for size change
-	glfwSetCursorPosCallback(window, mouse_callback);				   // callback for mouse movement
-	glfwSetScrollCallback(window, scroll_callback);					   // callback for zoom
-																	   //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);// disable cursor
-}
-
-bool checkInput(GLFWwindow *window, int key)
-{
-	return (glfwGetKey(window, key) == GLFW_PRESS);
-}
-
-// check exit input
-void processInput(GLFWwindow *window)
-{
-	if (checkInput(window, GLFW_KEY_ESCAPE))
-	{
-		glfwSetWindowShouldClose(window, true);
-	}
-	if (canMoveCamera)
-	{
-		if (checkInput(window, GLFW_KEY_W))
-		{
-			camera.ProcessKeyboard(FORWARD, deltaTime);
-		}
-		if (checkInput(window, GLFW_KEY_S))
-		{
-			camera.ProcessKeyboard(BACKWARD, deltaTime);
-		}
-		if (checkInput(window, GLFW_KEY_A))
-		{
-			camera.ProcessKeyboard(LEFT, deltaTime);
-		}
-		if (checkInput(window, GLFW_KEY_D))
-		{
-			camera.ProcessKeyboard(RIGHT, deltaTime);
-		}
-		if (checkInput(window, GLFW_KEY_UP))
-		{
-			camera.ProcessKeyboard(UP, deltaTime);
-		}
-		if (checkInput(window, GLFW_KEY_DOWN))
-		{
-			camera.ProcessKeyboard(DOWN, deltaTime);
-		}
-	}
-}
-
-// Sets color of background
-void setColor(float r, float g, float b, float a)
-{
-	glClearColor(r, g, b, a); // Grey
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-// checks for draw mode
-void processDraw(bool *isLine, bool *isPoint, bool *isFill)
-{
-	int choice = 2;
-	if (*isLine)
-	{
-		choice = 0;
-	}
-	else if (*isPoint)
-	{
-		choice = 1;
-	}
-	setDraw(choice);
-}
-
-// Sets Draw Mode
-void setDraw(int choice)
-{
-	unsigned int fillMode = GL_FILL;
-	if (choice == 0)
-	{
-		fillMode = GL_LINE; // wireframe
-	}
-	else if (choice == 1)
-	{
-		fillMode = GL_POINT; // wireframe
-	}
-	glPolygonMode(GL_FRONT_AND_BACK, fillMode);
-}
-
-// callback for mouse movement
-void mouse_callback(GLFWwindow *window, double xpos, double ypos)
-{
-	if (isFirstMouse)
-	{
-		isFirstMouse = false;
-		lastX = xpos;
-		lastY = ypos;
-	}
-	float xOffset = xpos - lastX;
-	float yOffset = lastY - ypos; // y is reversed
-	lastX = xpos;
-	lastY = ypos;
-	xOff = xOffset;
-	yOff = yOffset;
-}
-
-void processMouse(GLFWwindow *window)
-{
-	if (canRotateCamera)
-	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		camera.ProcessMouseMovement(xOff, yOff, deltaTime);
-	}
-	else
-	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
-	xOff = 0;
-	yOff = 0;
-}
-
-// callback for the mouse scroll wheel
-void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
-{
-	camera.ProcessMouseScroll(yoffset);
-}
-
-// callback on  window size change
-void framebuffer_size_callback(GLFWwindow *window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
-
-// Sets the Scene Light Properties
-void setScene(Shader &shader, glm::vec3 lightColor, float angleVal, glm::vec3 pointLightPositions[], int numberOfLights)
-{
-	shader.setVec3("dirLight.direction", glm::vec3(0.5f, -1.0f, -0.7f));
-	shader.setVec3("dirLight.ambient", lightColor * 0.1f);
-	shader.setVec3("dirLight.diffuse", lightColor * 0.25f);
-	shader.setVec3("dirLight.specular", glm::vec3(0.5f));
-
-	for (int i = 0; i < numberOfLights; i++)
-	{
-		glm::mat4 lightModel = glm::mat4(1.0f);
-		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
-		lightModel = glm::translate(lightModel, pointLightPositions[i]);
-		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-		glm::vec3 newLightPos = (lightModel * glm::vec4(1.0f));
-
-		std::string lightName = "pointLights[" + std::to_string(i) + "].";
-		shader.setVec3(lightName + "position", newLightPos);
-		shader.setFloat(lightName + "constant", 1.0f);
-		shader.setFloat(lightName + "linear", 0.22f);
-		shader.setFloat(lightName + "quadratic", 0.20f);
-		shader.setVec3(lightName + "ambient", lightColor * 0.05f);
-		shader.setVec3(lightName + "diffuse", lightColor * 0.4f);
-		shader.setVec3(lightName + "specular", glm::vec3(1.0f));
-	}
-
-	shader.setVec3("spotLight.position", camera.Position);
-	shader.setVec3("spotLight.direction", camera.Front);
-	shader.setFloat("spotLight.cutoff", glm::cos(glm::radians(12.5f)));
-	shader.setFloat("spotLight.outerCutoff", glm::cos(glm::radians(20.0f)));
-	shader.setVec3("spotLight.ambient", lightColor * 0.05f);
-	shader.setVec3("spotLight.diffuse", lightColor * 0.3f);
-	shader.setVec3("spotLight.specular", glm::vec3(0.5f));
 }
