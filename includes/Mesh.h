@@ -7,6 +7,7 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 
 #include <Shader.h>
+#include <Renderer.h>
 
 #include <string>
 #include <vector>
@@ -35,13 +36,12 @@ public:
     vector<Vertex> vertices;
     vector<unsigned int> indices;
     vector<Texture> textures;
-    unsigned int VAO;
+    VertexArray vertexArray;
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
     void Draw(Shader &shader);
 
 private:
     // render data
-    unsigned int VBO, EBO;
     void setupMesh();
 };
 #endif

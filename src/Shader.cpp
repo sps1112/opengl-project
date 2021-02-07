@@ -113,6 +113,40 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
+// Sets the Scene Light Properties
+void Shader::SetScene(glm::vec3 lightColor, float angleVal, glm::vec3 pointLightPositions[], int numberOfLights, glm::vec3 camPos, glm::vec3 camFront)
+{
+    setVec3("dirLight.direction", glm::vec3(0.5f, -1.0f, -0.7f));
+    setVec3("dirLight.ambient", lightColor * 0.1f);
+    setVec3("dirLight.diffuse", lightColor * 0.25f);
+    setVec3("dirLight.specular", glm::vec3(0.5f));
+
+    for (int i = 0; i < numberOfLights; i++)
+    {
+        glm::mat4 lightModel = glm::mat4(1.0f);
+        lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
+        lightModel = glm::translate(lightModel, pointLightPositions[i]);
+        lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+        glm::vec3 newLightPos = (lightModel * glm::vec4(1.0f));
+
+        std::string lightName = "pointLights[" + std::to_string(i) + "].";
+        setVec3(lightName + "position", newLightPos);
+        setFloat(lightName + "constant", 1.0f);
+        setFloat(lightName + "linear", 0.22f);
+        setFloat(lightName + "quadratic", 0.20f);
+        setVec3(lightName + "ambient", lightColor * 0.05f);
+        setVec3(lightName + "diffuse", lightColor * 0.4f);
+        setVec3(lightName + "specular", glm::vec3(1.0f));
+    }
+    setVec3("spotLight.position", camPos);
+    setVec3("spotLight.direction", camFront);
+    setFloat("spotLight.cutoff", glm::cos(glm::radians(12.5f)));
+    setFloat("spotLight.outerCutoff", glm::cos(glm::radians(20.0f)));
+    setVec3("spotLight.ambient", lightColor * 0.05f);
+    setVec3("spotLight.diffuse", lightColor * 0.3f);
+    setVec3("spotLight.specular", glm::vec3(0.5f));
+}
+
 // utility function for checking errors
 void Shader::checkCompileErrors(unsigned int shader, std::string type)
 {

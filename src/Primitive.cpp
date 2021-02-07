@@ -49,16 +49,14 @@ void Primitive::Draw(Shader &shader)
     glActiveTexture(GL_TEXTURE0);
 
     // draw mesh
-    glBindVertexArray(VAO);
     if (is2D)
     {
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        vertexArray.DrawElements(indices.size());
     }
     else
     {
-        glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+        vertexArray.DrawTriangles(vertexCount, 0);
     }
-    glBindVertexArray(0);
 }
 
 void Primitive::SetupData(const char *path)
@@ -246,13 +244,13 @@ void Primitive::ProcessData(char *fileData)
 
 void Primitive::SetupPrimitive()
 {
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    glGenVertexArrays(1, &(vertexArray.VAO));
+    glGenBuffers(1, &(vertexArray.VBO));
+    glGenBuffers(1, &(vertexArray.EBO));
 
-    glBindVertexArray(VAO);
+    glBindVertexArray(vertexArray.VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexArray.VBO);
     if (is2D)
     {
         glBufferData(GL_ARRAY_BUFFER, vertices2D.size() * sizeof(Vertex2D), &vertices2D[0], GL_STATIC_DRAW);
@@ -264,7 +262,7 @@ void Primitive::SetupPrimitive()
 
     if (is2D)
     {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexArray.EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
     }
 

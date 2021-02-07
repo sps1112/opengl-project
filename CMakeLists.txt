@@ -36,15 +36,11 @@ add_executable(
     src/Utils.cpp
     src/Primitive.cpp
     src/FileReader.cpp
-
-    includes/Shader.h
-    includes/Camera.h
-    includes/Mesh.h
-    includes/Model.h
-    includes/FileSystem.h
-    includes/Utils.h
-    includes/Primitive.h
-    includes/FileReader.h
+    src/Renderer.cpp
+    src/GUI.cpp
+    src/Texture.cpp
+    src/Math.cpp
+    src/Material.cpp
 
     includes/imgui/imgui.cpp
     includes/imgui/imgui_draw.cpp

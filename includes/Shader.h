@@ -3,6 +3,10 @@
 
 #include <glad/glad.h> // include glad to get opengl Files
 #include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
+
+#include <Camera.h>
 
 #include <string>
 #include <fstream>
@@ -30,6 +34,12 @@ public:
 	void setMat2(const std::string &name, const glm::mat2 &mat) const;
 	void setMat3(const std::string &name, const glm::mat3 &mat) const;
 	void setMat4(const std::string &name, const glm::mat4 &mat) const;
+	void SetScene(glm::vec3 lightColor,
+				  float angleVal,
+				  glm::vec3 pointLightPositions[],
+				  int numberOfLights,
+				  glm::vec3 camPos,
+				  glm::vec3 camFront);
 
 private:
 	// utility function for checking errors

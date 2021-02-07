@@ -9,6 +9,7 @@
 #include <Shader.h>
 #include <FileReader.h>
 #include <Utils.h>
+#include <Renderer.h>
 
 #include <iostream>
 #include <fstream>
@@ -51,14 +52,13 @@ public:
     vector<Vertex3D> vertices3D;
     vector<unsigned int> indices;
     vector<pTexture> textures;
-    unsigned int VAO;
+    VertexArray vertexArray;
     Primitive(const char *path);
     void SetupTextures(vector<pTexture> textures);
     void Draw(Shader &shader);
 
 private:
     // render data
-    unsigned int VBO, EBO;
     bool is2D;
     int vertexCount;
     void SetupData(const char *path);
