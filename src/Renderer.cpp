@@ -48,6 +48,12 @@ void Renderer::SetOtherData()
     stbi_set_flip_vertically_on_load(true); // set before loading model
 }
 
+void Renderer::SwapBuffers()
+{
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}
+
 void Renderer::SetCamera(Camera camera)
 {
     rCamera.camera = Camera(camera.Position);

@@ -1,23 +1,13 @@
-// glm libraries for math
-#include <glm/glm/glm.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <glm/glm/gtc/type_ptr.hpp>
-#include <glm/glm/gtc/quaternion.hpp>
-#include <glm/glm/gtx/quaternion.hpp>
-
-// imgui headers
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
-
 // Custom Headers
 #include <Renderer.h>	// Renderer header
-#include <Shader.h>		// shader header
-#include <Camera.h>		// camera header
-#include <Model.h>		// model header
+#include <Math.h>		// Math header
+#include <Shader.h>		// Shader header
+#include <Camera.h>		// Camera header
+#include <Model.h>		// Model header
 #include <FileSystem.h> // Filesystem header
 #include <Utils.h>		// Utility header
 #include <Primitive.h>	// Primitive header
+#include <GUI.h>		// GUI header
 
 #include <iostream>
 #include <vector>
@@ -26,6 +16,7 @@
 const int majorVersion = 3;
 const int minorVersion = 3;
 const char *windowTitle = "OpenGL Window";
+std::string guiTitle = "UI Window";
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
@@ -63,15 +54,8 @@ int main()
 	renderer.SetCamera(localCam);
 
 	// Setup ImGui
-	std::string versionText = "#version " + std::to_string(majorVersion) + std::to_string(minorVersion) + "0";
-	const char *glsl_version = versionText.c_str();
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui_ImplGlfw_InitForOpenGL(renderer.window, true);
-	ImGui_ImplOpenGL3_Init(glsl_version);
-	ImGuiIO &io = ImGui::GetIO();
-	(void)io;
-	ImGui::StyleColorsDark();
+	GUI gui(renderer.window, majorVersion, minorVersion);
+	GUIWindow guiWindow(guiTitle);
 
 	Primitive triangle(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
@@ -133,7 +117,7 @@ int main()
 	float angleVal = 0.0f;
 
 	// UI Data
-	bool showTraingle = false;
+	bool showTriangles = false;
 	bool showCubes = false;
 	ImVec4 backgroundColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 	ImVec4 lightColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -159,6 +143,32 @@ int main()
 	sclY = 1;
 	sclZ = 1;
 	bool globalRotation = false;
+	guiWindow.AddGUI(GUI_LINE, "Setup OpenGL Render Data:-", true);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Show Cubes", true, &showCubes);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Show Triangles", true, &showTriangles);
+	guiWindow.AddGUI(GUI_COLOR, "Light Color", true, true, &lightColor);
+	guiWindow.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
+	guiWindow.AddGUI(GUI_LINE, "Fill Mode:- ", true);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Fill", false, &renderFill);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Line", false, &renderLines);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Point", false, &renderPoint);
+	guiWindow.AddGUI(GUI_FLOAT, "Light Rotation", true, &angleVal, 0.0f, 360.0f);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Move Camera", true, &canMoveCamera);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Rotate Camera", true, &canRotateCamera);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Global Roatation", true, &globalRotation);
+	guiWindow.AddGUI(GUI_LINE, "Set Transform:-", true);
+	guiWindow.AddGUI(GUI_LINE, "Position:-", true);
+	guiWindow.AddGUI(GUI_FLOAT, "X##1", true, &posX, -5.0f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Y##1", true, &posY, -5.0f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Z##1", true, &posZ, -5.0f, 5.0f);
+	guiWindow.AddGUI(GUI_LINE, "Rotation:-", true);
+	guiWindow.AddGUI(GUI_FLOAT, "X##2", true, &rotX, -360.0f, 360.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Y##2", true, &rotY, -360.0f, 360.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Z##2", true, &rotZ, -360.0f, 360.0f);
+	guiWindow.AddGUI(GUI_LINE, "Scale:-", true);
+	guiWindow.AddGUI(GUI_FLOAT, "X##3", true, &sclX, 0.001f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Y##3", true, &sclY, 0.001f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Z##3", true, &sclZ, 0.001f, 5.0f);
 	while (!glfwWindowShouldClose(renderer.window))
 	{
 		// Setup bools
@@ -167,9 +177,7 @@ int main()
 		pRenderFill = renderFill;
 
 		// Setup Imgui Frame data
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+		gui.NewFrame();
 
 		// delta time refresh
 		float currentFrameTime = glfwGetTime();
@@ -238,7 +246,7 @@ int main()
 			}
 		}
 
-		if (showTraingle)
+		if (showTriangles)
 		{
 			shader2D.use();
 			triangle.Draw(shader2D);
@@ -289,43 +297,7 @@ int main()
 		mainModel.Draw(modelShader);
 
 		// Render your GUI
-		ImGui::Begin("Debug Window");
-		ImGui::Text("Setup OpenGL Render Data:-");
-		ImGui::Checkbox("Show Cubes", &showCubes);
-		ImGui::Checkbox("Show Triangle", &showTraingle);
-		ImGui::ColorEdit3("Light Color", (float *)&lightColor);
-		ImGui::ColorEdit3("Background Color", (float *)&backgroundColor);
-		ImGui::Text("Fill Mode:- ");
-		ImGui::SameLine();
-		ImGui::Checkbox("Fill", &renderFill);
-		ImGui::SameLine();
-		ImGui::Checkbox("Line", &renderLines);
-		ImGui::SameLine();
-		ImGui::Checkbox("Point", &renderPoint);
-		ImGui::Checkbox("Show FrameRate", &showFrameRate);
-		if (showFrameRate)
-		{
-			ImGui::SameLine();
-			int val = (int)(1.0f / deltaTime);
-			ImGui::Text("FrameRate:- %d", val);
-		}
-		ImGui::SliderFloat("Light Rotation", &angleVal, 0.0f, 360.0f);
-		ImGui::Checkbox("Move Camera", &canMoveCamera);
-		ImGui::Checkbox("Rotate Camera", &canRotateCamera);
-		ImGui::Checkbox("GlobalRotation", &globalRotation);
-		ImGui::Text("Set Transform:- ");
-		ImGui::Text("Position: ");
-		ImGui::SliderFloat("X##1", &posX, -5.0f, 5.0f);
-		ImGui::SliderFloat("Y##1", &posY, -5.0f, 5.0f);
-		ImGui::SliderFloat("Z##1", &posZ, -5.0f, 5.0f);
-		ImGui::Text("Rotation: ");
-		ImGui::SliderFloat("X##2", &rotX, -360.0f, 360.0f);
-		ImGui::SliderFloat("Y##2", &rotY, -360.0f, 360.0f);
-		ImGui::SliderFloat("Z##2", &rotZ, -360.0f, 360.0f);
-		ImGui::Text("Scale: ");
-		ImGui::SliderFloat("X##3", &sclX, 0.0f, 5.0f);
-		ImGui::SliderFloat("Y##3", &sclY, 0.0f, 5.0f);
-		ImGui::SliderFloat("Z##3", &sclZ, 0.0f, 5.0f);
+		guiWindow.ShowGUI();
 		if (ImGui::Button("Reset Object"))
 		{
 			posX = 0;
@@ -338,7 +310,14 @@ int main()
 			sclY = 1;
 			sclZ = 1;
 		}
-		ImGui::End();
+		ImGui::Checkbox("Show FrameRate", &showFrameRate);
+		if (showFrameRate)
+		{
+			ImGui::SameLine();
+			int val = (int)(1.0f / deltaTime);
+			ImGui::Text("FrameRate:- %d", val);
+		}
+		guiWindow.EndGUI();
 
 		// Check bools
 		if (renderFill != pRenderFill && renderFill)
@@ -360,21 +339,12 @@ int main()
 		{
 			renderFill = true;
 		}
-
-		// Render calls imgui
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 		// call events
-		glfwSwapBuffers(renderer.window);
-		glfwPollEvents();
+		gui.RenderGUI();
+		renderer.SwapBuffers();
 	}
-	// Terminate Imgui
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-
 	// terminate program
+	gui.TerminateGUI();
 	renderer.TerminateGLFW();
 	return 0;
 }

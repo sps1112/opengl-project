@@ -53,6 +53,7 @@ public:
     void CreateWindow(const char *title, GLFWmonitor *monitor = NULL, GLFWwindow *share = NULL);
     void SetData();
     void SetOtherData();
+    void SwapBuffers();
     void SetCamera(Camera camera);
     float GetZoom();
     Camera *GetCamera();
