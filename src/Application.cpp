@@ -1,8 +1,3 @@
-// Library headers
-#include <glad/glad.h>	// first glad
-#include <GLFW/glfw3.h> // then glfw
-#include <stb_image.h>	// for loading images
-
 // glm libraries for math
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/matrix_transform.hpp>
@@ -34,11 +29,6 @@ const char *windowTitle = "OpenGL Window";
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-Renderer renderer(majorVersion, minorVersion, SCR_WIDTH, SCR_HEIGHT);
-
-// Camera settings
-glm::vec3 cameraPos(0.0f, 0.0f, 5.0f);
-
 // Frame settings
 float lastFrameTime = 0.0f;
 float deltaTime = 0.0f;
@@ -50,6 +40,7 @@ bool canRotateCamera = false;
 // main function
 int main()
 {
+	Renderer renderer(majorVersion, minorVersion, SCR_WIDTH, SCR_HEIGHT);
 	renderer.SetupGLFW();
 	renderer.CreateWindow(windowTitle);
 	if (renderer.window == NULL)
@@ -64,9 +55,10 @@ int main()
 		renderer.TerminateGLFW();
 		return -1;
 	}
+	renderer.SetOtherData();
 
-	glEnable(GL_DEPTH_TEST);				// Enable Z buffering
-	stbi_set_flip_vertically_on_load(true); // set before loading model
+	// Camera settings
+	glm::vec3 cameraPos(0.0f, 0.0f, 5.0f);
 	Camera localCam(cameraPos);
 	renderer.SetCamera(localCam);
 
@@ -114,7 +106,6 @@ int main()
 	textures3D.push_back(emmision);
 	testCube.SetupTextures(textures3D);
 
-	glm::vec3 lightColor(1.0f);
 	glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 
 	glm::vec3 pointLightPositions[] = {
@@ -145,6 +136,7 @@ int main()
 	bool showTraingle = false;
 	bool showCubes = false;
 	ImVec4 backgroundColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+	ImVec4 lightColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	bool renderLines = false;
 	bool renderPoint = false;
@@ -167,7 +159,6 @@ int main()
 	sclY = 1;
 	sclZ = 1;
 	bool globalRotation = false;
-	Log("To Start loop");
 	while (!glfwWindowShouldClose(renderer.window))
 	{
 		// Setup bools
@@ -207,13 +198,13 @@ int main()
 		*/
 		projection = glm::perspective(glm::radians(renderer.GetZoom()), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
 
-		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+		glm::vec3 currentLightColor(lightColor.x, lightColor.y, lightColor.z);
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
 		sourceShader.use();
 		sourceShader.setMat4("view", view);
 		sourceShader.setMat4("projection", projection);
-		sourceShader.setVec3("sourceColor", lightColor);
+		sourceShader.setVec3("sourceColor", currentLightColor);
 		for (int i = 0; i < 4; i++)
 		{
 			glm::mat4 model = lightModel;
@@ -226,7 +217,7 @@ int main()
 		shader3D.setMat4("view", view);
 		shader3D.setMat4("projection", projection);
 
-		shader3D.SetScene(lightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
+		shader3D.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
 		shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		shader3D.setFloat("material.shininess", 64);
 		shader3D.setVec3("material.ambient", objectColor);
@@ -294,7 +285,7 @@ int main()
 		modelShader.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		modelShader.setFloat("material.shininess", 64);
 		modelShader.setMat4("model", model);
-		modelShader.SetScene(lightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
+		modelShader.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
 		mainModel.Draw(modelShader);
 
 		// Render your GUI
@@ -302,6 +293,7 @@ int main()
 		ImGui::Text("Setup OpenGL Render Data:-");
 		ImGui::Checkbox("Show Cubes", &showCubes);
 		ImGui::Checkbox("Show Triangle", &showTraingle);
+		ImGui::ColorEdit3("Light Color", (float *)&lightColor);
 		ImGui::ColorEdit3("Background Color", (float *)&backgroundColor);
 		ImGui::Text("Fill Mode:- ");
 		ImGui::SameLine();
@@ -384,6 +376,5 @@ int main()
 
 	// terminate program
 	renderer.TerminateGLFW();
-	Log("End");
 	return 0;
 }

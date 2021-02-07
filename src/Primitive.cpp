@@ -244,63 +244,43 @@ void Primitive::ProcessData(char *fileData)
 
 void Primitive::SetupPrimitive()
 {
-    glGenVertexArrays(1, &(vertexArray.VAO));
-    glGenBuffers(1, &(vertexArray.VBO));
-    glGenBuffers(1, &(vertexArray.EBO));
-
-    glBindVertexArray(vertexArray.VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexArray.VBO);
+    vertexArray.GenerateBuffers();
+    vertexArray.BindVAO();
     if (is2D)
     {
-        glBufferData(GL_ARRAY_BUFFER, vertices2D.size() * sizeof(Vertex2D), &vertices2D[0], GL_STATIC_DRAW);
+        vertexArray.BindVBO(vertices2D.size(), sizeof(Vertex2D), &vertices2D[0]);
+        vertexArray.BindEBO(indices.size(), &indices[0]);
     }
     else
     {
-        glBufferData(GL_ARRAY_BUFFER, vertices3D.size() * sizeof(Vertex3D), &vertices3D[0], GL_STATIC_DRAW);
+        vertexArray.BindVBO(vertices3D.size(), sizeof(Vertex3D), &vertices3D[0]);
     }
-
-    if (is2D)
-    {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexArray.EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-    }
-
     if (is2D)
     {
         // vertex positions
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (void *)0);
+        vertexArray.SetAttribArray(0, 3, sizeof(Vertex2D), (void *)0);
         // vertex color
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (void *)offsetof(Vertex2D, Color));
+        vertexArray.SetAttribArray(1, 3, sizeof(Vertex2D), (void *)offsetof(Vertex2D, Color));
         // vertex Texture coordinates
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex2D), (void *)offsetof(Vertex2D, TexCoord));
+        vertexArray.SetAttribArray(2, 2, sizeof(Vertex2D), (void *)offsetof(Vertex2D, TexCoord));
     }
     else
     {
         // vertex positions
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void *)0);
+        vertexArray.SetAttribArray(0, 3, sizeof(Vertex3D), (void *)0);
         // vertex normals
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void *)offsetof(Vertex3D, Normal));
+        vertexArray.SetAttribArray(1, 3, sizeof(Vertex3D), (void *)offsetof(Vertex3D, Normal));
         // vertex Texture coordinates
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void *)offsetof(Vertex3D, TexCoord));
+        vertexArray.SetAttribArray(2, 2, sizeof(Vertex3D), (void *)offsetof(Vertex3D, TexCoord));
         // vertex colors
-        glEnableVertexAttribArray(3);
-        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void *)offsetof(Vertex3D, Color));
+        vertexArray.SetAttribArray(3, 3, sizeof(Vertex3D), (void *)offsetof(Vertex3D, Color));
         // vertex Tangents
-        glEnableVertexAttribArray(4);
-        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void *)offsetof(Vertex3D, Tangent));
+        vertexArray.SetAttribArray(4, 3, sizeof(Vertex3D), (void *)offsetof(Vertex3D, Tangent));
         // vertex Bitangents
-        glEnableVertexAttribArray(5);
-        glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3D), (void *)offsetof(Vertex3D, Bitangent));
+        vertexArray.SetAttribArray(5, 3, sizeof(Vertex3D), (void *)offsetof(Vertex3D, Bitangent));
     }
     // free memory
-    glBindVertexArray(0);
+    vertexArray.UnBindVAO();
 }
 
 glm::vec3 GetVec3(char *fileData, char itemType, bool is2D, int lineStartIndex, int vertexIndex)

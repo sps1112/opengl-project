@@ -36,11 +36,16 @@ void Renderer::CreateWindow(const char *title, GLFWmonitor *monitor, GLFWwindow 
 
 void Renderer::SetData()
 {
-    Log("Set Data");
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+}
+
+void Renderer::SetOtherData()
+{
+    glEnable(GL_DEPTH_TEST);                // Enable Z buffering
+    stbi_set_flip_vertically_on_load(true); // set before loading model
 }
 
 void Renderer::SetCamera(Camera camera)
@@ -49,20 +54,6 @@ void Renderer::SetCamera(Camera camera)
     rCamera.lastX = width / 2.0f;
     rCamera.lastY = height / 2.0f;
     rCamera.isFirstMouse = true;
-    rCamera.xOff = 0;
-    rCamera.yOff = 0;
-}
-
-float Renderer::GetXOff()
-{
-    return rCamera.xOff;
-}
-float Renderer::GetYOff()
-{
-    return rCamera.yOff;
-}
-void Renderer::ResetCameraOffset()
-{
     rCamera.xOff = 0;
     rCamera.yOff = 0;
 }
@@ -158,7 +149,8 @@ void Renderer::ProcessMouse(bool rotateStatus, float delta)
     {
         SetCursor(true);
     }
-    ResetCameraOffset();
+    rCamera.xOff = 0;
+    rCamera.yOff = 0;
 }
 
 void Renderer::SetDraw(int choice)
@@ -189,18 +181,50 @@ void Renderer::ProcessDraw(bool lineStatus, bool pointStatus, bool fillStatus)
     SetDraw(choice);
 }
 
-void VertexArray::DrawTriangles(int vertexCount, int startIndex)
+void VertexArray::GenerateBuffers()
+{
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+}
+
+void VertexArray::BindVAO()
 {
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, startIndex, vertexCount);
+}
+void VertexArray::UnBindVAO()
+{
     glBindVertexArray(0);
+}
+void VertexArray::BindVBO(int vertexCount, GLsizeiptr size, void *pointer)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * size, pointer, GL_STATIC_DRAW);
+}
+void VertexArray::BindEBO(int indicesCount, void *pointer)
+{
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int), pointer, GL_STATIC_DRAW);
+}
+
+void VertexArray::SetAttribArray(int layoutLayer, int count, GLsizeiptr size, const void *pointer)
+{
+    glEnableVertexAttribArray(layoutLayer);
+    glVertexAttribPointer(layoutLayer, count, GL_FLOAT, GL_FALSE, size, pointer);
+}
+
+void VertexArray::DrawTriangles(int vertexCount, int startIndex)
+{
+    BindVAO();
+    glDrawArrays(GL_TRIANGLES, startIndex, vertexCount);
+    UnBindVAO();
 }
 
 void VertexArray::DrawElements(int indicesCount)
 {
-    glBindVertexArray(VAO);
+    BindVAO();
     glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    UnBindVAO();
 }
 
 // callback on  window size change

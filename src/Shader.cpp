@@ -119,7 +119,7 @@ void Shader::SetScene(glm::vec3 lightColor, float angleVal, glm::vec3 pointLight
     setVec3("dirLight.direction", glm::vec3(0.5f, -1.0f, -0.7f));
     setVec3("dirLight.ambient", lightColor * 0.1f);
     setVec3("dirLight.diffuse", lightColor * 0.25f);
-    setVec3("dirLight.specular", glm::vec3(0.5f));
+    setVec3("dirLight.specular", lightColor * 0.5f);
 
     for (int i = 0; i < numberOfLights; i++)
     {
@@ -136,7 +136,7 @@ void Shader::SetScene(glm::vec3 lightColor, float angleVal, glm::vec3 pointLight
         setFloat(lightName + "quadratic", 0.20f);
         setVec3(lightName + "ambient", lightColor * 0.05f);
         setVec3(lightName + "diffuse", lightColor * 0.4f);
-        setVec3(lightName + "specular", glm::vec3(1.0f));
+        setVec3(lightName + "specular", lightColor);
     }
     setVec3("spotLight.position", camPos);
     setVec3("spotLight.direction", camFront);
@@ -144,7 +144,7 @@ void Shader::SetScene(glm::vec3 lightColor, float angleVal, glm::vec3 pointLight
     setFloat("spotLight.outerCutoff", glm::cos(glm::radians(20.0f)));
     setVec3("spotLight.ambient", lightColor * 0.05f);
     setVec3("spotLight.diffuse", lightColor * 0.3f);
-    setVec3("spotLight.specular", glm::vec3(0.5f));
+    setVec3("spotLight.specular", lightColor * 0.5f);
 }
 
 // utility function for checking errors
