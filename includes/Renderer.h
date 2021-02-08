@@ -47,26 +47,32 @@ public:
     int width;
     int height;
     GLFWwindow *window;
+    float deltaTime;
     Renderer(int majorVersion, int minorVersion, int windowWidth, int windowHeight);
     void SetupGLFW();
     void TerminateGLFW();
     void CreateWindow(const char *title, GLFWmonitor *monitor = NULL, GLFWwindow *share = NULL);
     void SetData();
     void SetOtherData();
+    int checkGLAD();
     void SwapBuffers();
+    void StartTimer();
+    void NewFrame();
     void SetCamera(Camera camera);
     float GetZoom();
     Camera *GetCamera();
-    int checkGLAD();
     void SetCursor(bool status);
     void SetColor(float r, float g, float b, float a);
     bool CheckInput(int key);
-    void ProcessInput(bool moveStatus, float delta);
-    void ProcessMouse(bool rotateStatus, float delta);
+    void ProcessInput(bool moveStatus);
+    void ProcessMouse(bool rotateStatus);
     void SetDraw(int choice);
     void ProcessDraw(bool lineStatus, bool pointStatus, bool fillStatus);
 
 private:
+    float currentFrameTime;
+    float timePeriod;
+    float prevFrameTime;
 };
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);

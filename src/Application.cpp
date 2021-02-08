@@ -20,14 +20,6 @@ std::string guiTitle = "UI Window";
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-// Frame settings
-float lastFrameTime = 0.0f;
-float deltaTime = 0.0f;
-
-// Input Values
-bool canMoveCamera = false;
-bool canRotateCamera = false;
-
 // main function
 int main()
 {
@@ -40,7 +32,6 @@ int main()
 		return -1;
 	}
 	renderer.SetData();
-	// check GLAD
 	if (!renderer.checkGLAD())
 	{
 		renderer.TerminateGLFW();
@@ -62,10 +53,8 @@ int main()
 	Primitive testCube(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 
 	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
-	// Model mainModel(FileSystem::getPath("resources/models/teapot/teapot.obj"));
 
 	Shader shader2D(FileSystem::getPath("shaders/primitive/shader_2d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_2d.fs").c_str());
-	// Light Source Shader
 	Shader sourceShader(FileSystem::getPath("shaders/primitive/shader_source.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_source.fs").c_str());
 	Shader shader3D(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_scene.fs").c_str());
 	Shader modelShader(FileSystem::getPath("shaders/light/shader_model.vs").c_str(), FileSystem::getPath("shaders/light/shader_model.fs").c_str());
@@ -111,14 +100,15 @@ int main()
 		glm::vec3(-1.3f, 1.0f, -1.5f)};
 
 	// Values setup
-	float sliderValue = 0.5f;
-	float timePeriod = 3.0f;
-	float timeGap = 0.0f;
 	float angleVal = 0.0f;
 
 	// UI Data
 	bool showTriangles = false;
 	bool showCubes = false;
+	// Input Values
+	bool canMoveCamera = false;
+	bool canRotateCamera = false;
+
 	ImVec4 backgroundColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 	ImVec4 lightColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -169,6 +159,8 @@ int main()
 	guiWindow.AddGUI(GUI_FLOAT, "X##3", true, &sclX, 0.001f, 5.0f);
 	guiWindow.AddGUI(GUI_FLOAT, "Y##3", true, &sclY, 0.001f, 5.0f);
 	guiWindow.AddGUI(GUI_FLOAT, "Z##3", true, &sclZ, 0.001f, 5.0f);
+
+	renderer.StartTimer();
 	while (!glfwWindowShouldClose(renderer.window))
 	{
 		// Setup bools
@@ -180,20 +172,13 @@ int main()
 		gui.NewFrame();
 
 		// delta time refresh
-		float currentFrameTime = glfwGetTime();
-		deltaTime = currentFrameTime - lastFrameTime;
-		lastFrameTime = currentFrameTime;
-		timeGap += deltaTime;
-		if (timeGap >= timePeriod)
-		{
-			timeGap -= timePeriod;
-		}
+		renderer.NewFrame();
 
 		// input commands
-		renderer.ProcessInput(canMoveCamera, deltaTime);
+		renderer.ProcessInput(canMoveCamera);
 		renderer.SetColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
 		renderer.ProcessDraw(renderLines, renderPoint, renderFill);
-		renderer.ProcessMouse(canRotateCamera, deltaTime);
+		renderer.ProcessMouse(canRotateCamera);
 
 		// view matrix :: WORLD TO VIEW
 		glm::mat4 view;
@@ -201,36 +186,30 @@ int main()
 
 		// projection matrix:: VIEW TO CLIPPED
 		glm::mat4 projection;
-		/*
-		FOV = X degrees, RATIO =WIDTH/HEIGHT, Near Plane = 0.1, Far Plane = 100.0
-		*/
+		// FOV = X degrees, RATIO =WIDTH/HEIGHT, Near Plane = 0.1, Far Plane = 100.0
 		projection = glm::perspective(glm::radians(renderer.GetZoom()), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
 
 		glm::vec3 currentLightColor(lightColor.x, lightColor.y, lightColor.z);
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::rotate(lightModel, glm::radians(angleVal), glm::vec3(0.0f, 1.0f, 0.0f));
 		sourceShader.use();
-		sourceShader.setMat4("view", view);
-		sourceShader.setMat4("projection", projection);
 		sourceShader.setVec3("sourceColor", currentLightColor);
 		for (int i = 0; i < 4; i++)
 		{
 			glm::mat4 model = lightModel;
 			model = glm::translate(model, pointLightPositions[i]);
 			model = glm::scale(model, glm::vec3(0.2f));
-			sourceShader.setMat4("model", model);
+			sourceShader.SetMatrices(model, view, projection);
 			lightObject.Draw(sourceShader);
 		}
 		shader3D.use();
-		shader3D.setMat4("view", view);
-		shader3D.setMat4("projection", projection);
 
 		shader3D.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
 		shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		shader3D.setFloat("material.shininess", 64);
 		shader3D.setVec3("material.ambient", objectColor);
 		shader3D.setVec3("material.diffuse", objectColor);
-		shader3D.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
+		shader3D.setVec3("material.specular", currentLightColor * 0.5f);
 
 		for (unsigned int i = 0; i < 10; i++)
 		{
@@ -239,7 +218,7 @@ int main()
 			model = glm::translate(model, cubePositions[i]);
 			float angle = 15.0f * (i);
 			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			shader3D.setMat4("model", model);
+			shader3D.SetMatrices(model, view, projection);
 			if (showCubes)
 			{
 				testCube.Draw(shader3D);
@@ -273,26 +252,12 @@ int main()
 			glm::mat4 modelX = glm::rotate(model, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
 			model = (modelX * (modelZ * (modelY * model)));
 		}
-		/*glm::mat4 rotationMat(1.0f);
-		rotationMat = glm::rotate(rotationMat, glm::radians(objectRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		rotationMat = glm::rotate(rotationMat, glm::radians(objectRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		rotationMat = glm::rotate(rotationMat, glm::radians(objectRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
-		if (!globalRotation)
-		{
-			model = model * rotationMat;
-		}
-		else
-		{
-			model = rotationMat * model;
-		}*/
 		model = glm::scale(model, objectScale);
 
 		modelShader.use();
-		modelShader.setMat4("view", view);
-		modelShader.setMat4("projection", projection);
+		modelShader.SetMatrices(model, view, projection);
 		modelShader.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		modelShader.setFloat("material.shininess", 64);
-		modelShader.setMat4("model", model);
 		modelShader.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
 		mainModel.Draw(modelShader);
 
@@ -314,7 +279,7 @@ int main()
 		if (showFrameRate)
 		{
 			ImGui::SameLine();
-			int val = (int)(1.0f / deltaTime);
+			int val = (int)(1.0f / renderer.deltaTime);
 			ImGui::Text("FrameRate:- %d", val);
 		}
 		guiWindow.EndGUI();

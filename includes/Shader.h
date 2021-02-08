@@ -34,12 +34,18 @@ public:
 	void setMat2(const std::string &name, const glm::mat2 &mat) const;
 	void setMat3(const std::string &name, const glm::mat3 &mat) const;
 	void setMat4(const std::string &name, const glm::mat4 &mat) const;
-	void SetScene(glm::vec3 lightColor,
-				  float angleVal,
-				  glm::vec3 pointLightPositions[],
-				  int numberOfLights,
-				  glm::vec3 camPos,
-				  glm::vec3 camFront);
+	void SetMatrices(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+	void SetPointLight(glm::vec3 position,
+					   glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+					   float constant, float linear, float quadratic, bool hasName = false, std::string lightName = "");
+	void SetDirLight(glm::vec3 direction,
+					 glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+	void SetSpotLight(glm::vec3 position, glm::vec3 direction,
+					  glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+					  float cutoffAngle, float outerCutoffAngle);
+	void SetScene(glm::vec3 lightColor, float angleVal,
+				  glm::vec3 pointLightPositions[], int numberOfLights,
+				  glm::vec3 camPos, glm::vec3 camFront);
 
 private:
 	// utility function for checking errors

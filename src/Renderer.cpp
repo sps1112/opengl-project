@@ -48,10 +48,35 @@ void Renderer::SetOtherData()
     stbi_set_flip_vertically_on_load(true); // set before loading model
 }
 
+int Renderer::checkGLAD()
+{
+    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+    if (!status)
+    {
+        Log("Failed to intialize GLAD");
+    }
+    return status;
+}
+
 void Renderer::SwapBuffers()
 {
     glfwSwapBuffers(window);
     glfwPollEvents();
+}
+
+void Renderer::StartTimer()
+{
+    currentFrameTime = glfwGetTime();
+    prevFrameTime = currentFrameTime;
+    timePeriod = 100.0f;
+    deltaTime = 0.0f;
+}
+
+void Renderer::NewFrame()
+{
+    currentFrameTime = glfwGetTime();
+    deltaTime = currentFrameTime - prevFrameTime;
+    prevFrameTime = currentFrameTime;
 }
 
 void Renderer::SetCamera(Camera camera)
@@ -72,16 +97,6 @@ float Renderer::GetZoom()
 Camera *Renderer::GetCamera()
 {
     return &(rCamera.camera);
-}
-
-int Renderer::checkGLAD()
-{
-    int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    if (!status)
-    {
-        Log("Failed to intialize GLAD");
-    }
-    return status;
 }
 
 void Renderer::SetCursor(bool status)
@@ -109,7 +124,7 @@ bool Renderer::CheckInput(int key)
 }
 
 // check exit input
-void Renderer::ProcessInput(bool moveStatus, float delta)
+void Renderer::ProcessInput(bool moveStatus)
 {
     if (CheckInput(GLFW_KEY_ESCAPE))
     {
@@ -119,37 +134,37 @@ void Renderer::ProcessInput(bool moveStatus, float delta)
     {
         if (CheckInput(GLFW_KEY_W))
         {
-            rCamera.camera.ProcessKeyboard(FORWARD, delta);
+            rCamera.camera.ProcessKeyboard(FORWARD, deltaTime);
         }
         if (CheckInput(GLFW_KEY_S))
         {
-            rCamera.camera.ProcessKeyboard(BACKWARD, delta);
+            rCamera.camera.ProcessKeyboard(BACKWARD, deltaTime);
         }
         if (CheckInput(GLFW_KEY_A))
         {
-            rCamera.camera.ProcessKeyboard(LEFT, delta);
+            rCamera.camera.ProcessKeyboard(LEFT, deltaTime);
         }
         if (CheckInput(GLFW_KEY_D))
         {
-            rCamera.camera.ProcessKeyboard(RIGHT, delta);
+            rCamera.camera.ProcessKeyboard(RIGHT, deltaTime);
         }
         if (CheckInput(GLFW_KEY_UP))
         {
-            rCamera.camera.ProcessKeyboard(UP, delta);
+            rCamera.camera.ProcessKeyboard(UP, deltaTime);
         }
         if (CheckInput(GLFW_KEY_DOWN))
         {
-            rCamera.camera.ProcessKeyboard(DOWN, delta);
+            rCamera.camera.ProcessKeyboard(DOWN, deltaTime);
         }
     }
 }
 
-void Renderer::ProcessMouse(bool rotateStatus, float delta)
+void Renderer::ProcessMouse(bool rotateStatus)
 {
     if (rotateStatus)
     {
         SetCursor(false);
-        rCamera.camera.ProcessMouseMovement(rCamera.xOff, rCamera.yOff, delta);
+        rCamera.camera.ProcessMouseMovement(rCamera.xOff, rCamera.yOff, deltaTime);
     }
     else
     {

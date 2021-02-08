@@ -113,13 +113,64 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
+void Shader::SetMatrices(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+{
+    setMat4("model", model);
+    setMat4("view", view);
+    setMat4("projection", projection);
+}
+
+void Shader::SetPointLight(glm::vec3 position,
+                           glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+                           float constant, float linear, float quadratic,
+                           bool hasName, std::string lightName)
+{
+    if (hasName)
+    {
+        setVec3(lightName + "position", position);
+        setFloat(lightName + "constant", constant);
+        setFloat(lightName + "linear", linear);
+        setFloat(lightName + "quadratic", quadratic);
+        setVec3(lightName + "ambient", ambient);
+        setVec3(lightName + "diffuse", diffuse);
+        setVec3(lightName + "specular", specular);
+    }
+    else
+    {
+        setVec3("pointLight.position", position);
+        setFloat("pointLight.constant", constant);
+        setFloat("pointLight.linear", linear);
+        setFloat("pointLight.quadratic", quadratic);
+        setVec3("pointLight.ambient", ambient);
+        setVec3("pointLight.diffuse", diffuse);
+        setVec3("pointLight.specular", specular);
+    }
+}
+void Shader::SetDirLight(glm::vec3 direction,
+                         glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
+{
+    setVec3("dirLight.direction", direction);
+    setVec3("dirLight.ambient", ambient);
+    setVec3("dirLight.diffuse", diffuse);
+    setVec3("dirLight.specular", specular);
+}
+void Shader::SetSpotLight(glm::vec3 position, glm::vec3 direction,
+                          glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+                          float cutoffAngle, float outerCutoffAngle)
+{
+    setVec3("spotLight.position", position);
+    setVec3("spotLight.direction", direction);
+    setFloat("spotLight.cutoff", glm::cos(glm::radians(cutoffAngle)));
+    setFloat("spotLight.outerCutoff", glm::cos(glm::radians(outerCutoffAngle)));
+    setVec3("spotLight.ambient", ambient);
+    setVec3("spotLight.diffuse", diffuse);
+    setVec3("spotLight.specular", specular);
+}
+
 // Sets the Scene Light Properties
 void Shader::SetScene(glm::vec3 lightColor, float angleVal, glm::vec3 pointLightPositions[], int numberOfLights, glm::vec3 camPos, glm::vec3 camFront)
 {
-    setVec3("dirLight.direction", glm::vec3(0.5f, -1.0f, -0.7f));
-    setVec3("dirLight.ambient", lightColor * 0.1f);
-    setVec3("dirLight.diffuse", lightColor * 0.25f);
-    setVec3("dirLight.specular", lightColor * 0.5f);
+    SetDirLight(glm::vec3(0.5f, -1.0f, -0.7f), lightColor * 0.1f, lightColor * 0.3f, lightColor * 0.5f);
 
     for (int i = 0; i < numberOfLights; i++)
     {
@@ -130,21 +181,11 @@ void Shader::SetScene(glm::vec3 lightColor, float angleVal, glm::vec3 pointLight
         glm::vec3 newLightPos = (lightModel * glm::vec4(1.0f));
 
         std::string lightName = "pointLights[" + std::to_string(i) + "].";
-        setVec3(lightName + "position", newLightPos);
-        setFloat(lightName + "constant", 1.0f);
-        setFloat(lightName + "linear", 0.22f);
-        setFloat(lightName + "quadratic", 0.20f);
-        setVec3(lightName + "ambient", lightColor * 0.05f);
-        setVec3(lightName + "diffuse", lightColor * 0.4f);
-        setVec3(lightName + "specular", lightColor);
+        SetPointLight(newLightPos,
+                      lightColor * 0.05f, lightColor * 0.4f, lightColor,
+                      1.0f, 0.22f, 0.20f, true, lightName);
     }
-    setVec3("spotLight.position", camPos);
-    setVec3("spotLight.direction", camFront);
-    setFloat("spotLight.cutoff", glm::cos(glm::radians(12.5f)));
-    setFloat("spotLight.outerCutoff", glm::cos(glm::radians(20.0f)));
-    setVec3("spotLight.ambient", lightColor * 0.05f);
-    setVec3("spotLight.diffuse", lightColor * 0.3f);
-    setVec3("spotLight.specular", lightColor * 0.5f);
+    SetSpotLight(camPos, camFront, lightColor * 0.05f, lightColor * 0.30f, lightColor * 0.5f, 12.5f, 20.0f);
 }
 
 // utility function for checking errors
