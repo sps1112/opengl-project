@@ -237,8 +237,6 @@ int main()
 		glm::vec3 objectScale(sclX, sclY, sclZ);
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, objectPos);
-		/*glm::quat rotQuat(glm::radians(objectRot));
-		model = glm::mat4(rotQuat) * model;*/
 		if (!globalRotation)
 		{
 			model = glm::rotate(model, glm::radians(objectRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
