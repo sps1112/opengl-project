@@ -40,7 +40,6 @@ add_executable(
     src/GUI.cpp
     src/Texture.cpp
     src/Math.cpp
-    src/Material.cpp
 
     includes/imgui/imgui.cpp
     includes/imgui/imgui_draw.cpp

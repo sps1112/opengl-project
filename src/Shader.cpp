@@ -113,6 +113,14 @@ void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
     glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
+void Shader::SetMaterial(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess)
+{
+    setVec3("material.ambient", ambient);
+    setVec3("material.diffuse", diffuse);
+    setVec3("material.specular", specular);
+    setFloat("material.shininess", 64);
+}
+
 void Shader::SetMatrices(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 {
     setMat4("model", model);

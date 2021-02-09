@@ -57,6 +57,7 @@ int main()
 
 	Shader shader2D(FileSystem::getPath("shaders/primitive/shader_2d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_2d.fs").c_str());
 	Shader sourceShader(FileSystem::getPath("shaders/primitive/shader_source.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_source.fs").c_str());
+	Shader shader3DMat(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_mat.fs").c_str());
 	Shader shader3D(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_scene.fs").c_str());
 	Shader modelShader(FileSystem::getPath("shaders/light/shader_model.vs").c_str(), FileSystem::getPath("shaders/light/shader_model.fs").c_str());
 
@@ -106,12 +107,14 @@ int main()
 	// UI Data
 	bool showTriangles = false;
 	bool showCubes = false;
+	bool colorCubes = false;
 	// Input Values
 	bool canMoveCamera = false;
 	bool canRotateCamera = false;
 
 	ImVec4 backgroundColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 	ImVec4 lightColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+	ImVec4 cubeColor = ImVec4(objectColor.x, objectColor.y, objectColor.z, 1.0f);
 
 	bool renderLines = false;
 	bool renderPoint = false;
@@ -122,23 +125,15 @@ int main()
 	bool pRenderFill;
 
 	bool showFrameRate = false;
-
-	float posX, posY, posZ, rotX, rotY, rotZ, sclX, sclY, sclZ;
-	posX = 0;
-	posY = 0;
-	posZ = 0;
-	rotX = 0;
-	rotY = 0;
-	rotZ = 0;
-	sclX = 1;
-	sclY = 1;
-	sclZ = 1;
+	Transform objectTransform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 	bool globalRotation = false;
 	guiWindow.AddGUI(GUI_LINE, "Setup OpenGL Render Data:-", true);
 	guiWindow.AddGUI(GUI_CHECKBOX, "Show Cubes", true, &showCubes);
 	guiWindow.AddGUI(GUI_CHECKBOX, "Show Triangles", true, &showTriangles);
 	guiWindow.AddGUI(GUI_COLOR, "Light Color", true, true, &lightColor);
 	guiWindow.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
+	guiWindow.AddGUI(GUI_CHECKBOX, "Color Cubes", true, &colorCubes);
+	guiWindow.AddGUI(GUI_COLOR, "Cube Color", true, true, &cubeColor);
 	guiWindow.AddGUI(GUI_LINE, "Fill Mode:- ", true);
 	guiWindow.AddGUI(GUI_CHECKBOX, "Fill", false, &renderFill);
 	guiWindow.AddGUI(GUI_CHECKBOX, "Line", false, &renderLines);
@@ -149,17 +144,17 @@ int main()
 	guiWindow.AddGUI(GUI_CHECKBOX, "Global Roatation", true, &globalRotation);
 	guiWindow.AddGUI(GUI_LINE, "Set Transform:-", true);
 	guiWindow.AddGUI(GUI_LINE, "Position:-", true);
-	guiWindow.AddGUI(GUI_FLOAT, "X##1", true, &posX, -5.0f, 5.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Y##1", true, &posY, -5.0f, 5.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Z##1", true, &posZ, -5.0f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "X##1", true, &objectTransform.position.x, -5.0f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Y##1", true, &objectTransform.position.y, -5.0f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Z##1", true, &objectTransform.position.z, -5.0f, 5.0f);
 	guiWindow.AddGUI(GUI_LINE, "Rotation:-", true);
-	guiWindow.AddGUI(GUI_FLOAT, "X##2", true, &rotX, -360.0f, 360.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Y##2", true, &rotY, -360.0f, 360.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Z##2", true, &rotZ, -360.0f, 360.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "X##2", true, &objectTransform.rotation.x, -360.0f, 360.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Y##2", true, &objectTransform.rotation.y, -360.0f, 360.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Z##2", true, &objectTransform.rotation.z, -360.0f, 360.0f);
 	guiWindow.AddGUI(GUI_LINE, "Scale:-", true);
-	guiWindow.AddGUI(GUI_FLOAT, "X##3", true, &sclX, 0.001f, 5.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Y##3", true, &sclY, 0.001f, 5.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Z##3", true, &sclZ, 0.001f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "X##3", true, &objectTransform.scale.x, 0.001f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Y##3", true, &objectTransform.scale.y, 0.001f, 5.0f);
+	guiWindow.AddGUI(GUI_FLOAT, "Z##3", true, &objectTransform.scale.z, 0.001f, 5.0f);
 
 	renderer.StartTimer();
 	while (!glfwWindowShouldClose(renderer.window))
@@ -203,26 +198,47 @@ int main()
 			sourceShader.SetMatrices(model, view, projection);
 			lightObject.Draw(sourceShader);
 		}
-		shader3D.use();
 
-		shader3D.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
-		shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
-		shader3D.setFloat("material.shininess", 64);
-		shader3D.setVec3("material.ambient", objectColor);
-		shader3D.setVec3("material.diffuse", objectColor);
-		shader3D.setVec3("material.specular", currentLightColor * 0.5f);
-
-		for (unsigned int i = 0; i < 10; i++)
+		if (colorCubes)
 		{
-			// model matrix :: LOCAL TO WORLD
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 15.0f * (i);
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			shader3D.SetMatrices(model, view, projection);
-			if (showCubes)
+			glm::vec3 currentCubeColor(cubeColor.x, cubeColor.y, cubeColor.z);
+			shader3DMat.use();
+			shader3DMat.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
+			shader3DMat.setVec3("viewPos", (*(renderer.GetCamera())).Position);
+			shader3DMat.SetMaterial(currentCubeColor, currentCubeColor, currentLightColor * 0.5f, 64);
+
+			for (unsigned int i = 0; i < 10; i++)
 			{
-				testCube.Draw(shader3D);
+				// model matrix :: LOCAL TO WORLD
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, cubePositions[i]);
+				float angle = 15.0f * (i);
+				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+				shader3DMat.SetMatrices(model, view, projection);
+				if (showCubes)
+				{
+					testCube.Draw(shader3DMat);
+				}
+			}
+		}
+		else
+		{
+			shader3D.use();
+			shader3D.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
+			shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
+			shader3D.setFloat("material.shininess", 64);
+			for (unsigned int i = 0; i < 10; i++)
+			{
+				// model matrix :: LOCAL TO WORLD
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, cubePositions[i]);
+				float angle = 15.0f * (i);
+				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+				shader3D.SetMatrices(model, view, projection);
+				if (showCubes)
+				{
+					testCube.Draw(shader3D);
+				}
 			}
 		}
 
@@ -233,9 +249,9 @@ int main()
 		}
 
 		// Setup matrices
-		glm::vec3 objectPos(posX, posY, posZ);
-		glm::vec3 objectRot(rotX, rotY, rotZ);
-		glm::vec3 objectScale(sclX, sclY, sclZ);
+		glm::vec3 objectPos(objectTransform.position);
+		glm::vec3 objectRot(objectTransform.rotation);
+		glm::vec3 objectScale(objectTransform.scale);
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, objectPos);
 		if (!globalRotation)
@@ -264,15 +280,7 @@ int main()
 		guiWindow.ShowGUI();
 		if (ImGui::Button("Reset Object"))
 		{
-			posX = 0;
-			posY = 0;
-			posZ = 0;
-			rotX = 0;
-			rotY = 0;
-			rotZ = 0;
-			sclX = 1;
-			sclY = 1;
-			sclZ = 1;
+			objectTransform.ResetToOrigin();
 		}
 		ImGui::Checkbox("Show FrameRate", &showFrameRate);
 		if (showFrameRate)

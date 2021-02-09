@@ -34,6 +34,7 @@ public:
 	void setMat2(const std::string &name, const glm::mat2 &mat) const;
 	void setMat3(const std::string &name, const glm::mat3 &mat) const;
 	void setMat4(const std::string &name, const glm::mat4 &mat) const;
+	void SetMaterial(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess);
 	void SetMatrices(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 	void SetPointLight(glm::vec3 position,
 					   glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
