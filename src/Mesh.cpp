@@ -17,7 +17,7 @@ void Mesh::Draw(Shader &shader)
     unsigned int heightNR = 1;
     for (unsigned int i = 0; i < textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + i);
+        SetActiveTexture(i);
         string number;
         string name = textures[i].type;
         if (name == "texture_diffuse")
@@ -37,9 +37,9 @@ void Mesh::Draw(Shader &shader)
             number = std::to_string(heightNR++);
         }
         shader.setFloat(("material." + name + number).c_str(), i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+        BindTexture(textures[i].id);
     }
-    glActiveTexture(GL_TEXTURE0);
+    UnBindTexture();
 
     // draw mesh
     vertexArray.DrawElements(indices.size());

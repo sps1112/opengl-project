@@ -3,6 +3,7 @@
 #include <Math.h>		// Math header
 #include <Shader.h>		// Shader header
 #include <Camera.h>		// Camera header
+#include <Texture.h>	// Texture header
 #include <Model.h>		// Model header
 #include <FileSystem.h> // Filesystem header
 #include <Utils.h>		// Utility header
@@ -59,22 +60,22 @@ int main()
 	Shader shader3D(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_scene.fs").c_str());
 	Shader modelShader(FileSystem::getPath("shaders/light/shader_model.vs").c_str(), FileSystem::getPath("shaders/light/shader_model.fs").c_str());
 
-	vector<pTexture> textures2D;
-	pTexture mainTex;
-	mainTex.id = LoadTexture(FileSystem::getPath("resources/textures/awesomeface.png").c_str());
+	vector<Texture> textures2D;
+	Texture mainTex;
+	mainTex.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/awesomeface.png").c_str());
 	mainTex.type = "texture_diffuse";
 	textures2D.push_back(mainTex);
 	triangle.SetupTextures(textures2D);
 
-	vector<pTexture> textures3D;
-	pTexture diffuse, specular, emmision;
-	diffuse.id = LoadTexture(FileSystem::getPath("resources/textures/container2.png").c_str());
+	vector<Texture> textures3D;
+	Texture diffuse, specular, emmision;
+	diffuse.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/container2.png").c_str());
 	diffuse.type = "texture_diffuse";
 	textures3D.push_back(diffuse);
-	specular.id = LoadTexture(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
+	specular.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
 	specular.type = "texture_specular";
 	textures3D.push_back(specular);
-	emmision.id = LoadTexture(FileSystem::getPath("resources/textures/matrix.jpg").c_str());
+	emmision.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/matrix.jpg").c_str());
 	emmision.type = "texture_emmision";
 	textures3D.push_back(emmision);
 	testCube.SetupTextures(textures3D);

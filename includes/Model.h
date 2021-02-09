@@ -14,6 +14,7 @@
 
 #include <Shader.h>
 #include <Mesh.h>
+#include <Texture.h>
 
 #include <fstream>
 #include <sstream>
@@ -22,8 +23,6 @@
 #include <string>
 #include <vector>
 using namespace std;
-
-unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false);
 
 class Model
 {

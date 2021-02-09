@@ -30,6 +30,8 @@ public:
     void GenerateBuffers();
     void BindVAO();
     void UnBindVAO();
+    void UnBindVBO();
+    void UnBindEBO();
     void BindVBO(int vertexCount, GLsizeiptr size, void *pointer);
     void BindEBO(int indicesCount, void *pointer);
     void SetAttribArray(int layoutLayer, int count, GLsizeiptr size, const void *pointer);

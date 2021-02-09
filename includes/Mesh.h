@@ -8,6 +8,7 @@
 
 #include <Shader.h>
 #include <Renderer.h>
+#include <Texture.h>
 
 #include <string>
 #include <vector>
@@ -20,13 +21,6 @@ struct Vertex
     glm::vec2 TexCoords;
     glm::vec3 Tangent;
     glm::vec3 Bitangent;
-};
-
-struct Texture
-{
-    unsigned int id;
-    string type;
-    string path;
 };
 
 class Mesh

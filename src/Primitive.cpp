@@ -6,7 +6,7 @@ Primitive::Primitive(const char *path)
     SetupPrimitive();
 }
 
-void Primitive::SetupTextures(vector<pTexture> textures)
+void Primitive::SetupTextures(vector<Texture> textures)
 {
     this->textures = textures;
 }
@@ -20,7 +20,7 @@ void Primitive::Draw(Shader &shader)
     unsigned int emmisionNR = 1;
     for (unsigned int i = 0; i < textures.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + i);
+        SetActiveTexture(i);
         string number;
         string name = textures[i].type;
         if (name == "texture_diffuse")
@@ -44,9 +44,9 @@ void Primitive::Draw(Shader &shader)
             number = std::to_string(emmisionNR++);
         }
         shader.setInt(("material." + name + number).c_str(), i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+        BindTexture(textures[i].id);
     }
-    glActiveTexture(GL_TEXTURE0);
+    UnBindTexture();
 
     // draw mesh
     if (is2D)

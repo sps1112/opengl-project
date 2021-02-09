@@ -213,10 +213,12 @@ void VertexArray::BindVAO()
 {
     glBindVertexArray(VAO);
 }
+
 void VertexArray::UnBindVAO()
 {
     glBindVertexArray(0);
 }
+
 void VertexArray::BindVBO(int vertexCount, GLsizeiptr size, void *pointer)
 {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -226,6 +228,16 @@ void VertexArray::BindEBO(int indicesCount, void *pointer)
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int), pointer, GL_STATIC_DRAW);
+}
+
+void VertexArray::UnBindVBO()
+{
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void VertexArray::UnBindEBO()
+{
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void VertexArray::SetAttribArray(int layoutLayer, int count, GLsizeiptr size, const void *pointer)
