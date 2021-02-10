@@ -1,8 +1,6 @@
 #include <Renderer.h>
 
 static RenderCamera rCamera;
-static float currentWidth;
-static float currentHeight;
 
 Renderer::Renderer(int majorVersion, int minorVersion, int windowWidth, int windowHeight)
 {
@@ -42,8 +40,8 @@ void Renderer::SetData()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    currentWidth = width;
-    currentHeight = height;
+    // glfwSetWindowAspectRatio(window, 16, 9);
+    // glfwSetWindowSizeLimits(window, 160, 90, 1600, 900);
 }
 
 void Renderer::SetOtherData()
@@ -206,6 +204,20 @@ void Renderer::ProcessDraw(bool lineStatus, bool pointStatus, bool fillStatus)
     SetDraw(choice);
 }
 
+float Renderer::GetCurrentWidth()
+{
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+    return width;
+}
+
+float Renderer::GetCurrentHeight()
+{
+    int width, height;
+    glfwGetWindowSize(window, &width, &height);
+    return height;
+}
+
 void VertexArray::GenerateBuffers()
 {
     glGenVertexArrays(1, &VAO);
@@ -264,21 +276,10 @@ void VertexArray::DrawElements(int indicesCount)
     UnBindVAO();
 }
 
-float GetCurrentWidth()
-{
-    return currentWidth;
-}
-float GetCurrentHeight()
-{
-    return currentHeight;
-}
-
 // callback on  window size change
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
-    currentWidth = width;
-    currentHeight = height;
 }
 
 // callback for mouse movement

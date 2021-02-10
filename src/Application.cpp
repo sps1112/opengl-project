@@ -189,11 +189,11 @@ int main()
 		if (!isOrtho)
 		{
 			// FOV = X degrees, RATIO =WIDTH/HEIGHT, Near Plane = 0.1, Far Plane = 100.0
-			projection = glm::perspective(glm::radians(renderer.GetZoom()), ((float)GetCurrentWidth()) / ((float)GetCurrentHeight()), 0.1f, 100.0f);
+			projection = glm::perspective(glm::radians(renderer.GetZoom()), ((float)renderer.GetCurrentWidth()) / ((float)renderer.GetCurrentHeight()), 0.1f, 100.0f);
 		}
 		else
 		{
-			float aspectRatio = GetCurrentWidth() / GetCurrentHeight();
+			float aspectRatio = renderer.GetCurrentWidth() / renderer.GetCurrentHeight();
 			float cWidth = aspectRatio * orthoSize;
 			float cHeight = orthoSize;
 			projection = glm::ortho(-cWidth / 2.0f, cWidth / 2.0f, -cHeight / 2.0f, cHeight / 2.0f, 0.01f, 100.0f);
@@ -212,46 +212,45 @@ int main()
 			sourceShader.SetMatrices(model, view, projection);
 			lightObject.Draw(sourceShader);
 		}
-
-		if (colorCubes)
+		if (showCubes)
 		{
-			glm::vec3 currentCubeColor(cubeColor.x, cubeColor.y, cubeColor.z);
-			shader3DMat.use();
-			shader3DMat.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
-			shader3DMat.setVec3("viewPos", (*(renderer.GetCamera())).Position);
-			shader3DMat.SetMaterial(currentCubeColor, currentCubeColor, currentLightColor * 0.5f, 64);
-
-			for (unsigned int i = 0; i < 10; i++)
+			if (colorCubes)
 			{
-				// model matrix :: LOCAL TO WORLD
-				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, cubePositions[i]);
-				float angle = 15.0f * (i);
-				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-				shader3DMat.SetMatrices(model, view, projection);
-				if (showCubes)
+				glm::vec3 currentCubeColor(cubeColor.x, cubeColor.y, cubeColor.z);
+				shader3DMat.use();
+				shader3DMat.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
+				shader3DMat.setVec3("viewPos", (*(renderer.GetCamera())).Position);
+				shader3DMat.SetMaterial(currentCubeColor, currentCubeColor, currentLightColor * 0.5f, 64);
+
+				for (unsigned int i = 0; i < 10; i++)
 				{
+					// model matrix :: LOCAL TO WORLD
+					glm::mat4 model = glm::mat4(1.0f);
+					model = glm::translate(model, cubePositions[i]);
+					float angle = 15.0f * (i);
+					model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+					shader3DMat.SetMatrices(model, view, projection);
 					testCube.Draw(shader3DMat);
 				}
 			}
-		}
-		else
-		{
-			shader3D.use();
-			shader3D.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
-			shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
-			shader3D.setFloat("material.shininess", 64);
-			for (unsigned int i = 0; i < 10; i++)
+			else
 			{
-				// model matrix :: LOCAL TO WORLD
-				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, cubePositions[i]);
-				float angle = 15.0f * (i);
-				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-				shader3D.SetMatrices(model, view, projection);
-				if (showCubes)
+				shader3D.use();
+				shader3D.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
+				shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
+				shader3D.setFloat("material.shininess", 64);
+				for (unsigned int i = 0; i < 10; i++)
 				{
-					testCube.Draw(shader3D);
+					// model matrix :: LOCAL TO WORLD
+					glm::mat4 model = glm::mat4(1.0f);
+					model = glm::translate(model, cubePositions[i]);
+					float angle = 15.0f * (i);
+					model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+					shader3D.SetMatrices(model, view, projection);
+					if (showCubes)
+					{
+						testCube.Draw(shader3D);
+					}
 				}
 			}
 		}

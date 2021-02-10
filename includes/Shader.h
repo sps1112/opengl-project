@@ -13,12 +13,20 @@
 #include <sstream>
 #include <iostream>
 
+enum SHADER_TYPE
+{
+	VERTEX_SHADER,
+	FRAGMENT_SHADER,
+	GEOMETRY_SHADER
+};
+
 // Shader Class
 class Shader
 {
 public:
 	unsigned int ID;										  // shader program ID
 	Shader(const char *vertexPath, const char *fragmentPath); // creates and links shader program
+	unsigned int CompileShader(const char *code, SHADER_TYPE type);
 	// uses shader program
 	void use();
 	// utility functions
@@ -50,7 +58,7 @@ public:
 
 private:
 	// utility function for checking errors
-	void checkCompileErrors(unsigned int shader, std::string type);
+	void CheckCompileErrors(unsigned int shader, std::string type);
 };
 
 #endif // !SHADER_H

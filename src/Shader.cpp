@@ -36,25 +36,41 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) // creates and 
     const char *fShaderCode = fragmentCode.c_str();
     unsigned int vertex, fragment;
     // vertex Shader
-    vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, &vShaderCode, NULL);
-    glCompileShader(vertex);
-    checkCompileErrors(vertex, "VERTEX");
+    vertex = CompileShader(vShaderCode, VERTEX_SHADER);
+    CheckCompileErrors(vertex, "VERTEX");
     // fragment Shader
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, &fShaderCode, NULL);
-    glCompileShader(fragment);
-    checkCompileErrors(fragment, "FRAGMENT");
+    fragment = CompileShader(fShaderCode, FRAGMENT_SHADER);
+    CheckCompileErrors(fragment, "FRAGMENT");
 
     // shader program
     ID = glCreateProgram();
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
-    checkCompileErrors(ID, "PROGRAM");
+    CheckCompileErrors(ID, "PROGRAM");
     // delete individual shaders
     glDeleteShader(vertex);
     glDeleteShader(fragment);
+}
+
+unsigned int Shader::CompileShader(const char *code, SHADER_TYPE type)
+{
+    unsigned int shader;
+    if (type == VERTEX_SHADER)
+    {
+        shader = glCreateShader(GL_VERTEX_SHADER);
+    }
+    else if (type == FRAGMENT_SHADER)
+    {
+        shader = glCreateShader(GL_FRAGMENT_SHADER);
+    }
+    else if (type == GEOMETRY_SHADER)
+    {
+        shader = glCreateShader(GL_GEOMETRY_SHADER);
+    }
+    glShaderSource(shader, 1, &code, NULL);
+    glCompileShader(shader);
+    return shader;
 }
 
 // uses shader program
@@ -197,7 +213,7 @@ void Shader::SetScene(glm::vec3 lightColor, float angleVal, glm::vec3 pointLight
 }
 
 // utility function for checking errors
-void Shader::checkCompileErrors(unsigned int shader, std::string type)
+void Shader::CheckCompileErrors(unsigned int shader, std::string type)
 {
     int success;
     char infoLog[1024];

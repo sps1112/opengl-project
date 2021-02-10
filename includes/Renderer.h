@@ -70,6 +70,8 @@ public:
     void ProcessMouse(bool rotateStatus);
     void SetDraw(int choice);
     void ProcessDraw(bool lineStatus, bool pointStatus, bool fillStatus);
+    float GetCurrentWidth();
+    float GetCurrentHeight();
 
 private:
     float currentFrameTime;
@@ -77,8 +79,6 @@ private:
     float prevFrameTime;
 };
 
-float GetCurrentWidth();
-float GetCurrentHeight();
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
