@@ -48,6 +48,9 @@ int main()
 	// Setup ImGui
 	GUI gui(renderer.window, majorVersion, minorVersion);
 	GUIWindow guiWindow(guiTitle);
+	GUIWindow cameraUI("Camera UI");
+	GUIWindow primitiveUI("Primitive UI");
+	GUIWindow objectUI("Object UI");
 
 	Primitive triangle(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
@@ -111,6 +114,8 @@ int main()
 	// Input Values
 	bool canMoveCamera = false;
 	bool canRotateCamera = false;
+	bool isOrtho = false;
+	float orthoSize = 3.0f;
 
 	ImVec4 backgroundColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 	ImVec4 lightColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -127,34 +132,42 @@ int main()
 	bool showFrameRate = false;
 	Transform objectTransform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 	bool globalRotation = false;
+
 	guiWindow.AddGUI(GUI_LINE, "Setup OpenGL Render Data:-", true);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Show Cubes", true, &showCubes);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Show Triangles", true, &showTriangles);
-	guiWindow.AddGUI(GUI_COLOR, "Light Color", true, true, &lightColor);
 	guiWindow.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Color Cubes", true, &colorCubes);
-	guiWindow.AddGUI(GUI_COLOR, "Cube Color", true, true, &cubeColor);
+	guiWindow.AddGUI(GUI_COLOR, "Light Color", true, true, &lightColor);
 	guiWindow.AddGUI(GUI_LINE, "Fill Mode:- ", true);
 	guiWindow.AddGUI(GUI_CHECKBOX, "Fill", false, &renderFill);
 	guiWindow.AddGUI(GUI_CHECKBOX, "Line", false, &renderLines);
 	guiWindow.AddGUI(GUI_CHECKBOX, "Point", false, &renderPoint);
 	guiWindow.AddGUI(GUI_FLOAT, "Light Rotation", true, &angleVal, 0.0f, 360.0f);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Move Camera", true, &canMoveCamera);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Rotate Camera", true, &canRotateCamera);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Global Roatation", true, &globalRotation);
-	guiWindow.AddGUI(GUI_LINE, "Set Transform:-", true);
-	guiWindow.AddGUI(GUI_LINE, "Position:-", true);
-	guiWindow.AddGUI(GUI_FLOAT, "X##1", true, &objectTransform.position.x, -5.0f, 5.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Y##1", true, &objectTransform.position.y, -5.0f, 5.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Z##1", true, &objectTransform.position.z, -5.0f, 5.0f);
-	guiWindow.AddGUI(GUI_LINE, "Rotation:-", true);
-	guiWindow.AddGUI(GUI_FLOAT, "X##2", true, &objectTransform.rotation.x, -360.0f, 360.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Y##2", true, &objectTransform.rotation.y, -360.0f, 360.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Z##2", true, &objectTransform.rotation.z, -360.0f, 360.0f);
-	guiWindow.AddGUI(GUI_LINE, "Scale:-", true);
-	guiWindow.AddGUI(GUI_FLOAT, "X##3", true, &objectTransform.scale.x, 0.001f, 5.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Y##3", true, &objectTransform.scale.y, 0.001f, 5.0f);
-	guiWindow.AddGUI(GUI_FLOAT, "Z##3", true, &objectTransform.scale.z, 0.001f, 5.0f);
+
+	cameraUI.AddGUI(GUI_CHECKBOX, "Move Camera", true, &canMoveCamera);
+	cameraUI.AddGUI(GUI_CHECKBOX, "Rotate Camera", true, &canRotateCamera);
+	cameraUI.AddGUI(GUI_CHECKBOX, "Enable Orthographic", true, &isOrtho);
+	cameraUI.AddGUI(GUI_FLOAT, "Camera Size", true, &orthoSize, 1.0f, 10.0f);
+
+	primitiveUI.AddGUI(GUI_LINE, "Setup Primitive Data:-", true);
+	primitiveUI.AddGUI(GUI_CHECKBOX, "Show Triangles", true, &showTriangles);
+	primitiveUI.AddGUI(GUI_CHECKBOX, "Show Cubes", true, &showCubes);
+	primitiveUI.AddGUI(GUI_CHECKBOX, "Color Cubes", true, &colorCubes);
+	primitiveUI.AddGUI(GUI_COLOR, "Cube Color", true, true, &cubeColor);
+
+	objectUI.AddGUI(GUI_LINE, "Setup Model Data:-", true);
+	objectUI.AddGUI(GUI_CHECKBOX, "Global Rotation", true, &globalRotation);
+	objectUI.AddGUI(GUI_LINE, "Set Transform:-", true);
+	objectUI.AddGUI(GUI_LINE, "Position:-", true);
+	objectUI.AddGUI(GUI_FLOAT, "X##1", true, &objectTransform.position.x, -5.0f, 5.0f);
+	objectUI.AddGUI(GUI_FLOAT, "Y##1", true, &objectTransform.position.y, -5.0f, 5.0f);
+	objectUI.AddGUI(GUI_FLOAT, "Z##1", true, &objectTransform.position.z, -5.0f, 5.0f);
+	objectUI.AddGUI(GUI_LINE, "Rotation:-", true);
+	objectUI.AddGUI(GUI_FLOAT, "X##2", true, &objectTransform.rotation.x, -360.0f, 360.0f);
+	objectUI.AddGUI(GUI_FLOAT, "Y##2", true, &objectTransform.rotation.y, -360.0f, 360.0f);
+	objectUI.AddGUI(GUI_FLOAT, "Z##2", true, &objectTransform.rotation.z, -360.0f, 360.0f);
+	objectUI.AddGUI(GUI_LINE, "Scale:-", true);
+	objectUI.AddGUI(GUI_FLOAT, "X##3", true, &objectTransform.scale.x, 0.001f, 5.0f);
+	objectUI.AddGUI(GUI_FLOAT, "Y##3", true, &objectTransform.scale.y, 0.001f, 5.0f);
+	objectUI.AddGUI(GUI_FLOAT, "Z##3", true, &objectTransform.scale.z, 0.001f, 5.0f);
 
 	renderer.StartTimer();
 	while (!glfwWindowShouldClose(renderer.window))
@@ -182,8 +195,18 @@ int main()
 
 		// projection matrix:: VIEW TO CLIPPED
 		glm::mat4 projection;
-		// FOV = X degrees, RATIO =WIDTH/HEIGHT, Near Plane = 0.1, Far Plane = 100.0
-		projection = glm::perspective(glm::radians(renderer.GetZoom()), ((float)SCR_WIDTH) / ((float)SCR_HEIGHT), 0.1f, 100.0f);
+		if (!isOrtho)
+		{
+			// FOV = X degrees, RATIO =WIDTH/HEIGHT, Near Plane = 0.1, Far Plane = 100.0
+			projection = glm::perspective(glm::radians(renderer.GetZoom()), ((float)GetCurrentWidth()) / ((float)GetCurrentHeight()), 0.1f, 100.0f);
+		}
+		else
+		{
+			float aspectRatio = GetCurrentWidth() / GetCurrentHeight();
+			float cWidth = aspectRatio * orthoSize;
+			float cHeight = orthoSize;
+			projection = glm::ortho(-cWidth / 2.0f, cWidth / 2.0f, -cHeight / 2.0f, cHeight / 2.0f, 0.01f, 100.0f);
+		}
 
 		glm::vec3 currentLightColor(lightColor.x, lightColor.y, lightColor.z);
 		glm::mat4 lightModel = glm::mat4(1.0f);
@@ -278,10 +301,6 @@ int main()
 
 		// Render your GUI
 		guiWindow.ShowGUI();
-		if (ImGui::Button("Reset Object"))
-		{
-			objectTransform.ResetToOrigin();
-		}
 		ImGui::Checkbox("Show FrameRate", &showFrameRate);
 		if (showFrameRate)
 		{
@@ -290,6 +309,16 @@ int main()
 			ImGui::Text("FrameRate:- %d", val);
 		}
 		guiWindow.EndGUI();
+		cameraUI.ShowGUI();
+		cameraUI.EndGUI();
+		primitiveUI.ShowGUI();
+		primitiveUI.EndGUI();
+		objectUI.ShowGUI();
+		if (ImGui::Button("Reset Object"))
+		{
+			objectTransform.ResetToOrigin();
+		}
+		objectUI.EndGUI();
 
 		// Check bools
 		if (renderFill != pRenderFill && renderFill)
@@ -310,6 +339,11 @@ int main()
 		if (!renderFill && !renderLines && !renderPoint)
 		{
 			renderFill = true;
+		}
+
+		if (renderer.CheckInput(GLFW_KEY_LEFT_ALT))
+		{
+			canRotateCamera = false;
 		}
 		// call events
 		gui.RenderGUI();

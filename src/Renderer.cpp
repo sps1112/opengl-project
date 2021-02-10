@@ -1,6 +1,8 @@
 #include <Renderer.h>
 
 static RenderCamera rCamera;
+static float currentWidth;
+static float currentHeight;
 
 Renderer::Renderer(int majorVersion, int minorVersion, int windowWidth, int windowHeight)
 {
@@ -40,6 +42,8 @@ void Renderer::SetData()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    currentWidth = width;
+    currentHeight = height;
 }
 
 void Renderer::SetOtherData()
@@ -260,10 +264,21 @@ void VertexArray::DrawElements(int indicesCount)
     UnBindVAO();
 }
 
+float GetCurrentWidth()
+{
+    return currentWidth;
+}
+float GetCurrentHeight()
+{
+    return currentHeight;
+}
+
 // callback on  window size change
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
+    currentWidth = width;
+    currentHeight = height;
 }
 
 // callback for mouse movement
