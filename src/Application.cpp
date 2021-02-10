@@ -14,8 +14,8 @@
 #include <vector>
 
 // Const settings
-const int majorVersion = 3;
-const int minorVersion = 3;
+const int majorVersion = 4;
+const int minorVersion = 6;
 const char *windowTitle = "OpenGL Window";
 std::string guiTitle = "UI Window";
 const unsigned int SCR_WIDTH = 800;
@@ -58,11 +58,11 @@ int main()
 
 	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
 
-	Shader shader2D(FileSystem::getPath("shaders/primitive/shader_2d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_2d.fs").c_str());
-	Shader sourceShader(FileSystem::getPath("shaders/primitive/shader_source.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_source.fs").c_str());
-	Shader shader3DMat(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_mat.fs").c_str());
-	Shader shader3D(FileSystem::getPath("shaders/primitive/shader_3d.vs").c_str(), FileSystem::getPath("shaders/primitive/shader_3d_scene.fs").c_str());
-	Shader modelShader(FileSystem::getPath("shaders/light/shader_model.vs").c_str(), FileSystem::getPath("shaders/light/shader_model.fs").c_str());
+	Shader shader2D(FileSystem::getPath("shaders/modern/shader_2d.vs").c_str(), FileSystem::getPath("shaders/modern/shader_2d.fs").c_str());
+	Shader sourceShader(FileSystem::getPath("shaders/modern/shader_source.vs").c_str(), FileSystem::getPath("shaders/modern/shader_source.fs").c_str());
+	Shader shader3DMat(FileSystem::getPath("shaders/modern/shader_3d.vs").c_str(), FileSystem::getPath("shaders/modern/shader_3d_mat.fs").c_str());
+	Shader shader3D(FileSystem::getPath("shaders/modern/shader_3d.vs").c_str(), FileSystem::getPath("shaders/modern/shader_3d_scene.fs").c_str());
+	Shader modelShader(FileSystem::getPath("shaders/modern/shader_model.vs").c_str(), FileSystem::getPath("shaders/modern/shader_model.fs").c_str());
 
 	vector<Texture> textures2D;
 	Texture mainTex;
@@ -156,18 +156,9 @@ int main()
 	objectUI.AddGUI(GUI_LINE, "Setup Model Data:-", true);
 	objectUI.AddGUI(GUI_CHECKBOX, "Global Rotation", true, &globalRotation);
 	objectUI.AddGUI(GUI_LINE, "Set Transform:-", true);
-	objectUI.AddGUI(GUI_LINE, "Position:-", true);
-	objectUI.AddGUI(GUI_FLOAT, "X##1", true, &objectTransform.position.x, -5.0f, 5.0f);
-	objectUI.AddGUI(GUI_FLOAT, "Y##1", true, &objectTransform.position.y, -5.0f, 5.0f);
-	objectUI.AddGUI(GUI_FLOAT, "Z##1", true, &objectTransform.position.z, -5.0f, 5.0f);
-	objectUI.AddGUI(GUI_LINE, "Rotation:-", true);
-	objectUI.AddGUI(GUI_FLOAT, "X##2", true, &objectTransform.rotation.x, -360.0f, 360.0f);
-	objectUI.AddGUI(GUI_FLOAT, "Y##2", true, &objectTransform.rotation.y, -360.0f, 360.0f);
-	objectUI.AddGUI(GUI_FLOAT, "Z##2", true, &objectTransform.rotation.z, -360.0f, 360.0f);
-	objectUI.AddGUI(GUI_LINE, "Scale:-", true);
-	objectUI.AddGUI(GUI_FLOAT, "X##3", true, &objectTransform.scale.x, 0.001f, 5.0f);
-	objectUI.AddGUI(GUI_FLOAT, "Y##3", true, &objectTransform.scale.y, 0.001f, 5.0f);
-	objectUI.AddGUI(GUI_FLOAT, "Z##3", true, &objectTransform.scale.z, 0.001f, 5.0f);
+	objectUI.AddGUI(GUI_VECTOR3, "Position", true, &objectTransform.position.x, -5.0f, 5.0f);
+	objectUI.AddGUI(GUI_VECTOR3, "Rotation", true, &objectTransform.rotation.x, -360.0f, 360.0f);
+	objectUI.AddGUI(GUI_VECTOR3, "Scale", true, &objectTransform.scale.x, 0.01f, 5.0f);
 
 	renderer.StartTimer();
 	while (!glfwWindowShouldClose(renderer.window))

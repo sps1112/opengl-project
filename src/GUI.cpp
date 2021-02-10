@@ -99,6 +99,10 @@ void GUIWindow::ShowItems()
         {
             ImGui::SliderFloat((item.text).c_str(), item.pointerF, item.minVal, item.maxVal);
         }
+        else if (item.type == GUI_VECTOR3)
+        {
+            ImGui::SliderFloat3((item.text).c_str(), item.pointerF, item.minVal, item.maxVal);
+        }
         else if (item.type == GUI_COLOR)
         {
             ImGui::ColorEdit3((item.text).c_str(), item.pointerF);

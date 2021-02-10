@@ -18,6 +18,7 @@ enum GUI_TYPE
     GUI_CHECKBOX,
     GUI_FLOAT,
     GUI_COLOR,
+    GUI_VECTOR3,
 };
 
 class GUIItem
