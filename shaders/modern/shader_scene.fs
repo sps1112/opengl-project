@@ -1,8 +1,13 @@
 #version 460 core
 struct Material {
-  sampler2D diffuse;
-  sampler2D specular;
-  sampler2D emmision;
+  sampler2D texture_diffuse1;
+  sampler2D texture_specular1;
+  sampler2D texture_emmision1;
+
+  vec3 ambient;
+  vec3 diffuse;
+  vec3 specular;
+
   float shininess;
 };
 
@@ -13,7 +18,10 @@ struct DirLight {
   vec3 diffuse;
   vec3 specular;
 };
-uniform DirLight dirLight;
+#define NR_DIRECTION_LIGHTS 4
+uniform DirLight dirLights[NR_DIRECTION_LIGHTS];
+uniform int dirLightCount;
+uniform bool useDirLight;
 vec3 CalculateDirLight(DirLight light, vec3 normal, vec3 viewDir);
 
 struct PointLight {
@@ -27,8 +35,10 @@ struct PointLight {
   vec3 diffuse;
   vec3 specular;
 };
-#define NR_POINT_LIGHTS 4
+#define NR_POINT_LIGHTS 6
 uniform PointLight pointLights[NR_POINT_LIGHTS];
+uniform int pointLightCount;
+uniform bool usePointLight;
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos,
                          vec3 viewDir);
 
@@ -43,7 +53,10 @@ struct SpotLight {
   vec3 diffuse;
   vec3 specular;
 };
-uniform SpotLight spotLight;
+#define NR_SPOT_LIGHTS 2
+uniform SpotLight spotLights[NR_SPOT_LIGHTS];
+uniform int spotLightCount;
+uniform bool useSpotLight;
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos,
                         vec3 viewDir);
 
@@ -59,6 +72,7 @@ in vec2 TexCoords;
 
 uniform vec3 viewPos;
 uniform Material material;
+uniform bool useTexture;
 
 void main() {
   // Scene Lighting
@@ -67,29 +81,37 @@ void main() {
   vec3 result = vec3(0.0f);
 
   // 1:- Directional Light
-  result += CalculateDirLight(dirLight, norm, viewDir);
+  if (useDirLight) {
+    for (int i = 0; i < min(NR_DIRECTION_LIGHTS, dirLightCount); i++) {
+      result += CalculateDirLight(dirLights[i], norm, viewDir);
+    }
+  }
 
   // 2:- Point Lights
-  for (int i = 0; i < NR_POINT_LIGHTS; i++) {
-    result += CalculatePointLight(pointLights[i], norm, FragPos, viewDir);
+  if (usePointLight) {
+    for (int i = 0; i < min(NR_POINT_LIGHTS, pointLightCount); i++) {
+      result += CalculatePointLight(pointLights[i], norm, FragPos, viewDir);
+    }
   }
 
   // 3:- SpotLight
-  result += CalculateSpotLight(spotLight, norm, FragPos, viewDir);
+  if (useSpotLight) {
+    for (int i = 0; i < min(NR_SPOT_LIGHTS, spotLightCount); i++) {
+      result += CalculateSpotLight(spotLights[i], norm, FragPos, viewDir);
+    }
+  }
 
   // Other effects
   vec3 emmision = vec3(0.0f);
-  if (texture(material.specular, TexCoords).r == 0.0) {
-    emmision = vec3(texture(material.emmision, TexCoords));
+  if (useTexture) {
+    if (texture(material.texture_specular1, TexCoords).r == 0.0) {
+      emmision = vec3(texture(material.texture_emmision1, TexCoords));
+    }
   }
 
   // Resultant Lighting
   result += (emmision);
   FragColor = vec4(result, 1.0f);
-
-  // No Lighting
-  /*vec3 result=vec3(texture(material.diffuse,TexCoords));
-  FragColor=vec4(result, 1.0f);*/
 }
 
 vec3 CalculateDirLight(DirLight light, vec3 normal, vec3 viewDir) {
@@ -147,20 +169,36 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos,
 }
 
 vec3 GetAmbient(vec3 ambient) {
-  vec3 final = ambient * vec3(texture(material.diffuse, TexCoords));
+  vec3 final = vec3(0.0f, 0.0f, 0.0f);
+  if (useTexture) {
+    final = ambient * vec3(texture(material.texture_diffuse1, TexCoords));
+  } else {
+    final = ambient * material.ambient;
+  }
   return final;
 }
 
 vec3 GetDiffuse(vec3 normal, vec3 lightDir, vec3 diffuse) {
   float diff = max(dot(normal, lightDir), 0.0f);
-  vec3 final = diffuse * (diff * vec3(texture(material.diffuse, TexCoords)));
+  vec3 final = vec3(0.0f, 0.0f, 0.0f);
+  if (useTexture) {
+    final =
+        diffuse * (diff * vec3(texture(material.texture_diffuse1, TexCoords)));
+  } else {
+    final = diffuse * (diff * material.diffuse);
+  }
   return final;
 }
 
 vec3 GetSpecular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 specular) {
   vec3 reflectDir = reflect(-lightDir, normal);
   float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-  vec3 final =
-      specular * (spec * (vec3(texture(material.specular, TexCoords))));
+  vec3 final = vec3(0.0f, 0.0f, 0.0f);
+  if (useTexture) {
+    final = specular *
+            (spec * (vec3(texture(material.texture_specular1, TexCoords))));
+  } else {
+    final = specular * (spec * material.specular);
+  }
   return final;
 }

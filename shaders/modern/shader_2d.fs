@@ -9,6 +9,7 @@ in vec3 ourColor;
 in vec2 TexCoord;
 
 void main() {
-  FragColor =
-      texture(material.texture_diffuse1, TexCoord) * vec4(ourColor, 1.0f);
+  vec3 finalColor =
+      vec3(texture(material.texture_diffuse1, TexCoord)) * ourColor;
+  FragColor = vec4(finalColor, 1.0f);
 }
