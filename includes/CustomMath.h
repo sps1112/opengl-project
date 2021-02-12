@@ -1,5 +1,5 @@
-#ifndef MATH_H
-#define MATH_H
+#ifndef CUSTOM_MATH_H
+#define CUSTOM_MATH_H
 
 // glm libraries for math
 #include <glm/glm/glm.hpp>

@@ -5,7 +5,7 @@
 #include <FileSystem.h> // Filesystem header
 #include <Shader.h>		// Shader header
 #include <Texture.h>	// Texture header
-#include <Math.h>		// Math header
+#include <CustomMath.h> // Math header
 #include <Primitive.h>	// Primitive header
 #include <Camera.h>		// Camera header
 #include <Light.h>		// Light header

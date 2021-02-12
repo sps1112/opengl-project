@@ -11,7 +11,7 @@
 
 #include <Camera.h>
 #include <Utils.h>
-#include <Math.h>
+#include <CustomMath.h>
 
 struct RenderCamera
 {

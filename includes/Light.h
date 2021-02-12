@@ -2,7 +2,7 @@
 #define LIGHT_H
 
 #include <Renderer.h>
-#include <Math.h>
+#include <CustomMath.h>
 
 enum LIGHT_TYPE
 {

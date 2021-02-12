@@ -39,7 +39,7 @@ add_executable(
     src/Renderer.cpp
     src/GUI.cpp
     src/Texture.cpp
-    src/Math.cpp
+    src/CustomMath.cpp
     src/Light.cpp
 
     includes/imgui/imgui.cpp
