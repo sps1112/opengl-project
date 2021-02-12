@@ -33,7 +33,7 @@ int main()
 		return -1;
 	}
 	renderer.SetData();
-	if (!renderer.checkGLAD())
+	if (!renderer.CheckGLAD())
 	{
 		renderer.TerminateGLFW();
 		return -1;
@@ -87,22 +87,15 @@ int main()
 	glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 
 	glm::vec3 pointLightPositions[] = {
-		glm::vec3(0.7f, 0.2f, 2.0f),
-		glm::vec3(2.3f, -3.3f, -4.0f),
-		glm::vec3(-4.0f, 2.0f, -12.0f),
-		glm::vec3(0.0f, 0.0f, -3.0f)};
+		glm::vec3(0.7f, 0.2f, 2.0f), glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(-4.0f, 2.0f, -12.0f), glm::vec3(0.0f, 0.0f, -3.0f)};
 
 	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f, 0.0f, -2.0f),
-		glm::vec3(2.0f, 5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f, 3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f, 2.0f, -2.5f),
-		glm::vec3(1.5f, 0.2f, -1.5f),
-		glm::vec3(-1.3f, 1.0f, -1.5f)};
+		glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(2.0f, 5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f), glm::vec3(-1.7f, 3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f), glm::vec3(1.5f, 2.0f, -2.5f),
+		glm::vec3(1.5f, 0.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
 
 	// Values setup
 	float angleVal = 0.0f;
@@ -121,14 +114,9 @@ int main()
 	ImVec4 lightColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 	ImVec4 cubeColor = ImVec4(objectColor.x, objectColor.y, objectColor.z, 1.0f);
 
-	bool renderLines = false;
-	bool renderPoint = false;
-	bool renderFill = true;
-
-	bool pRenderLine;
-	bool pRenderPoint;
-	bool pRenderFill;
-
+	int drawOption = 2;
+	const char *drawComboItems[] = {
+		"Draw Line", "Draw Point", "Draw Fill"};
 	bool showFrameRate = false;
 	Transform objectTransform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 	bool globalRotation = false;
@@ -136,10 +124,7 @@ int main()
 	guiWindow.AddGUI(GUI_LINE, "Setup OpenGL Render Data:-", true);
 	guiWindow.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
 	guiWindow.AddGUI(GUI_COLOR, "Light Color", true, true, &lightColor);
-	guiWindow.AddGUI(GUI_LINE, "Fill Mode:- ", true);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Fill", false, &renderFill);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Line", false, &renderLines);
-	guiWindow.AddGUI(GUI_CHECKBOX, "Point", false, &renderPoint);
+	guiWindow.AddGUI(GUI_COMBO, "Draw Mode", true, true, &drawOption, drawComboItems, 3);
 	guiWindow.AddGUI(GUI_FLOAT, "Light Rotation", true, &angleVal, 0.0f, 360.0f);
 
 	cameraUI.AddGUI(GUI_CHECKBOX, "Move Camera", true, &canMoveCamera);
@@ -161,13 +146,8 @@ int main()
 	objectUI.AddGUI(GUI_VECTOR3, "Scale", true, &objectTransform.scale.x, 0.01f, 5.0f);
 
 	renderer.StartTimer();
-	while (!glfwWindowShouldClose(renderer.window))
+	while (!renderer.CheckWindowFlag())
 	{
-		// Setup bools
-		pRenderLine = renderLines;
-		pRenderPoint = renderPoint;
-		pRenderFill = renderFill;
-
 		// Setup Imgui Frame data
 		gui.NewFrame();
 
@@ -177,7 +157,7 @@ int main()
 		// input commands
 		renderer.ProcessInput(canMoveCamera);
 		renderer.SetColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
-		renderer.ProcessDraw(renderLines, renderPoint, renderFill);
+		renderer.SetDraw(drawOption);
 		renderer.ProcessMouse(canRotateCamera);
 
 		// view matrix :: WORLD TO VIEW
@@ -309,27 +289,6 @@ int main()
 			objectTransform.ResetToOrigin();
 		}
 		objectUI.EndGUI();
-
-		// Check bools
-		if (renderFill != pRenderFill && renderFill)
-		{
-			renderLines = false;
-			renderPoint = false;
-		}
-		else if (renderPoint != pRenderPoint && renderPoint)
-		{
-			renderLines = false;
-			renderFill = false;
-		}
-		else if (renderLines != pRenderLine && renderLines)
-		{
-			renderFill = false;
-			renderPoint = false;
-		}
-		if (!renderFill && !renderLines && !renderPoint)
-		{
-			renderFill = true;
-		}
 
 		if (renderer.CheckInput(GLFW_KEY_LEFT_ALT))
 		{
