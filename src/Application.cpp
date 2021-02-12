@@ -1,27 +1,28 @@
 // Custom Headers
 #include <Renderer.h>	// Renderer header
-#include <Math.h>		// Math header
-#include <Shader.h>		// Shader header
-#include <Camera.h>		// Camera header
-#include <Texture.h>	// Texture header
-#include <Model.h>		// Model header
-#include <FileSystem.h> // Filesystem header
 #include <Utils.h>		// Utility header
-#include <Primitive.h>	// Primitive header
 #include <GUI.h>		// GUI header
+#include <FileSystem.h> // Filesystem header
+#include <Shader.h>		// Shader header
+#include <Texture.h>	// Texture header
+#include <Math.h>		// Math header
+#include <Primitive.h>	// Primitive header
+#include <Camera.h>		// Camera header
+#include <Light.h>		// Light header
+#include <Model.h>		// Model header
 
+// Standard Headers
 #include <iostream>
 #include <vector>
 
-// Const settings
+// Const Settings
 const int majorVersion = 4;
 const int minorVersion = 6;
-const char *windowTitle = "OpenGL Window";
-std::string guiTitle = "UI Window";
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+const char *windowTitle = "OpenGL window";
 
-// main function
+// Main Function
 int main()
 {
 	Renderer renderer(majorVersion, minorVersion, SCR_WIDTH, SCR_HEIGHT);
@@ -40,29 +41,32 @@ int main()
 	}
 	renderer.SetOtherData();
 
-	// Camera settings
+	// Camera Settings
 	glm::vec3 cameraPos(0.0f, 0.0f, 5.0f);
 	Camera localCam(cameraPos);
 	renderer.SetCamera(localCam);
 
 	// Setup ImGui
 	GUI gui(renderer.window, majorVersion, minorVersion);
-	GUIWindow guiWindow(guiTitle);
+	GUIWindow standardUI("UI window");
 	GUIWindow cameraUI("Camera UI");
 	GUIWindow primitiveUI("Primitive UI");
 	GUIWindow objectUI("Object UI");
 
 	Primitive triangle(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
+	Primitive cube(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
-	Primitive testCube(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 
 	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"));
 
-	Shader shader2D(FileSystem::getPath("shaders/modern/shader_2d.vs").c_str(), FileSystem::getPath("shaders/modern/shader_2d.fs").c_str());
-	Shader sourceShader(FileSystem::getPath("shaders/modern/shader_source.vs").c_str(), FileSystem::getPath("shaders/modern/shader_source.fs").c_str());
-	Shader shader3DMat(FileSystem::getPath("shaders/modern/shader_3d.vs").c_str(), FileSystem::getPath("shaders/modern/shader_3d_mat.fs").c_str());
-	Shader shader3D(FileSystem::getPath("shaders/modern/shader_3d.vs").c_str(), FileSystem::getPath("shaders/modern/shader_3d_scene.fs").c_str());
-	Shader modelShader(FileSystem::getPath("shaders/modern/shader_model.vs").c_str(), FileSystem::getPath("shaders/modern/shader_model.fs").c_str());
+	Shader shader2D((FileSystem::getPath("shaders/modern/shader_2d.vs")).c_str(),
+					(FileSystem::getPath("shaders/modern/shader_2d.fs")).c_str());
+	Shader shader3D((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
+					(FileSystem::getPath("shaders/modern/shader_scene.fs")).c_str());
+	Shader sourceShader(FileSystem::getPath("shaders/modern/shader_source.vs").c_str(),
+						FileSystem::getPath("shaders/modern/shader_source.fs").c_str());
+	Shader modelShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
+					   (FileSystem::getPath("shaders/modern/shader_scene.fs")).c_str());
 
 	vector<Texture> textures2D;
 	Texture mainTex;
@@ -82,7 +86,7 @@ int main()
 	emmision.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/matrix.jpg").c_str());
 	emmision.type = "texture_emmision";
 	textures3D.push_back(emmision);
-	testCube.SetupTextures(textures3D);
+	cube.SetupTextures(textures3D);
 
 	glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 
@@ -97,6 +101,10 @@ int main()
 		glm::vec3(1.3f, -2.0f, -2.5f), glm::vec3(1.5f, 2.0f, -2.5f),
 		glm::vec3(1.5f, 0.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+	PointLight pointLights[4];
+	DirectionalLight dirLights[2];
+	SpotLight spotLights[1];
+
 	// Values setup
 	float angleVal = 0.0f;
 
@@ -104,13 +112,14 @@ int main()
 	bool showTriangles = false;
 	bool showCubes = false;
 	bool colorCubes = false;
+
 	// Input Values
 	bool canMoveCamera = false;
 	bool canRotateCamera = false;
 	bool isOrtho = false;
 	float orthoSize = 3.0f;
 
-	ImVec4 backgroundColor = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+	ImVec4 backgroundColor(0.0f, 0.0f, 0.05f, 1.0f);
 	ImVec4 lightColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 	ImVec4 cubeColor = ImVec4(objectColor.x, objectColor.y, objectColor.z, 1.0f);
 
@@ -118,15 +127,65 @@ int main()
 	const char *drawComboItems[] = {
 		"Draw Line", "Draw Point", "Draw Fill"};
 	bool showFrameRate = false;
+
+	// Scene Light Data
+	bool useDirLight = true;
+	bool usePointLight = true;
+	bool useSpotLight = true;
+
+	float cubeAmbient = 0.1;
+	float cubeDiffuse = 1.0f;
+	float cubeSpecular = 0.5f;
+	float cubeShininess = 64;
+
+	float lightAmbientPoint = 0.15f;
+	float lightDiffusePoint = 0.45f;
+	float lightSpecularPoint = 0.65f;
+	float pointLightConstant = 1.0f;
+	float pointLightLinear = 0.22f;
+	float pointLightQuadratic = 0.2f;
+
+	float lightAmbientDir = 0.05f;
+	float lightDiffuseDir = 0.25f;
+	float lightSpecularDir = 0.45f;
+	glm::vec3 direction1(0.5f, -1.0f, -1.0f);
+	glm::vec3 direction2(-0.3f, 0.8f, 1.0f);
+
+	float lightAmbientSpot = 0.05f;
+	float lightDiffuseSpot = 0.50f;
+	float lightSpecularSpot = 0.45f;
+	float spotLightCutoff = 12.5f;
+	float spotLightOuterCutoff = 20.0f;
+
 	Transform objectTransform(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
 	bool globalRotation = false;
 
-	guiWindow.AddGUI(GUI_LINE, "Setup OpenGL Render Data:-", true);
-	guiWindow.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
-	guiWindow.AddGUI(GUI_COLOR, "Light Color", true, true, &lightColor);
-	guiWindow.AddGUI(GUI_COMBO, "Draw Mode", true, true, &drawOption, drawComboItems, 3);
-	guiWindow.AddGUI(GUI_FLOAT, "Light Rotation", true, &angleVal, 0.0f, 360.0f);
+	standardUI.AddGUI(GUI_LINE, "Setup Standard Data:-", true);
+	standardUI.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
+	standardUI.AddGUI(GUI_COMBO, "Draw Mode", true, true, &drawOption, drawComboItems, 3);
+	standardUI.AddGUI(GUI_COLOR, "Light Color", true, true, &lightColor);
+	standardUI.AddGUI(GUI_CHECKBOX, "Use Directional Light", true, &useDirLight);
+	standardUI.AddGUI(GUI_FLOAT, "Light Ambient##1", true, &lightAmbientDir, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Light Diffuse##1", true, &lightDiffuseDir, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Light Specular##1", true, &lightSpecularDir, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_VECTOR3, "Direction 1", true, &direction1.x, -1.0f, 1.0f);
+	standardUI.AddGUI(GUI_VECTOR3, "Direction 2", true, &direction2.x, -1.0f, 1.0f);
+	standardUI.AddGUI(GUI_CHECKBOX, "Use Point Light", true, &usePointLight);
+	standardUI.AddGUI(GUI_FLOAT, "Light Rotation##2", true, &angleVal, 0.0f, 360.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Light Ambient##2", true, &lightAmbientPoint, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Light Diffuse##2", true, &lightDiffusePoint, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Light Specular", true, &lightSpecularPoint, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Constant", true, &pointLightConstant, 0.0f, 1.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Linear", true, &pointLightLinear, 0.0f, 1.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Quadratic", true, &pointLightQuadratic, 0.0f, 1.0f);
+	standardUI.AddGUI(GUI_CHECKBOX, "Use Spot Light", true, &useSpotLight);
+	standardUI.AddGUI(GUI_FLOAT, "Light Ambient##3", true, &lightAmbientSpot, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Light Diffuse##3", true, &lightDiffuseSpot, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Light Specular##3", true, &lightSpecularSpot, 0.0f, 2.0f);
+	standardUI.AddGUI(GUI_FLOAT, "Cutoff", true, &spotLightCutoff, 0.0f, 20.0f);
+	standardUI.AddGUI(GUI_FLOAT, "OuterCutoff", true, &spotLightOuterCutoff, spotLightCutoff, 45.0f);
 
+	cameraUI.AddGUI(GUI_LINE, "Setup Camera Data:-", true);
 	cameraUI.AddGUI(GUI_CHECKBOX, "Move Camera", true, &canMoveCamera);
 	cameraUI.AddGUI(GUI_CHECKBOX, "Rotate Camera", true, &canRotateCamera);
 	cameraUI.AddGUI(GUI_CHECKBOX, "Enable Orthographic", true, &isOrtho);
@@ -137,6 +196,10 @@ int main()
 	primitiveUI.AddGUI(GUI_CHECKBOX, "Show Cubes", true, &showCubes);
 	primitiveUI.AddGUI(GUI_CHECKBOX, "Color Cubes", true, &colorCubes);
 	primitiveUI.AddGUI(GUI_COLOR, "Cube Color", true, true, &cubeColor);
+	primitiveUI.AddGUI(GUI_FLOAT, "Cube Ambient", true, &cubeAmbient, 0.0f, 2.0f);
+	primitiveUI.AddGUI(GUI_FLOAT, "Cube Diffuse", true, &cubeDiffuse, 0.0f, 2.0f);
+	primitiveUI.AddGUI(GUI_FLOAT, "Cube Specular", true, &cubeSpecular, 0.0f, 2.0f);
+	primitiveUI.AddGUI(GUI_FLOAT, "Cube Shininess", true, &cubeShininess, 0.0f, 256.0f);
 
 	objectUI.AddGUI(GUI_LINE, "Setup Model Data:-", true);
 	objectUI.AddGUI(GUI_CHECKBOX, "Global Rotation", true, &globalRotation);
@@ -148,13 +211,10 @@ int main()
 	renderer.StartTimer();
 	while (!renderer.CheckWindowFlag())
 	{
-		// Setup Imgui Frame data
+		// New Frame
 		gui.NewFrame();
-
-		// delta time refresh
 		renderer.NewFrame();
-
-		// input commands
+		// Process Data
 		renderer.ProcessInput(canMoveCamera);
 		renderer.SetColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
 		renderer.SetDraw(drawOption);
@@ -192,46 +252,68 @@ int main()
 			sourceShader.SetMatrices(model, view, projection);
 			lightObject.Draw(sourceShader);
 		}
+
+		// Setups Lights
+		for (int i = 0; i < 4; i++)
+		{
+			pointLights[i].position = pointLightPositions[i];
+			pointLights[i].ambient = currentLightColor * lightAmbientPoint;
+			pointLights[i].diffuse = currentLightColor * lightDiffusePoint;
+			pointLights[i].specular = currentLightColor * lightSpecularPoint;
+			pointLights[i].constant = pointLightConstant;
+			pointLights[i].linear = pointLightLinear;
+			pointLights[i].quadratic = pointLightQuadratic;
+		}
+		for (int i = 0; i < 2; i++)
+		{
+			dirLights[i].ambient = currentLightColor * lightAmbientDir;
+			dirLights[i].diffuse = currentLightColor * lightDiffuseDir;
+			dirLights[i].specular = currentLightColor * lightSpecularDir;
+		}
+		dirLights[0].direction = direction1;
+		dirLights[1].direction = direction2;
+		for (int i = 0; i < 1; i++)
+		{
+			spotLights[i].ambient = currentLightColor * lightAmbientSpot;
+			spotLights[i].diffuse = currentLightColor * lightDiffuseSpot;
+			spotLights[i].specular = currentLightColor * lightSpecularSpot;
+			spotLights[i].position = (*(renderer.GetCamera())).Position;
+			spotLights[i].direction = (*(renderer.GetCamera())).Front;
+			spotLights[i].cutoff = spotLightCutoff;
+			spotLights[i].outerCutoff = spotLightOuterCutoff;
+		}
 		if (showCubes)
 		{
+			shader3D.use();
 			if (colorCubes)
 			{
 				glm::vec3 currentCubeColor(cubeColor.x, cubeColor.y, cubeColor.z);
-				shader3DMat.use();
-				shader3DMat.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
-				shader3DMat.setVec3("viewPos", (*(renderer.GetCamera())).Position);
-				shader3DMat.SetMaterial(currentCubeColor, currentCubeColor, currentLightColor * 0.5f, 64);
-
-				for (unsigned int i = 0; i < 10; i++)
-				{
-					// model matrix :: LOCAL TO WORLD
-					glm::mat4 model = glm::mat4(1.0f);
-					model = glm::translate(model, cubePositions[i]);
-					float angle = 15.0f * (i);
-					model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-					shader3DMat.SetMatrices(model, view, projection);
-					testCube.Draw(shader3DMat);
-				}
+				shader3D.SetMaterial(currentCubeColor * cubeAmbient,
+									 currentCubeColor * cubeDiffuse,
+									 currentCubeColor * cubeSpecular, cubeShininess);
+				shader3D.setBool("useTexture", false);
 			}
 			else
 			{
-				shader3D.use();
-				shader3D.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
-				shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
-				shader3D.setFloat("material.shininess", 64);
-				for (unsigned int i = 0; i < 10; i++)
-				{
-					// model matrix :: LOCAL TO WORLD
-					glm::mat4 model = glm::mat4(1.0f);
-					model = glm::translate(model, cubePositions[i]);
-					float angle = 15.0f * (i);
-					model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-					shader3D.SetMatrices(model, view, projection);
-					if (showCubes)
-					{
-						testCube.Draw(shader3D);
-					}
-				}
+				shader3D.setBool("useTexture", true);
+			}
+			shader3D.setFloat("material.shininess", cubeShininess);
+			shader3D.SetPointLights(pointLights, 4, angleVal);
+			shader3D.SetDirLights(dirLights, 2);
+			shader3D.SetSpotLights(spotLights, 1);
+			shader3D.setBool("useDirLight", useDirLight);
+			shader3D.setBool("usePointLight", usePointLight);
+			shader3D.setBool("useSpotLight", useSpotLight);
+			shader3D.setVec3("viewPos", (*(renderer.GetCamera())).Position);
+			for (unsigned int i = 0; i < 10; i++)
+			{
+				// model matrix :: LOCAL TO WORLD
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, cubePositions[i]);
+				float angle = 15.0f * (i);
+				model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+				shader3D.SetMatrices(model, view, projection);
+				cube.Draw(shader3D);
 			}
 		}
 
@@ -263,14 +345,22 @@ int main()
 		model = glm::scale(model, objectScale);
 
 		modelShader.use();
+		modelShader.setBool("useTexture", true);
+		modelShader.setFloat("material.shininess", cubeShininess);
+		modelShader.SetPointLights(pointLights, 4, angleVal);
+		modelShader.SetDirLights(dirLights, 2);
+		modelShader.SetSpotLights(spotLights, 1);
+		modelShader.setBool("useDirLight", useDirLight);
+		modelShader.setBool("usePointLight", usePointLight);
+		modelShader.setBool("useSpotLight", useSpotLight);
+		modelShader.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		modelShader.SetMatrices(model, view, projection);
 		modelShader.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		modelShader.setFloat("material.shininess", 64);
-		modelShader.SetScene(currentLightColor, angleVal, pointLightPositions, 4, (*(renderer.GetCamera())).Position, (*(renderer.GetCamera())).Front);
-		mainModel.Draw(modelShader);
+		mainModel.Draw(shader3D);
 
-		// Render your GUI
-		guiWindow.ShowGUI();
+		// Set UI
+		standardUI.ShowGUI();
 		ImGui::Checkbox("Show FrameRate", &showFrameRate);
 		if (showFrameRate)
 		{
@@ -278,7 +368,7 @@ int main()
 			int val = (int)(1.0f / renderer.deltaTime);
 			ImGui::Text("FrameRate:- %d", val);
 		}
-		guiWindow.EndGUI();
+		standardUI.EndGUI();
 		cameraUI.ShowGUI();
 		cameraUI.EndGUI();
 		primitiveUI.ShowGUI();
@@ -298,7 +388,7 @@ int main()
 		gui.RenderGUI();
 		renderer.SwapBuffers();
 	}
-	// terminate program
+	// Terminate Program
 	gui.TerminateGUI();
 	renderer.TerminateGLFW();
 	return 0;
