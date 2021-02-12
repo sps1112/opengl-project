@@ -78,6 +78,13 @@ void GUIWindow::AddGUI(GUI_TYPE itemType, std::string itemText, bool isOnNewLine
     items.push_back(item);
 }
 
+void GUIWindow::AddGUI(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool isCombo, int *pointer, const char *choices[], int count)
+{
+    guiCount++;
+    GUIItem item(itemType, itemText, isOnNewLine, isCombo, pointer, choices, count);
+    items.push_back(item);
+}
+
 void GUIWindow::ShowItems()
 {
     for (int i = 0; i < guiCount; i++)
@@ -107,6 +114,17 @@ void GUIWindow::ShowItems()
         {
             ImGui::ColorEdit3((item.text).c_str(), item.pointerF);
         }
+        else if (item.type == GUI_COMBO)
+        {
+            const char *newList[5] = {
+                item.choices[0].c_str(),
+                item.choices[1].c_str(),
+                item.choices[2].c_str(),
+                item.choices[3].c_str(),
+                item.choices[4].c_str(),
+            };
+            ImGui::Combo((item.text).c_str(), item.pointerI, newList, item.count);
+        }
     }
 }
 
@@ -116,6 +134,7 @@ GUIItem::GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine)
     this->text = itemText;
     this->isOnNewLine = isOnNewLine;
 }
+
 GUIItem::GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool *pointer)
 {
     this->type = itemType;
@@ -123,6 +142,7 @@ GUIItem::GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool
     this->isOnNewLine = isOnNewLine;
     pointerB = pointer;
 }
+
 GUIItem::GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, float *pointer, float minVal, float maxVal)
 {
     this->type = itemType;
@@ -132,10 +152,25 @@ GUIItem::GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, floa
     this->minVal = minVal;
     this->maxVal = maxVal;
 }
+
 GUIItem::GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool isColor, ImVec4 *pointer)
 {
     this->type = itemType;
     this->text = itemText;
     this->isOnNewLine = isOnNewLine;
     pointerF = (float *)pointer;
+}
+
+GUIItem::GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool isCombo, int *pointer, const char *choices[], int count)
+{
+    this->type = itemType;
+    this->text = itemText;
+    this->isOnNewLine = isOnNewLine;
+    pointerI = pointer;
+    this->count = count;
+    this->choices = new std::string[count];
+    for (int i = 0; i < count; i++)
+    {
+        (this->choices)[i] = choices[i];
+    }
 }

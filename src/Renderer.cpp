@@ -50,13 +50,19 @@ void Renderer::SetOtherData()
     stbi_set_flip_vertically_on_load(true); // set before loading model
 }
 
-int Renderer::checkGLAD()
+int Renderer::CheckGLAD()
 {
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     if (!status)
     {
         Log("Failed to intialize GLAD");
     }
+    return status;
+}
+
+int Renderer::CheckWindowFlag()
+{
+    int status = glfwWindowShouldClose(window);
     return status;
 }
 
@@ -190,20 +196,6 @@ void Renderer::SetDraw(int choice)
     glPolygonMode(GL_FRONT_AND_BACK, fillMode);
 }
 
-void Renderer::ProcessDraw(bool lineStatus, bool pointStatus, bool fillStatus)
-{
-    int choice = 2;
-    if (lineStatus)
-    {
-        choice = 0;
-    }
-    else if (pointStatus)
-    {
-        choice = 1;
-    }
-    SetDraw(choice);
-}
-
 float Renderer::GetCurrentWidth()
 {
     int width, height;
@@ -235,10 +227,10 @@ void VertexArray::UnBindVAO()
     glBindVertexArray(0);
 }
 
-void VertexArray::BindVBO(int vertexCount, GLsizeiptr size, void *pointer)
+void VertexArray::BindVBO(int vertexCount, GLsizeiptr strideSize, void *pointer)
 {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertexCount * size, pointer, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * strideSize, pointer, GL_STATIC_DRAW);
 }
 void VertexArray::BindEBO(int indicesCount, void *pointer)
 {
@@ -256,10 +248,10 @@ void VertexArray::UnBindEBO()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void VertexArray::SetAttribArray(int layoutLayer, int count, GLsizeiptr size, const void *pointer)
+void VertexArray::SetAttribArray(int layoutLayer, int count, GLsizeiptr strideSize, const void *pointer)
 {
     glEnableVertexAttribArray(layoutLayer);
-    glVertexAttribPointer(layoutLayer, count, GL_FLOAT, GL_FALSE, size, pointer);
+    glVertexAttribPointer(layoutLayer, count, GL_FLOAT, GL_FALSE, strideSize, pointer);
 }
 
 void VertexArray::DrawTriangles(int vertexCount, int startIndex)

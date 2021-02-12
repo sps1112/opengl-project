@@ -32,9 +32,9 @@ public:
     void UnBindVAO();
     void UnBindVBO();
     void UnBindEBO();
-    void BindVBO(int vertexCount, GLsizeiptr size, void *pointer);
+    void BindVBO(int vertexCount, GLsizeiptr strideSize, void *pointer);
     void BindEBO(int indicesCount, void *pointer);
-    void SetAttribArray(int layoutLayer, int count, GLsizeiptr size, const void *pointer);
+    void SetAttribArray(int layoutLayer, int count, GLsizeiptr strideSize, const void *pointer = (void *)0);
     void DrawTriangles(int vertexCount, int startIndex);
     void DrawElements(int indicesCount);
 
@@ -50,13 +50,14 @@ public:
     int height;
     GLFWwindow *window;
     float deltaTime;
-    Renderer(int majorVersion, int minorVersion, int windowWidth, int windowHeight);
+    Renderer(int majorVersion, int minorVersion, int windowWidth = 800, int windowHeight = 600);
     void SetupGLFW();
     void TerminateGLFW();
     void CreateWindow(const char *title, GLFWmonitor *monitor = NULL, GLFWwindow *share = NULL);
     void SetData();
     void SetOtherData();
-    int checkGLAD();
+    int CheckGLAD();
+    int CheckWindowFlag();
     void SwapBuffers();
     void StartTimer();
     void NewFrame();
@@ -64,12 +65,11 @@ public:
     float GetZoom();
     Camera *GetCamera();
     void SetCursor(bool status);
-    void SetColor(float r, float g, float b, float a);
+    void SetColor(float r, float g, float b, float a = 1.0f);
     bool CheckInput(int key);
-    void ProcessInput(bool moveStatus);
+    void ProcessInput(bool moveStatus = false);
     void ProcessMouse(bool rotateStatus);
     void SetDraw(int choice);
-    void ProcessDraw(bool lineStatus, bool pointStatus, bool fillStatus);
     float GetCurrentWidth();
     float GetCurrentHeight();
 

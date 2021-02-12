@@ -7,6 +7,7 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 
 #include <Camera.h>
+#include <Light.h>
 
 #include <string>
 #include <fstream>
@@ -44,14 +45,28 @@ public:
 	void setMat4(const std::string &name, const glm::mat4 &mat) const;
 	void SetMaterial(glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, float shininess);
 	void SetMatrices(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+	void SetLight(NormalLight light, float angleVal = 0.0f);
+	void SetLights(NormalLight lights[], int count, float angleVal = 0.0f);
+	void SetLights(int count, glm::vec3 positions[],
+				   glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+				   float angleVal = 0.0f);
 	void SetPointLight(glm::vec3 position,
 					   glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
-					   float constant, float linear, float quadratic, bool hasName = false, std::string lightName = "");
+					   std::string lightName = "light.",
+					   float constant = 1.0f, float linear = 0.22f, float quadratic = 0.2f);
+	void SetPointLight(PointLight light, float angleVal = 0.0f);
+	void SetPointLights(PointLight lights[], int count, float angleVal = 0.0f);
 	void SetDirLight(glm::vec3 direction,
-					 glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular);
+					 glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
+					 std::string lightName = "dirLight.");
+	void SetDirLight(DirectionalLight light);
+	void SetDirLights(DirectionalLight lights[], int count);
 	void SetSpotLight(glm::vec3 position, glm::vec3 direction,
 					  glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular,
-					  float cutoffAngle, float outerCutoffAngle);
+					  float cutoffAngle, float outerCutoffAngle,
+					  std::string lightName = "spotLight.");
+	void SetSpotLight(SpotLight light);
+	void SetSpotLights(SpotLight lights[], int count);
 	void SetScene(glm::vec3 lightColor, float angleVal,
 				  glm::vec3 pointLightPositions[], int numberOfLights,
 				  glm::vec3 camPos, glm::vec3 camFront);

@@ -6,6 +6,7 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 #include <Renderer.h>
+#include <Utils.h>
 
 #include <iostream>
 #include <vector>
@@ -19,6 +20,7 @@ enum GUI_TYPE
     GUI_FLOAT,
     GUI_COLOR,
     GUI_VECTOR3,
+    GUI_COMBO,
 };
 
 class GUIItem
@@ -29,12 +31,16 @@ public:
     bool isOnNewLine;
     bool *pointerB;
     float *pointerF;
+    int *pointerI;
     float minVal;
     float maxVal;
+    int count;
+    std::string *choices;
     GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine);
     GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool *pointer);
     GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, float *pointer, float minVal = -10000, float maxVal = 10000);
     GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool isColor, ImVec4 *pointer);
+    GUIItem(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool isCombo, int *pointer, const char *choices[], int count);
 
 private:
 };
@@ -62,6 +68,7 @@ public:
     void AddGUI(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool *pointer);
     void AddGUI(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, float *pointer, float minVal = -10000, float maxVal = 10000);
     void AddGUI(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool isColor, ImVec4 *pointer);
+    void AddGUI(GUI_TYPE itemType, std::string itemText, bool isOnNewLine, bool isCombo, int *pointer, const char *choices[], int count);
 
 private:
     vector<GUIItem> items;
