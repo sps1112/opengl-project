@@ -14,7 +14,7 @@ struct Texture
 };
 
 unsigned int LoadTextureFromPath(const char *path,
-                                 bool gammaCorrection = false, bool isDiffuse = true);
+                                 bool gammaCorrection = false, bool isDiffuse = true, bool toClamp = false);
 void SetActiveTexture(int index);
 void BindTexture(unsigned int id);
 void UnBindTexture();

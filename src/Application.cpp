@@ -57,6 +57,7 @@ int main()
 	Primitive cube(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 	Primitive plane(FileSystem::getPath("resources/primitives/3D/plane.3d").c_str());
+	Primitive quad(FileSystem::getPath("resources/primitives/3D/quad.3d").c_str());
 
 	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"), true);
 
@@ -72,6 +73,8 @@ int main()
 					   (FileSystem::getPath("shaders/modern/shader_scene.fs")).c_str());
 	Shader outlineShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
 						 (FileSystem::getPath("shaders/other/shader_outline.fs")).c_str());
+	Shader transparentShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
+							 (FileSystem::getPath("shaders/modern/shader_transparent.fs")).c_str());
 
 	vector<Texture> textures2D;
 	Texture mainTex;
@@ -114,6 +117,18 @@ int main()
 	marbleGamma.type = "texture_diffuse";
 	planeTexturesGamma.push_back(marbleGamma);
 
+	vector<Texture> quadTextures, windowTextures;
+	Texture grass, windowTex;
+	grass.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/grass.png").c_str(),
+								   true, true, true);
+	grass.type = "texture_diffuse";
+	quadTextures.push_back(grass);
+	windowTex.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/window.png").c_str(),
+									   true, true, true);
+	windowTex.type = "texture_diffuse";
+	windowTextures.push_back(windowTex);
+	quad.SetupTextures(quadTextures);
+
 	glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 
 	glm::vec3 pointLightPositions[] = {
@@ -128,6 +143,11 @@ int main()
 		glm::vec3(1.5f, 0.2f, -1.5f), glm::vec3(-1.3f, 1.0f, -1.5f)};
 
 	glm::vec3 planePosition(0.0f, -2.0f, -5.0f);
+
+	glm::vec3 quadPositions[] = {
+		glm::vec3(-1.5f, 0.0f, -0.48f), glm::vec3(1.5f, 0.0f, 0.51f),
+		glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(-0.3f, 0.0f, -2.3f),
+		glm::vec3(0.5f, 0.0f, -0.6f)};
 
 	PointLight pointLights[4];
 	DirectionalLight dirLights[2];
@@ -195,6 +215,11 @@ int main()
 	bool useBlinnModel = true;
 	bool gammaCorrection = true;
 
+	float grassHeight = -0.5f;
+	bool isWindow = true;
+	bool lockFrameRate = true;
+	bool toCullFaces = true;
+
 	standardUI.AddGUI(GUI_LINE, "Setup Standard Data:-", true);
 	standardUI.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
 	standardUI.AddGUI(GUI_COMBO, "Draw Mode", true, true, &drawOption, drawComboItems, 3);
@@ -221,6 +246,8 @@ int main()
 	standardUI.AddGUI(GUI_FLOAT, "OuterCutoff", true, &spotLightOuterCutoff, spotLightCutoff, 45.0f);
 	standardUI.AddGUI(GUI_CHECKBOX, "Use Blinn Model", true, &useBlinnModel);
 	standardUI.AddGUI(GUI_CHECKBOX, "Use Gamma Correction", true, &gammaCorrection);
+	standardUI.AddGUI(GUI_CHECKBOX, "Lock FrameRate", true, &lockFrameRate);
+	standardUI.AddGUI(GUI_CHECKBOX, "Face Culling", true, &toCullFaces);
 
 	cameraUI.AddGUI(GUI_LINE, "Setup Camera Data:-", true);
 	cameraUI.AddGUI(GUI_CHECKBOX, "Move Camera", true, &canMoveCamera);
@@ -249,6 +276,9 @@ int main()
 	objectUI.AddGUI(GUI_VECTOR3, "Rotation", true, &objectTransform.rotation.x, -360.0f, 360.0f);
 	objectUI.AddGUI(GUI_VECTOR3, "Scale", true, &objectTransform.scale.x, 0.01f, 5.0f);
 
+	objectUI.AddGUI(GUI_FLOAT, "Grass Height", true, &grassHeight, -5.0f, 5.0f);
+	objectUI.AddGUI(GUI_CHECKBOX, "Draw Window", true, &isWindow);
+
 	renderer.StartTimer();
 	while (!renderer.CheckWindowFlag())
 	{
@@ -264,6 +294,14 @@ int main()
 		if (renderer.CheckInput(GLFW_KEY_LEFT_ALT))
 		{
 			canRotateCamera = false;
+		}
+		if (toCullFaces)
+		{
+			glEnable(GL_CULL_FACE);
+		}
+		else
+		{
+			glDisable(GL_CULL_FACE);
 		}
 
 		// View matrix :: WORLD TO VIEW
@@ -479,6 +517,35 @@ int main()
 		modelShader.setFloat("material.shininess", 64);
 		mainModel.Draw(modelShader);
 
+		transparentShader.use();
+		transparentShader.setBool("toDiscard", !isWindow);
+		if (isWindow)
+		{
+			quad.SetupTextures(windowTextures);
+		}
+		else
+		{
+			quad.SetupTextures(quadTextures);
+		}
+		std::map<float, glm::vec3> sorted;
+		for (unsigned int i = 0; i < 5; i++)
+		{
+			float distance = glm::length((*(renderer.GetCamera())).Position - quadPositions[i]);
+			sorted[distance] = quadPositions[i];
+		}
+
+		for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin();
+			 it != sorted.rend();
+			 ++it)
+		{
+			glm::mat4 model(1.0f);
+			model = glm::translate(model, it->second);
+			model = glm::translate(model, glm::vec3(0.0f, planePosition.y + grassHeight, 0.0f));
+			model = glm::scale(model, glm::vec3(0.25f));
+			transparentShader.SetMatrices(model, view, projection);
+			quad.Draw(transparentShader);
+		}
+
 		// Draw Triangle
 		if (showTriangles)
 		{
@@ -508,7 +575,7 @@ int main()
 
 		// call events
 		gui.RenderGUI();
-		renderer.SwapBuffers();
+		renderer.SwapBuffers(lockFrameRate);
 	}
 	// Free Shaders
 	shader2D.FreeData();

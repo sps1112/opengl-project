@@ -59,7 +59,7 @@ public:
     void SetOtherData();
     int CheckGLAD();
     int CheckWindowFlag();
-    void SwapBuffers();
+    void SwapBuffers(bool lockFramerate = true);
     void StartTimer();
     void NewFrame();
     void SetCamera(Camera camera);

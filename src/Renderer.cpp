@@ -46,12 +46,16 @@ void Renderer::SetData()
 
 void Renderer::SetOtherData()
 {
-
-    glEnable(GL_DEPTH_TEST);                // Enable Z buffering
-    glDepthFunc(GL_LESS);                   // Closer objects will be drawn in front
-    glEnable(GL_STENCIL_TEST);              // Enables editing Stencil
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);    // if (n!=1) ==> (n=1) =>Draw Everything
-    stbi_set_flip_vertically_on_load(true); // Set before loading model
+    glEnable(GL_DEPTH_TEST);                           // Enable Z buffering
+    glDepthFunc(GL_LESS);                              // Closer objects will be drawn in front
+    glEnable(GL_STENCIL_TEST);                         // Enables editing Stencil
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);               // if (n!=1) ==> (n=1) =>Draw Everything
+    glEnable(GL_BLEND);                                // Enables Blend test
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Set Blending mode as {x*a+y*(1-a)}
+    stbi_set_flip_vertically_on_load(true);            // Set before loading model
+    glEnable(GL_CULL_FACE);                            // Enable Face Culling
+    glCullFace(GL_BACK);                               // To Cull Back Faces (do no draw)
+    glFrontFace(GL_CCW);                               // Front faces are those with CCW motion
 }
 
 int Renderer::CheckGLAD()
@@ -70,10 +74,18 @@ int Renderer::CheckWindowFlag()
     return status;
 }
 
-void Renderer::SwapBuffers()
+void Renderer::SwapBuffers(bool lockFramerate)
 {
     glfwSwapBuffers(window);
     glfwPollEvents();
+    if (!lockFramerate)
+    {
+        glfwSwapInterval(0);
+    }
+    else
+    {
+        glfwSwapInterval(1);
+    }
 }
 
 void Renderer::StartTimer()
