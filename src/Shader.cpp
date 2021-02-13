@@ -79,6 +79,11 @@ void Shader::use()
     glUseProgram(ID);
 }
 
+void Shader::FreeData()
+{
+    glDeleteProgram(ID);
+}
+
 // utility functions
 void Shader::setBool(const std::string &name, bool value) const
 {

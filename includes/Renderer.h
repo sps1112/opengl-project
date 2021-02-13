@@ -37,6 +37,7 @@ public:
     void SetAttribArray(int layoutLayer, int count, GLsizeiptr strideSize, const void *pointer = (void *)0);
     void DrawTriangles(int vertexCount, int startIndex);
     void DrawElements(int indicesCount);
+    void FreeData();
 
 private:
 };

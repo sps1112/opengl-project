@@ -46,8 +46,12 @@ void Renderer::SetData()
 
 void Renderer::SetOtherData()
 {
+
     glEnable(GL_DEPTH_TEST);                // Enable Z buffering
-    stbi_set_flip_vertically_on_load(true); // set before loading model
+    glDepthFunc(GL_LESS);                   // Closer objects will be drawn in front
+    glEnable(GL_STENCIL_TEST);              // Enables editing Stencil
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);    // if (n!=1) ==> (n=1) =>Draw Everything
+    stbi_set_flip_vertically_on_load(true); // Set before loading model
 }
 
 int Renderer::CheckGLAD()
@@ -123,7 +127,7 @@ void Renderer::SetCursor(bool status)
 void Renderer::SetColor(float r, float g, float b, float a)
 {
     glClearColor(r, g, b, a); // Grey
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 bool Renderer::CheckInput(int key)
@@ -266,6 +270,13 @@ void VertexArray::DrawElements(int indicesCount)
     BindVAO();
     glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_INT, 0);
     UnBindVAO();
+}
+
+void VertexArray::FreeData()
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
 }
 
 // callback on  window size change

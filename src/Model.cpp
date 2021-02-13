@@ -12,6 +12,13 @@ void Model::Draw(Shader &shader)
         meshes[i].Draw(shader);
     }
 }
+void Model::FreeData()
+{
+    for (unsigned int i = 0; i < meshes.size(); i++)
+    {
+        meshes[i].vertexArray.FreeData();
+    }
+}
 
 void Model::loadModel(string const &path)
 {

@@ -30,6 +30,7 @@ public:
 	unsigned int CompileShader(const char *code, SHADER_TYPE type);
 	// uses shader program
 	void use();
+	void FreeData();
 	// utility functions
 	void setBool(const std::string &name, bool value) const;
 	void setInt(const std::string &name, int value) const;

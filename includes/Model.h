@@ -34,6 +34,7 @@ public:
     bool gammaCorrection;
     Model(string const &path, bool gamma = false);
     void Draw(Shader &shader);
+    void FreeData();
 
 private:
     // loads scene
