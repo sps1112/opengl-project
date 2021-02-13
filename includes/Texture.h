@@ -13,7 +13,8 @@ struct Texture
     std::string path;
 };
 
-unsigned int LoadTextureFromPath(const char *path);
+unsigned int LoadTextureFromPath(const char *path,
+                                 bool gammaCorrection = false, bool isDiffuse = true);
 void SetActiveTexture(int index);
 void BindTexture(unsigned int id);
 void UnBindTexture();

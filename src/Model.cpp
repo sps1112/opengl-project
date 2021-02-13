@@ -148,7 +148,8 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
             Texture texture;
             string filename = string(str.C_Str());
             filename = directory + '/' + filename;
-            texture.id = LoadTextureFromPath(filename.c_str());
+            bool toCorrect = (typeName == "texture_diffuse") ? true : false;
+            texture.id = LoadTextureFromPath(filename.c_str(), gammaCorrection, toCorrect);
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);

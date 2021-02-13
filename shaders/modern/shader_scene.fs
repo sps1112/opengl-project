@@ -74,6 +74,10 @@ uniform vec3 viewPos;
 uniform Material material;
 uniform bool useTexture;
 
+uniform bool useBlinnModel;
+uniform bool correctGamma;
+float gamma = 2.2f;
+
 void main() {
   // Scene Lighting
   vec3 norm = normalize(Normal);
@@ -111,6 +115,9 @@ void main() {
 
   // Resultant Lighting
   result += (emmision);
+  if (correctGamma) {
+    result = pow(result.rgb, vec3(1.0 / gamma));
+  }
   FragColor = vec4(result, 1.0f);
 }
 
@@ -135,6 +142,9 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos,
   float distance = length(light.position - fragPos);
   float attenuation = 1.0f / (light.constant + (light.linear * distance) +
                               (light.quadratic * distance * distance));
+  if (correctGamma) {
+    attenuation = 1.0f / (light.quadratic * distance * distance);
+  }
   // Ambient Lighting
   vec3 ambient = GetAmbient(light.ambient);
   // Diffused Lighting
@@ -192,7 +202,11 @@ vec3 GetDiffuse(vec3 normal, vec3 lightDir, vec3 diffuse) {
 
 vec3 GetSpecular(vec3 normal, vec3 lightDir, vec3 viewDir, vec3 specular) {
   vec3 reflectDir = reflect(-lightDir, normal);
+  vec3 halfDir = normalize(viewDir + lightDir);
   float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
+  if (useBlinnModel) {
+    spec = pow(max(dot(normal, halfDir), 0.0f), material.shininess * 4);
+  }
   vec3 final = vec3(0.0f, 0.0f, 0.0f);
   if (useTexture) {
     final = specular *

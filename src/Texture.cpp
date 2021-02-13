@@ -1,6 +1,7 @@
 #include <Texture.h>
 
-unsigned int LoadTextureFromPath(const char *path)
+unsigned int LoadTextureFromPath(const char *path,
+                                 bool gammaCorrection, bool isDiffuse)
 {
     unsigned int textureID;
     glGenTextures(1, &textureID);
@@ -13,20 +14,24 @@ unsigned int LoadTextureFromPath(const char *path)
     if (data)
     {
         GLenum format;
+        GLenum otherFormat;
         if (nrComponents == 1)
         {
             format = GL_RED;
+            otherFormat = format;
         }
         else if (nrComponents == 3)
         {
             format = GL_RGB;
+            otherFormat = (gammaCorrection && isDiffuse) ? GL_SRGB : format;
         }
         else if (nrComponents == 4)
         {
             format = GL_RGBA;
+            otherFormat = (gammaCorrection && isDiffuse) ? GL_SRGB_ALPHA : format;
         }
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, otherFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
