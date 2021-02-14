@@ -19,5 +19,6 @@ unsigned int GenerateTexture();
 void BindTexture(unsigned int id);
 void UnBindTexture();
 void SetActiveTexture(int index);
-
+void BindCubemap(unsigned int id);
+unsigned int LoadCubemapFromPath(std::string directory, std::string extension);
 #endif

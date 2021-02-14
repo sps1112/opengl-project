@@ -60,6 +60,7 @@ int main()
 	Primitive plane(FileSystem::getPath("resources/primitives/3D/plane.3d").c_str());
 	Primitive quad(FileSystem::getPath("resources/primitives/3D/quad.3d").c_str());
 	Primitive quad2D(FileSystem::getPath("resources/primitives/2D/quad.2d").c_str());
+	Primitive skybox(FileSystem::getPath("resources/primitives/3D/cubemap.3d").c_str());
 
 	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"), true);
 
@@ -79,6 +80,10 @@ int main()
 							 (FileSystem::getPath("shaders/modern/shader_transparent.fs")).c_str());
 	Shader shaderFrame((FileSystem::getPath("shaders/modern/shader_2d.vs")).c_str(),
 					   (FileSystem::getPath("shaders/modern/shader_frame.fs")).c_str());
+	Shader skyboxShader((FileSystem::getPath("shaders/modern/shader_skybox.vs")).c_str(),
+						(FileSystem::getPath("shaders/modern/shader_skybox.fs")).c_str());
+	Shader reflectShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
+						 (FileSystem::getPath("shaders/modern/shader_reflect.fs")).c_str());
 
 	vector<Texture> textures2D;
 	Texture mainTex;
@@ -133,6 +138,9 @@ int main()
 	windowTextures.push_back(windowTex);
 	quad.SetupTextures(quadTextures);
 
+	Texture skyboxTex;
+	skyboxTex.id = LoadCubemapFromPath(FileSystem::getPath("resources/textures/skybox"), ".jpg");
+
 	glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 
 	glm::vec3 pointLightPositions[] = {
@@ -158,6 +166,7 @@ int main()
 	SpotLight spotLights[1];
 
 	// Values setup
+	bool renderGui = true;
 	float angleVal = 0.0f;
 
 	// UI Data
@@ -175,8 +184,11 @@ int main()
 	ImVec4 lightColor = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 	ImVec4 cubeColor = ImVec4(objectColor.x, objectColor.y, objectColor.z, 1.0f);
 	ImVec4 cubeOutlineColor = ImVec4(0.1f, 0.1, 0.3f, 1.0f);
+	ImVec4 skyTint = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 	float outlineWidth = 0.1f;
 	bool drawOutline = false;
+	bool toRefract = false;
+	bool toReflect = false;
 
 	int drawOption = 2;
 	const char *drawComboItems[] = {
@@ -227,12 +239,14 @@ int main()
 	const char *imageFliterOptions[] = {
 		"Normal", "Invert Colors",
 		"GrayScale", "Sharpen",
-		"Blur", "Edge Detection"};
+		"Blur", "Edge Detection",
+		"Emboss", "Outline"};
 
 	standardUI.AddGUI(GUI_LINE, "Setup Standard Data:-", true);
 	standardUI.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
 	standardUI.AddGUI(GUI_COMBO, "Draw Mode", true, true, &drawOption, drawComboItems, 3);
 	standardUI.AddGUI(GUI_COLOR, "Light Color", true, true, &lightColor);
+	standardUI.AddGUI(GUI_COLOR, "Sky Color", true, true, &skyTint);
 	standardUI.AddGUI(GUI_CHECKBOX, "Use Directional Light", true, &useDirLight);
 	standardUI.AddGUI(GUI_FLOAT, "Light Ambient##1", true, &lightAmbientDir, 0.0f, 2.0f);
 	standardUI.AddGUI(GUI_FLOAT, "Light Diffuse##1", true, &lightDiffuseDir, 0.0f, 2.0f);
@@ -287,6 +301,8 @@ int main()
 
 	objectUI.AddGUI(GUI_FLOAT, "Grass Height", true, &grassHeight, -5.0f, 5.0f);
 	objectUI.AddGUI(GUI_CHECKBOX, "Draw Window", true, &isWindow);
+	objectUI.AddGUI(GUI_CHECKBOX, "To Reflect", true, &toReflect);
+	objectUI.AddGUI(GUI_CHECKBOX, "To Refract", true, &toRefract);
 
 	renderer.StartTimer();
 	while (!renderer.CheckWindowFlag())
@@ -329,14 +345,17 @@ int main()
 		if (!isOrtho)
 		{
 			// FOV = X degrees, RATIO =WIDTH/HEIGHT, Near Plane = 0.1, Far Plane = 100.0
-			projection = glm::perspective(glm::radians(renderer.GetZoom()), ((float)renderer.GetCurrentWidth()) / ((float)renderer.GetCurrentHeight()), 0.1f, 100.0f);
+			projection = glm::perspective(glm::radians(renderer.GetZoom()),
+										  ((float)renderer.GetCurrentWidth()) / ((float)renderer.GetCurrentHeight()),
+										  0.1f, 100.0f);
 		}
 		else
 		{
 			float aspectRatio = renderer.GetCurrentWidth() / renderer.GetCurrentHeight();
 			float cWidth = aspectRatio * orthoSize;
 			float cHeight = orthoSize;
-			projection = glm::ortho(-cWidth / 2.0f, cWidth / 2.0f, -cHeight / 2.0f, cHeight / 2.0f, 0.01f, 100.0f);
+			projection = glm::ortho(-cWidth / 2.0f, cWidth / 2.0f, -cHeight / 2.0f, cHeight / 2.0f,
+									0.01f, 100.0f);
 		}
 
 		// Setups Lights
@@ -531,7 +550,20 @@ int main()
 		modelShader.setVec3("viewPos", (*(renderer.GetCamera())).Position);
 		modelShader.SetMatrices(model, view, projection);
 		modelShader.setFloat("material.shininess", 64);
-		mainModel.Draw(modelShader);
+		if (toReflect || toRefract)
+		{
+			reflectShader.use();
+			reflectShader.SetMatrices(model, view, projection);
+			reflectShader.setVec3("cameraPos", (*(renderer.GetCamera())).Position);
+			reflectShader.setBool("toRefract", toRefract);
+			BindCubemap(skyboxTex.id);
+			mainModel.Draw(reflectShader);
+			BindCubemap(0);
+		}
+		else
+		{
+			mainModel.Draw(modelShader);
+		}
 
 		transparentShader.use();
 		transparentShader.setBool("toDiscard", !isWindow);
@@ -569,6 +601,23 @@ int main()
 			triangle.Draw(shader2D);
 		}
 
+		glDepthFunc(GL_LEQUAL);
+		skyboxShader.use();
+		glm::mat4 newView = glm::mat4(glm::mat3(view));
+		glm::mat4 newProjection = projection;
+		if (isOrtho)
+		{
+			newProjection = glm::perspective(glm::radians(renderer.GetZoom()),
+											 ((float)renderer.GetCurrentWidth()) / ((float)renderer.GetCurrentHeight()),
+											 0.1f, 100.0f);
+		}
+		skyboxShader.setMat4("projection", newProjection);
+		skyboxShader.setMat4("view", newView);
+		skyboxShader.setVec3("tintColor", glm::vec3(skyTint.x, skyTint.y, skyTint.z));
+		BindCubemap(skyboxTex.id);
+		skybox.Draw(skyboxShader);
+		glDepthFunc(GL_LESS);
+
 		// Second pass
 		renderer.frameBuffer.UnBindFBO(); // back to default
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -587,26 +636,37 @@ int main()
 		quad2D.Draw(shaderFrame);
 
 		// Set UI
-		standardUI.ShowGUI();
-		ImGui::Checkbox("Show FrameRate", &showFrameRate);
-		if (showFrameRate)
+		if (renderer.CheckInput(GLFW_KEY_SPACE))
 		{
-			ImGui::SameLine();
-			int val = (int)(1.0f / renderer.deltaTime);
-			ImGui::Text("FrameRate:- %d", val);
+			renderGui = false;
 		}
-		standardUI.EndGUI();
-		cameraUI.ShowGUI();
-		ImGui::Combo("Image Filters", &imageFilter, imageFliterOptions, 6);
-		cameraUI.EndGUI();
-		primitiveUI.ShowGUI();
-		primitiveUI.EndGUI();
-		objectUI.ShowGUI();
-		if (ImGui::Button("Reset Object"))
+		if (renderer.CheckInput(GLFW_KEY_LEFT_CONTROL))
 		{
-			objectTransform.ResetToOrigin();
+			renderGui = true;
 		}
-		objectUI.EndGUI();
+		if (renderGui)
+		{
+			standardUI.ShowGUI();
+			ImGui::Checkbox("Show FrameRate", &showFrameRate);
+			if (showFrameRate)
+			{
+				ImGui::SameLine();
+				int val = (int)(1.0f / renderer.deltaTime);
+				ImGui::Text("FrameRate:- %d", val);
+			}
+			standardUI.EndGUI();
+			cameraUI.ShowGUI();
+			ImGui::Combo("Image Filters", &imageFilter, imageFliterOptions, 8);
+			cameraUI.EndGUI();
+			primitiveUI.ShowGUI();
+			primitiveUI.EndGUI();
+			objectUI.ShowGUI();
+			if (ImGui::Button("Reset Object"))
+			{
+				objectTransform.ResetToOrigin();
+			}
+			objectUI.EndGUI();
+		}
 
 		// call events
 		gui.RenderGUI();
@@ -621,6 +681,8 @@ int main()
 	planeShader.FreeData();
 	transparentShader.FreeData();
 	shaderFrame.FreeData();
+	skyboxShader.FreeData();
+	reflectShader.FreeData();
 
 	// Free Vertex Arrays
 	triangle.vertexArray.FreeData();
@@ -630,6 +692,7 @@ int main()
 	mainModel.FreeData();
 	quad.vertexArray.FreeData();
 	quad2D.vertexArray.FreeData();
+	skybox.vertexArray.FreeData();
 
 	// Free frame buffer
 	renderer.frameBuffer.FreeFBO();
