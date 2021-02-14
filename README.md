@@ -7,7 +7,7 @@ This is a testing repo for an OpenGL project.
 - [x] Basic OpenGL
 - [x] Basic Lighting
 - [x] Loading Models
-- [ ] UI
+- [x] UI
 - [ ] Advanced OpenGL
 - [ ] Advanced Lighting
 - [ ] PBR

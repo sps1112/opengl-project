@@ -68,6 +68,27 @@ int Renderer::CheckGLAD()
     return status;
 }
 
+void Renderer::SetupFrameBuffer()
+{
+    // Generate FBO
+    frameBuffer.GenerateFBO();
+    frameBuffer.BindFBO();
+
+    // Generate Texture
+    frameBuffer.textureColorBuffer = GenerateTexture();
+    frameBuffer.RefreshTexture(width, height);
+    frameBuffer.AttachTexture();
+
+    // Generate RBO
+    frameBuffer.GenerateRBO();
+    frameBuffer.RefreshRBO(width, height);
+    frameBuffer.AttachRBO();
+
+    // Check status
+    frameBuffer.CheckStatus();
+    frameBuffer.UnBindFBO();
+}
+
 int Renderer::CheckWindowFlag()
 {
     int status = glfwWindowShouldClose(window);
@@ -318,4 +339,88 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
     rCamera.camera.ProcessMouseScroll(yoffset);
+}
+
+FrameBuffer::FrameBuffer()
+{
+}
+
+void FrameBuffer::GenerateFBO()
+{
+    glGenFramebuffers(1, &FBO);
+}
+
+void FrameBuffer::BindFBO()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+}
+
+void FrameBuffer::UnBindFBO()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::FreeFBO()
+{
+    glDeleteFramebuffers(1, &FBO);
+}
+
+void FrameBuffer::GenerateRBO()
+{
+    glGenRenderbuffers(1, &RBO);
+}
+
+void FrameBuffer::BindRBO()
+{
+    glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+}
+
+void FrameBuffer::UnBindRBO()
+{
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+void FrameBuffer::FreeRBO()
+{
+    glDeleteRenderbuffers(1, &RBO);
+}
+
+void FrameBuffer::RefreshTexture(int width, int height)
+{
+    BindTexture(textureColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
+                 width, height, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    UnBindTexture();
+}
+
+void FrameBuffer::RefreshRBO(int width, int height)
+{
+    glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8,
+                          width, height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+void FrameBuffer::AttachTexture()
+{
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_2D, textureColorBuffer, 0);
+}
+
+void FrameBuffer::AttachRBO()
+{
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                              GL_RENDERBUFFER, RBO);
+}
+
+void FrameBuffer::CheckStatus()
+{
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        Log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!!!");
+    }
 }

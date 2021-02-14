@@ -12,6 +12,7 @@
 #include <Camera.h>
 #include <Utils.h>
 #include <CustomMath.h>
+#include <Texture.h>
 
 struct RenderCamera
 {
@@ -42,6 +43,30 @@ public:
 private:
 };
 
+class FrameBuffer
+{
+public:
+    unsigned int FBO;
+    unsigned int textureColorBuffer;
+    unsigned int RBO;
+    FrameBuffer();
+    void GenerateFBO();
+    void BindFBO();
+    void UnBindFBO();
+    void FreeFBO();
+    void GenerateRBO();
+    void BindRBO();
+    void UnBindRBO();
+    void FreeRBO();
+    void RefreshTexture(int width, int height);
+    void RefreshRBO(int width, int height);
+    void AttachTexture();
+    void AttachRBO();
+    void CheckStatus();
+
+private:
+};
+
 class Renderer
 {
 public:
@@ -49,6 +74,7 @@ public:
     int minor;
     int width;
     int height;
+    FrameBuffer frameBuffer;
     GLFWwindow *window;
     float deltaTime;
     Renderer(int majorVersion, int minorVersion, int windowWidth = 800, int windowHeight = 600);
@@ -58,6 +84,7 @@ public:
     void SetData();
     void SetOtherData();
     int CheckGLAD();
+    void SetupFrameBuffer();
     int CheckWindowFlag();
     void SwapBuffers(bool lockFramerate = true);
     void StartTimer();
@@ -70,7 +97,7 @@ public:
     bool CheckInput(int key);
     void ProcessInput(bool moveStatus = false);
     void ProcessMouse(bool rotateStatus);
-    void SetDraw(int choice);
+    void SetDraw(int choice = 2);
     float GetCurrentWidth();
     float GetCurrentHeight();
 

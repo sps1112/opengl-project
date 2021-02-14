@@ -3,8 +3,7 @@
 unsigned int LoadTextureFromPath(const char *path,
                                  bool gammaCorrection, bool isDiffuse, bool toClamp)
 {
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
+    unsigned int textureID = GenerateTexture();
 
     int width, height, nrComponents;
     stbi_set_flip_vertically_on_load(true);
@@ -30,7 +29,7 @@ unsigned int LoadTextureFromPath(const char *path,
             format = GL_RGBA;
             otherFormat = (gammaCorrection && isDiffuse) ? GL_SRGB_ALPHA : format;
         }
-        glBindTexture(GL_TEXTURE_2D, textureID);
+        BindTexture(textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, otherFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -50,9 +49,11 @@ unsigned int LoadTextureFromPath(const char *path,
     return textureID;
 }
 
-void SetActiveTexture(int index)
+unsigned int GenerateTexture()
 {
-    glActiveTexture(GL_TEXTURE0 + index);
+    unsigned int id;
+    glGenTextures(1, &id);
+    return id;
 }
 
 void BindTexture(unsigned int id)
@@ -63,4 +64,9 @@ void BindTexture(unsigned int id)
 void UnBindTexture()
 {
     glActiveTexture(GL_TEXTURE0);
+}
+
+void SetActiveTexture(int index)
+{
+    glActiveTexture(GL_TEXTURE0 + index);
 }

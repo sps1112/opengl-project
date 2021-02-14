@@ -15,8 +15,9 @@ struct Texture
 
 unsigned int LoadTextureFromPath(const char *path,
                                  bool gammaCorrection = false, bool isDiffuse = true, bool toClamp = false);
-void SetActiveTexture(int index);
+unsigned int GenerateTexture();
 void BindTexture(unsigned int id);
 void UnBindTexture();
+void SetActiveTexture(int index);
 
 #endif

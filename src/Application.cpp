@@ -40,6 +40,7 @@ int main()
 		return -1;
 	}
 	renderer.SetOtherData();
+	renderer.SetupFrameBuffer();
 
 	// Camera Settings
 	glm::vec3 cameraPos(0.0f, 0.0f, 5.0f);
@@ -58,6 +59,7 @@ int main()
 	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
 	Primitive plane(FileSystem::getPath("resources/primitives/3D/plane.3d").c_str());
 	Primitive quad(FileSystem::getPath("resources/primitives/3D/quad.3d").c_str());
+	Primitive quad2D(FileSystem::getPath("resources/primitives/2D/quad.2d").c_str());
 
 	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"), true);
 
@@ -75,6 +77,8 @@ int main()
 						 (FileSystem::getPath("shaders/other/shader_outline.fs")).c_str());
 	Shader transparentShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
 							 (FileSystem::getPath("shaders/modern/shader_transparent.fs")).c_str());
+	Shader shaderFrame((FileSystem::getPath("shaders/modern/shader_2d.vs")).c_str(),
+					   (FileSystem::getPath("shaders/modern/shader_frame.fs")).c_str());
 
 	vector<Texture> textures2D;
 	Texture mainTex;
@@ -219,6 +223,11 @@ int main()
 	bool isWindow = true;
 	bool lockFrameRate = true;
 	bool toCullFaces = true;
+	int imageFilter = 0;
+	const char *imageFliterOptions[] = {
+		"Normal", "Invert Colors",
+		"GrayScale", "Sharpen",
+		"Blur", "Edge Detection"};
 
 	standardUI.AddGUI(GUI_LINE, "Setup Standard Data:-", true);
 	standardUI.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
@@ -285,6 +294,13 @@ int main()
 		// New Frame
 		gui.NewFrame();
 		renderer.NewFrame();
+
+		renderer.frameBuffer.BindFBO();
+		glEnable(GL_DEPTH_TEST);
+		renderer.frameBuffer.RefreshRBO((int)renderer.GetCurrentWidth(),
+										(int)renderer.GetCurrentHeight());
+		renderer.frameBuffer.RefreshTexture((int)renderer.GetCurrentWidth(),
+											(int)renderer.GetCurrentHeight());
 
 		// Process Data
 		renderer.ProcessInput(canMoveCamera);
@@ -552,6 +568,24 @@ int main()
 			shader2D.use();
 			triangle.Draw(shader2D);
 		}
+
+		// Second pass
+		renderer.frameBuffer.UnBindFBO(); // back to default
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glDisable(GL_DEPTH_TEST);
+		renderer.SetDraw();
+
+		shaderFrame.use();
+		vector<Texture> frameTextures;
+		Texture frameTex;
+		frameTex.id = renderer.frameBuffer.textureColorBuffer;
+		frameTex.type = "texture_diffuse";
+		frameTextures.push_back(frameTex);
+		quad2D.SetupTextures(frameTextures);
+		shaderFrame.setInt("filterChoice", imageFilter);
+		quad2D.Draw(shaderFrame);
+
 		// Set UI
 		standardUI.ShowGUI();
 		ImGui::Checkbox("Show FrameRate", &showFrameRate);
@@ -563,6 +597,7 @@ int main()
 		}
 		standardUI.EndGUI();
 		cameraUI.ShowGUI();
+		ImGui::Combo("Image Filters", &imageFilter, imageFliterOptions, 6);
 		cameraUI.EndGUI();
 		primitiveUI.ShowGUI();
 		primitiveUI.EndGUI();
@@ -584,6 +619,8 @@ int main()
 	outlineShader.FreeData();
 	modelShader.FreeData();
 	planeShader.FreeData();
+	transparentShader.FreeData();
+	shaderFrame.FreeData();
 
 	// Free Vertex Arrays
 	triangle.vertexArray.FreeData();
@@ -591,6 +628,12 @@ int main()
 	lightObject.vertexArray.FreeData();
 	plane.vertexArray.FreeData();
 	mainModel.FreeData();
+	quad.vertexArray.FreeData();
+	quad2D.vertexArray.FreeData();
+
+	// Free frame buffer
+	renderer.frameBuffer.FreeFBO();
+	renderer.frameBuffer.FreeRBO();
 
 	// Terminate Program
 	gui.TerminateGUI();
