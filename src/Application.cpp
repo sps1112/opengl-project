@@ -144,7 +144,7 @@ int main()
 	glm::vec3 objectColor(1.0f, 0.5f, 0.31f);
 
 	glm::vec3 pointLightPositions[] = {
-		glm::vec3(0.7f, 0.2f, 2.0f), glm::vec3(2.3f, -3.3f, -4.0f),
+		glm::vec3(0.7f, 0.2f, 2.0f), glm::vec3(2.3f, 3.3f, -4.0f),
 		glm::vec3(-4.0f, 2.0f, -12.0f), glm::vec3(0.0f, 0.0f, -3.0f)};
 
 	glm::vec3 cubePositions[] = {
@@ -240,7 +240,9 @@ int main()
 		"Normal", "Invert Colors",
 		"GrayScale", "Sharpen",
 		"Blur", "Edge Detection",
-		"Emboss", "Outline"};
+		"Emboss", "Outline",
+		"Checkbox"};
+	float checkboxSize = 1;
 
 	standardUI.AddGUI(GUI_LINE, "Setup Standard Data:-", true);
 	standardUI.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
@@ -323,9 +325,17 @@ int main()
 		renderer.SetColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
 		renderer.SetDraw(drawOption);
 		renderer.ProcessMouse(canRotateCamera);
+		if (renderer.CheckInput(GLFW_KEY_SPACE))
+		{
+			renderGui = false;
+			canRotateCamera = true;
+			canMoveCamera = true;
+		}
 		if (renderer.CheckInput(GLFW_KEY_LEFT_ALT))
 		{
+			renderGui = true;
 			canRotateCamera = false;
+			canMoveCamera = false;
 		}
 		if (toCullFaces)
 		{
@@ -633,17 +643,12 @@ int main()
 		frameTextures.push_back(frameTex);
 		quad2D.SetupTextures(frameTextures);
 		shaderFrame.setInt("filterChoice", imageFilter);
+		shaderFrame.setInt("width", (int)renderer.GetCurrentWidth());
+		shaderFrame.setInt("height", (int)renderer.GetCurrentHeight());
+		shaderFrame.setInt("boxSize", (int)checkboxSize);
 		quad2D.Draw(shaderFrame);
 
 		// Set UI
-		if (renderer.CheckInput(GLFW_KEY_SPACE))
-		{
-			renderGui = false;
-		}
-		if (renderer.CheckInput(GLFW_KEY_LEFT_CONTROL))
-		{
-			renderGui = true;
-		}
 		if (renderGui)
 		{
 			standardUI.ShowGUI();
@@ -656,7 +661,8 @@ int main()
 			}
 			standardUI.EndGUI();
 			cameraUI.ShowGUI();
-			ImGui::Combo("Image Filters", &imageFilter, imageFliterOptions, 8);
+			ImGui::Combo("Image Filters", &imageFilter, imageFliterOptions, 9);
+			ImGui::DragFloat("CheckBoxSize", &checkboxSize, 1, 1, 64);
 			cameraUI.EndGUI();
 			primitiveUI.ShowGUI();
 			primitiveUI.EndGUI();

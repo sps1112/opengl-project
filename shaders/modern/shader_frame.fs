@@ -9,6 +9,10 @@ out vec4 FragColor;
 in vec3 ourColor;
 in vec2 TexCoord;
 
+uniform int width;
+uniform int height;
+uniform int boxSize;
+
 const float offset = 1.0 / 300.0;
 
 void main() {
@@ -22,7 +26,7 @@ void main() {
     float average =
         0.2126 * finalColor.x + 0.7152 * finalColor.y + 0.0722 * finalColor.z;
     finalColor = vec3(average);
-  } else if (filterChoice >= 3) // Kernel Filters
+  } else if (filterChoice >= 3 && filterChoice <= 7) // Kernel Filters
   {
     vec2 offsets[9] = vec2[](vec2(-offset, offset),  // top-left
                              vec2(0.0f, offset),     // top-center
@@ -103,6 +107,18 @@ void main() {
       col += sampleTex[i] * kernel[i];
     }
     finalColor = col;
+  } else if (filterChoice == 8) // Checkbox
+  {
+    int posX = int(gl_FragCoord.x / boxSize);
+    int posY = int(gl_FragCoord.y / boxSize);
+    float average =
+        0.2126 * finalColor.x + 0.7152 * finalColor.y + 0.0722 * finalColor.z;
+    if ((posX % 2) == (posY % 2)) // both odd or even
+    {
+      finalColor = vec3(average);
+    } else {
+      finalColor = vec3(average * 3);
+    }
   }
   FragColor = vec4(finalColor, 1.0);
 }
