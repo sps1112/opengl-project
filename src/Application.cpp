@@ -240,9 +240,8 @@ int main()
 		"Normal", "Invert Colors",
 		"GrayScale", "Sharpen",
 		"Blur", "Edge Detection",
-		"Emboss", "Outline",
-		"Checkbox"};
-	float checkboxSize = 1;
+		"Emboss", "Checkbox"};
+	float checkboxSize = 16;
 
 	standardUI.AddGUI(GUI_LINE, "Setup Standard Data:-", true);
 	standardUI.AddGUI(GUI_COLOR, "Background Color", true, true, &backgroundColor);
@@ -661,7 +660,7 @@ int main()
 			}
 			standardUI.EndGUI();
 			cameraUI.ShowGUI();
-			ImGui::Combo("Image Filters", &imageFilter, imageFliterOptions, 9);
+			ImGui::Combo("Image Filters", &imageFilter, imageFliterOptions, 8);
 			ImGui::DragFloat("CheckBoxSize", &checkboxSize, 1, 1, 64);
 			cameraUI.EndGUI();
 			primitiveUI.ShowGUI();
