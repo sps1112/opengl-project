@@ -1,1 +1,4 @@
-const char *logl_root = "${CMAKE_SOURCE_DIR}";
+#ifndef ROOTDIR_H
+#define ROOTDIR_H
+inline constexpr char *logl_root = "${CMAKE_SOURCE_DIR}";
+#endif
