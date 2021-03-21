@@ -1,6 +1,17 @@
 #include <Shader.h>
 
-Shader::Shader(const char *vertexPath, const char *fragmentPath) // creates and links shader program
+// Creates and links shader program
+Shader::Shader(const char *vertexPath, const char *fragmentPath)
+{
+    CreateShader(vertexPath, fragmentPath);
+}
+
+Shader::Shader(const std::string &vertexPath, const std::string &fragmentPath)
+{
+    CreateShader(vertexPath.c_str(), fragmentPath.c_str());
+}
+
+void Shader::CreateShader(const char *vertexPath, const char *fragmentPath)
 {
     // retrieve from file path
     std::string vertexCode;
@@ -29,7 +40,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) // creates and 
     }
     catch (std::ifstream::failure e)
     {
-        std::cout << "ERROR::SHADER::FILE_NOT_SUCEESFULLY_READ" << std::endl;
+        std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
     }
 
     const char *vShaderCode = vertexCode.c_str();
@@ -53,6 +64,7 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath) // creates and 
     glDeleteShader(fragment);
 }
 
+// returns a compiled shader id
 unsigned int Shader::CompileShader(const char *code, SHADER_TYPE type)
 {
     unsigned int shader;
@@ -79,12 +91,13 @@ void Shader::use()
     glUseProgram(ID);
 }
 
+// Frees data by deleting shader program
 void Shader::FreeData()
 {
     glDeleteProgram(ID);
 }
 
-// utility functions
+// Utility Functions
 void Shader::setBool(const std::string &name, bool value) const
 {
     glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
