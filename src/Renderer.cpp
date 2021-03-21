@@ -46,14 +46,14 @@ void Renderer::SetData()
 
 void Renderer::SetOtherData()
 {
-    glEnable(GL_DEPTH_TEST);                           // Enable Z buffering
+    EnableTest(DEPTH_TEST);                            // Enable Z buffering
     glDepthFunc(GL_LESS);                              // Closer objects will be drawn in front
-    glEnable(GL_STENCIL_TEST);                         // Enables editing Stencil
+    EnableTest(STENCIL_TEST);                          // Enables editing Stencil
     glStencilFunc(GL_NOTEQUAL, 1, 0xFF);               // if (n!=1) ==> (n=1) =>Draw Everything
-    glEnable(GL_BLEND);                                // Enables Blend test
+    EnableTest(BLEND_TEST);                            // Enables Blend test
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Set Blending mode as {x*a+y*(1-a)}
     stbi_set_flip_vertically_on_load(true);            // Set before loading model
-    glEnable(GL_CULL_FACE);                            // Enable Face Culling
+    EnableTest(FACE_CULL);                             // Enable Face Culling
     glCullFace(GL_BACK);                               // To Cull Back Faces (do no draw)
     glFrontFace(GL_CCW);                               // Front faces are those with CCW motion
 }
@@ -228,7 +228,7 @@ void Renderer::SetDraw(int choice)
     }
     else if (choice == 1)
     {
-        fillMode = GL_POINT; // wireframe
+        fillMode = GL_POINT; // point
     }
     glPolygonMode(GL_FRONT_AND_BACK, fillMode);
 }
@@ -310,6 +310,37 @@ void VertexArray::FreeData()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+}
+
+void EnableTest(RENDERER_TESTS test)
+{
+    glEnable(GetTest(test));
+}
+
+void DisableTest(RENDERER_TESTS test)
+{
+    glDisable(GetTest(test));
+}
+
+GLenum GetTest(RENDERER_TESTS test)
+{
+    GLenum finalTest;
+    switch (test)
+    {
+    case DEPTH_TEST:
+        finalTest = GL_DEPTH_TEST;
+        break;
+    case STENCIL_TEST:
+        finalTest = GL_STENCIL_TEST;
+        break;
+    case BLEND_TEST:
+        finalTest = GL_BLEND;
+        break;
+    case FACE_CULL:
+        finalTest = GL_CULL_FACE;
+        break;
+    }
+    return finalTest;
 }
 
 // callback on  window size change
@@ -423,4 +454,12 @@ void FrameBuffer::CheckStatus()
     {
         Log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!!!");
     }
+}
+
+void FrameBuffer::NewFrame(int newWidth, int newHeight)
+{
+    BindFBO();
+    EnableTest(DEPTH_TEST);
+    RefreshRBO(newWidth, newHeight);
+    RefreshTexture(newWidth, newHeight);
 }

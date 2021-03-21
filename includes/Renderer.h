@@ -24,6 +24,14 @@ struct RenderCamera
     float yOff;
 };
 
+enum RENDERER_TESTS
+{
+    DEPTH_TEST,
+    STENCIL_TEST,
+    BLEND_TEST,
+    FACE_CULL,
+};
+
 class VertexArray
 {
 public:
@@ -63,6 +71,7 @@ public:
     void AttachTexture();
     void AttachRBO();
     void CheckStatus();
+    void NewFrame(int newWidth, int newHeight);
 
 private:
 };
@@ -106,6 +115,10 @@ private:
     float timePeriod;
     float prevFrameTime;
 };
+
+void EnableTest(RENDERER_TESTS test);
+void DisableTest(RENDERER_TESTS test);
+GLenum GetTest(RENDERER_TESTS test);
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
