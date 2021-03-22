@@ -86,7 +86,7 @@ public:
     FrameBuffer frameBuffer;
     GLFWwindow *window;
     float deltaTime;
-    Renderer(int majorVersion, int minorVersion, int windowWidth = 800, int windowHeight = 600);
+    Renderer(int majorVersion = 3, int minorVersion = 3, int windowWidth = 800, int windowHeight = 600);
     void SetupGLFW();
     void TerminateGLFW();
     void CreateWindow(const char *title, GLFWmonitor *monitor = NULL, GLFWwindow *share = NULL);
@@ -103,12 +103,14 @@ public:
     Camera *GetCamera();
     void SetCursor(bool status);
     void SetColor(float r, float g, float b, float a = 1.0f);
+    void ClearColor();
     bool CheckInput(int key);
     void ProcessInput(bool moveStatus = false);
     void ProcessMouse(bool rotateStatus);
     void SetDraw(int choice = 2);
     float GetCurrentWidth();
     float GetCurrentHeight();
+    void QuitWindow();
 
 private:
     float currentFrameTime;

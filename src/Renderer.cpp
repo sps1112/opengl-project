@@ -163,6 +163,11 @@ void Renderer::SetColor(float r, float g, float b, float a)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
+void Renderer::ClearColor()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 bool Renderer::CheckInput(int key)
 {
     return (glfwGetKey(window, key) == GLFW_PRESS);
@@ -173,7 +178,7 @@ void Renderer::ProcessInput(bool moveStatus)
 {
     if (CheckInput(GLFW_KEY_ESCAPE))
     {
-        glfwSetWindowShouldClose(window, true);
+        QuitWindow();
     }
     if (moveStatus)
     {
@@ -245,6 +250,11 @@ float Renderer::GetCurrentHeight()
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     return height;
+}
+
+void Renderer::QuitWindow()
+{
+    glfwSetWindowShouldClose(window, true);
 }
 
 void VertexArray::GenerateBuffers()
