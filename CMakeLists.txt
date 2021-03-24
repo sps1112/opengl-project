@@ -42,7 +42,6 @@ add_executable(
     src/CustomMath.cpp
     src/Light.cpp
     src/Scene.cpp
-    src/Entity.cpp
 
     includes/imgui/imgui.cpp
     includes/imgui/imgui_draw.cpp
