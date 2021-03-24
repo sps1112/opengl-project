@@ -11,6 +11,7 @@
 #include <Camera.h>		// Camera header
 #include <Light.h>		// Light header
 #include <Model.h>		// Model header
+#include <ExampleGUI.h> // Custom GUI Widgets
 
 // Standard Headers
 #include <iostream>
@@ -30,6 +31,7 @@ int maxSceneCount = 3;
 int currentSceneIndex = 0;
 int loadIndex = -1;
 int loadedSceneCount = 0;
+int listIndex;
 
 enum AppMode
 {
@@ -38,6 +40,9 @@ enum AppMode
 };
 AppMode currentMode = Empty_Scene;
 
+bool overlayOpen = true;
+bool listOpen = false;
+
 // Method Declarations
 int SetupRenderer();
 void Draw();
@@ -45,7 +50,7 @@ void ClearScreen();
 void ShowFileMenu();
 void ShowEditMenu();
 void ShowViewMenu();
-void DrawNormalScene(int width, int height);
+void DrawNormalScene();
 
 // Main Function
 int main()
@@ -87,15 +92,28 @@ void Draw()
 	loadedScenes = new Scene[maxSceneCount];
 	// Start Render Loop
 	renderer.StartTimer();
-	/*Render Loop
-		1. New Frame
-		2. Process Data
-		3. Get New Data
-		4. Refresh Last Frame
-		5. Render Objects
-		6. Render FBO
-		7. Render GUI
-		8. End Frame
+	/*
+	Render Loop
+	1. New Frame
+	2. Process Data
+	3. Get New Data
+	4. Refresh Last Frame
+		a. Clear Screen
+		b. Bind FBO
+	5. Render Objects
+		a. Draw Opaque Objects
+			i. Ground First
+			ii. Others Second
+		b. Draw Translucent Objects
+			i. Farthest to Closest
+		c. Draw Skybox
+		d. Draw 2D objects
+	6. Render FBO
+		a. Unbind FBO
+		b. Clear Screen
+		c. Draw Texture
+	7. Render GUI
+	8. End Frame
 	*/
 	while (!renderer.CheckWindowFlag())
 	{
@@ -117,7 +135,7 @@ void Draw()
 			ClearScreen();
 			break;
 		case Normal_Scene:
-			DrawNormalScene(currentWidth, currentHeight);
+			DrawNormalScene();
 			break;
 		}
 
@@ -160,17 +178,21 @@ void ClearScreen()
 	renderer.SetColor(0.0f, 0.0, 0.0f, 1.0f);
 }
 
-void DrawNormalScene(int width, int height)
+void DrawNormalScene()
 {
-	// Refresh Last Frame
-	glm::vec4 bgColor = loadedScenes[currentSceneIndex].backgroundColor;
-	renderer.SetColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
-	renderer.frameBuffer.NewFrame(width, height);
-	// Render Objects
-	// Render FBO
-	renderer.frameBuffer.UnBindFBO();
+	int sceneNumber = max(1, loadedSceneCount - 2) + currentSceneIndex;
+	listIndex = (sceneNumber + maxSceneCount - 1) % maxSceneCount;
+	loadedScenes[listIndex].DrawScene(renderer);
 	// Render GUI
 	ImGui::ShowDemoWindow();
+	if (overlayOpen)
+	{
+		ShowSimpleOverlay(&overlayOpen, sceneNumber);
+	}
+	if (listOpen)
+	{
+		ShowAppLayout(&listOpen, &(loadedScenes[listIndex]));
+	}
 }
 
 void ShowFileMenu()
@@ -182,7 +204,7 @@ void ShowFileMenu()
 		loadIndex = (loadIndex + 1) % maxSceneCount;
 		loadedSceneCount++;
 		loadedScenes[loadIndex] = nextScene;
-		currentSceneIndex = loadIndex;
+		currentSceneIndex = loadedSceneCount >= maxSceneCount ? 2 : loadIndex;
 	}
 	if (ImGui::MenuItem("Open Scene"))
 	{
@@ -202,7 +224,7 @@ void ShowFileMenu()
 				if (ImGui::MenuItem(name.c_str()))
 				{
 					currentMode = Normal_Scene;
-					currentSceneIndex = (i - 1) % maxSceneCount;
+					currentSceneIndex = (i - startIndex) % maxSceneCount;
 				}
 			}
 		}
@@ -228,62 +250,53 @@ void ShowFileMenu()
 
 void ShowEditMenu()
 {
-	if (ImGui::BeginMenu("Edit Current Scene.."))
+	if (currentMode == Normal_Scene)
 	{
-		if (currentMode == Normal_Scene)
+		if (ImGui::BeginMenu("Edit Current Scene.."))
 		{
-			ImGui::ColorEdit4("Background Color", &(loadedScenes[currentSceneIndex]).backgroundColor.x);
+			ImGui::ColorEdit4("Background Color", &(loadedScenes[listIndex]).backgroundColor.x);
+			ImGui::EndMenu();
 		}
-		ImGui::EndMenu();
+		if (ImGui::BeginMenu("Add Object.."))
+		{
+			if (ImGui::MenuItem("Triangle"))
+			{
+				loadedScenes[listIndex].AddObject("resources/primitives/2D/triangle.2d", PRIMITIVE_OBJECT);
+			}
+			if (ImGui::MenuItem("Rectangle"))
+			{
+				loadedScenes[listIndex].AddObject("resources/primitives/2D/rectangle.2d", PRIMITIVE_OBJECT);
+			}
+			if (ImGui::MenuItem("Cube"))
+			{
+				loadedScenes[listIndex].AddObject("resources/primitives/3D/cube.3d", PRIMITIVE_OBJECT);
+			}
+			/*if (ImGui::MenuItem("Backpack"))
+			{
+				loadedScenes[listIndex].AddObject("resources/models/backpack/backpack.obj", MODEL_OBJECT);
+			}*/
+			ImGui::EndMenu();
+		}
 	}
-	if (ImGui::BeginMenu("Add Object.."))
+	else
 	{
-		if (currentMode == Normal_Scene)
-		{
-			if (ImGui::BeginMenu("Primitive.."))
-			{
-				if (ImGui::BeginMenu("2D"))
-				{
-					if (ImGui::MenuItem("Triangle"))
-					{
-					}
-					if (ImGui::MenuItem("Rectangle"))
-					{
-					}
-					ImGui::EndMenu();
-				}
-				if (ImGui::BeginMenu("3D"))
-				{
-					if (ImGui::MenuItem("Cube"))
-					{
-					}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Light.."))
-			{
-				if (ImGui::MenuItem("Point Light"))
-				{
-				}
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Model.."))
-			{
-				if (ImGui::MenuItem("Backpack"))
-				{
-				}
-				ImGui::EndMenu();
-			}
-		}
-		ImGui::EndMenu();
+		ImGui::MenuItem("(No Scene Open)", NULL, false, false);
 	}
 }
 
 void ShowViewMenu()
 {
-	if (ImGui::BeginMenu("Log"))
+	if (currentMode == Normal_Scene)
 	{
-		ImGui::EndMenu();
+		if (ImGui::BeginMenu("SetView"))
+		{
+			ImGui::MenuItem("Overlay", NULL, &overlayOpen);
+			ImGui::MenuItem("Object List", NULL, &listOpen);
+			ImGui::EndMenu();
+		}
+	}
+	else
+	{
+		ImGui::MenuItem("(No Scene Open)", NULL, false, false);
 	}
 }
