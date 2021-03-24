@@ -48,6 +48,7 @@ public:
     vector<unsigned int> indices;
     vector<Texture> textures;
     VertexArray vertexArray;
+    Primitive();
     Primitive(const std::string &path);
     void SetupTextures(vector<Texture> textures);
     void Draw(Shader &shader);
@@ -56,6 +57,7 @@ private:
     // render data
     bool is2D;
     int vertexCount;
+    std::string filePath;
     void SetupData(const char *path);
     int GetVertexCount(char *fileData);
     void ProcessData(char *fileData);

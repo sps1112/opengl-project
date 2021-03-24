@@ -1,7 +1,12 @@
 #include <Primitive.h>
 
+Primitive::Primitive()
+{
+}
+
 Primitive::Primitive(const std::string &path)
 {
+    filePath = path;
     SetupData((path).c_str());
     SetupPrimitive();
 }
