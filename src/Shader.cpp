@@ -1,5 +1,9 @@
 #include <Shader.h>
 
+Shader::Shader()
+{
+}
+
 // Creates and links shader program
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {

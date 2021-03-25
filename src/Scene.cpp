@@ -19,6 +19,8 @@ void Scene::AddObject(const std::string &path, OBJECT_TYPE type)
 {
     objectCount++;
     SceneObject newObject("Object" + std::to_string(objectCount), path, type);
+    newObject.AddShader("shaders/modern/shader_2d.vs", "shaders/modern/shader_2d.fs");
+    newObject.AddTexture(TEXTURE_DIFFUSE, "resources/textures/awesomeface.png");
     objects.push_back(newObject);
     if (CheckList(path))
     {
@@ -39,10 +41,17 @@ void Scene::DrawScene(Renderer &renderer)
     int height = (int)renderer.GetCurrentHeight();
     // Refresh Last Frame
     renderer.SetColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
-    renderer.frameBuffer.NewFrame(width, height);
+    // renderer.frameBuffer.NewFrame(width, height);
     // Render Objects
+    for (int i = 0; i < objectCount; i++)
+    {
+        if (objects[i].isVisible)
+        {
+            GetUnique(objects[i].path)->Draw(&objects[i]);
+        }
+    }
     // Render FBO
-    renderer.frameBuffer.UnBindFBO();
+    // renderer.frameBuffer.UnBindFBO();
 }
 
 bool Scene::CheckList(std::string path)
@@ -75,6 +84,7 @@ UniqueObject *Scene::GetUnique(std::string path)
 
 SceneObject::SceneObject()
 {
+    isVisible = true;
 }
 
 SceneObject::SceneObject(std::string name, std::string path, OBJECT_TYPE objectType)
@@ -82,6 +92,20 @@ SceneObject::SceneObject(std::string name, std::string path, OBJECT_TYPE objectT
     this->name = name;
     this->path = path;
     this->objectType = objectType;
+    isVisible = true;
+}
+
+void SceneObject::AddShader(std::string pathVertex, std::string pathFragment)
+{
+    shader = Shader(FileSystem::getPath(pathVertex),
+                    FileSystem::getPath(pathFragment));
+}
+
+void SceneObject::AddTexture(TEXTURE_TYPE type, std::string path,
+                             bool gammaCorrection, bool isDiffuse, bool toClamp)
+{
+    Texture newTexture = LoadTexture(type, FileSystem::getPath(path), gammaCorrection, isDiffuse, toClamp);
+    textures.push_back(newTexture);
 }
 
 UniqueObject::UniqueObject(std::string name, std::string path, OBJECT_TYPE objectType)
@@ -94,6 +118,18 @@ UniqueObject::UniqueObject(std::string name, std::string path, OBJECT_TYPE objec
     {
     case PRIMITIVE_OBJECT:
         primitive = Primitive(FileSystem::getPath(path));
+        break;
+    }
+}
+
+void UniqueObject::Draw(SceneObject *object)
+{
+    switch (objectType)
+    {
+    case PRIMITIVE_OBJECT:
+        primitive.SetupTextures(object->textures);
+        (object->shader).use();
+        primitive.Draw(object->shader);
         break;
     }
 }

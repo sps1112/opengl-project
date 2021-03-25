@@ -153,6 +153,7 @@ static void ShowAppLayout(bool *p_open, Scene *currentScene)
                             ImGui::TextWrapped(("Name: " + selectedObject->name +
                                                 "\nPath: " + selectedObject->path + "\n")
                                                    .c_str());
+                            ImGui::Checkbox("Visibility", &(selectedObject->isVisible));
                         }
                     }
                     else
