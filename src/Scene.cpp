@@ -37,8 +37,8 @@ void Scene::AddObject(const std::string &path, OBJECT_TYPE type)
 void Scene::DrawScene(Renderer &renderer)
 {
     // Get Data
-    int width = (int)renderer.GetCurrentWidth();
-    int height = (int)renderer.GetCurrentHeight();
+    /*int width = (int)renderer.GetCurrentWidth();
+    int height = (int)renderer.GetCurrentHeight();*/
     // Refresh Last Frame
     renderer.SetColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
     // renderer.frameBuffer.NewFrame(width, height);

@@ -17,7 +17,7 @@
 #include <iostream>
 #include <vector>
 
-// Const Settings
+// Renderer Settings
 const int majorVersion = 4;
 const int minorVersion = 6;
 const unsigned int SCR_WIDTH = 800;
@@ -26,12 +26,13 @@ const char *windowTitle = "OpenGL window";
 
 Renderer renderer(majorVersion, minorVersion, SCR_WIDTH, SCR_HEIGHT);
 
+// Scene Settings
 Scene *loadedScenes;
-int maxSceneCount = 3;
-int currentSceneIndex = 0;
-int loadIndex = -1;
-int loadedSceneCount = 0;
-int listIndex;
+const int maxSceneCount = 3; // Max Number of Scene loaded
+int currentSceneIndex = 0;	 // Index of  Current Scene in UI
+int loadIndex = -1;			 // Index of last loaded Scene in Array
+int loadedSceneCount = 0;	 // Number of last loaded Scene
+int listIndex;				 // Index of Current Loaded Scene in Array
 
 enum AppMode
 {
@@ -40,6 +41,7 @@ enum AppMode
 };
 AppMode currentMode = Empty_Scene;
 
+// UI booleans
 bool overlayOpen = true;
 bool listOpen = false;
 
@@ -51,6 +53,11 @@ void ShowFileMenu();
 void ShowEditMenu();
 void ShowViewMenu();
 void DrawNormalScene();
+
+// Project Settings
+int drawOption = 2;
+const char *drawComboItems[] = {
+	"Draw Line", "Draw Point", "Draw Fill"};
 
 // Main Function
 int main()
@@ -90,6 +97,7 @@ void Draw()
 	// Setup GUI
 	GUI gui(renderer.window, majorVersion, minorVersion);
 	loadedScenes = new Scene[maxSceneCount];
+
 	// Start Render Loop
 	renderer.StartTimer();
 	/*
@@ -123,10 +131,11 @@ void Draw()
 
 		// Process Data
 		renderer.ProcessInput();
+		renderer.SetDraw(drawOption);
 
 		// Get New Data
-		int currentWidth = (int)renderer.GetCurrentWidth();
-		int currentHeight = (int)renderer.GetCurrentHeight();
+		/*int currentWidth = (int)renderer.GetCurrentWidth();
+		int currentHeight = (int)renderer.GetCurrentHeight();*/
 
 		// Refresh Frame
 		switch (currentMode)
@@ -180,9 +189,11 @@ void ClearScreen()
 
 void DrawNormalScene()
 {
+	// Draw Scene
 	int sceneNumber = max(1, loadedSceneCount - 2) + currentSceneIndex;
 	listIndex = (sceneNumber + maxSceneCount - 1) % maxSceneCount;
 	loadedScenes[listIndex].DrawScene(renderer);
+
 	// Render GUI
 	ImGui::ShowDemoWindow();
 	if (overlayOpen)
@@ -197,19 +208,20 @@ void DrawNormalScene()
 
 void ShowFileMenu()
 {
-	if (ImGui::MenuItem("New Scene"))
+	if (ImGui::MenuItem("New Scene")) // Add New Scene
 	{
 		currentMode = Normal_Scene;
 		Scene nextScene("New Scene");
 		loadIndex = (loadIndex + 1) % maxSceneCount;
 		loadedSceneCount++;
 		loadedScenes[loadIndex] = nextScene;
-		currentSceneIndex = loadedSceneCount >= maxSceneCount ? 2 : loadIndex;
+		currentSceneIndex = (loadedSceneCount >= maxSceneCount) ? 2 : loadIndex;
 	}
-	if (ImGui::MenuItem("Open Scene"))
+	ImGui::Separator();
+	if (ImGui::MenuItem("Open Scene")) // Load a Template Scene
 	{
 	}
-	if (ImGui::BeginMenu("Open Recent Scene"))
+	if (ImGui::BeginMenu("Open Recent Scene")) // Load Recently Open Scenes
 	{
 		if (loadedSceneCount == 0)
 		{
@@ -231,14 +243,11 @@ void ShowFileMenu()
 		ImGui::EndMenu();
 	}
 	ImGui::Separator();
-	if (ImGui::MenuItem("Save Scene"))
-	{
-	}
-	if (ImGui::MenuItem("Save Scene as.."))
+	if (ImGui::MenuItem("Save Scene")) // Save the Current Scene as a File
 	{
 	}
 	ImGui::Separator();
-	if (ImGui::MenuItem("Close Scene"))
+	if (ImGui::MenuItem("Close Scene")) // Close Current Scene
 	{
 		currentMode = Empty_Scene;
 	}
@@ -255,6 +264,7 @@ void ShowEditMenu()
 		if (ImGui::BeginMenu("Edit Current Scene.."))
 		{
 			ImGui::ColorEdit4("Background Color", &(loadedScenes[listIndex]).backgroundColor.x);
+			ImGui::Combo("Draw Mode", &drawOption, drawComboItems, 3);
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Add Object.."))
