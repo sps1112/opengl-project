@@ -1,17 +1,17 @@
 // Custom Headers
-#include <Renderer.h>	// Renderer header
-#include <Utils.h>		// Utility header
-#include <GUI.h>		// GUI header
-#include <Scene.h>		// Scene header
-#include <CustomMath.h> // Math header
-#include <FileSystem.h> // Filesystem header
-#include <Primitive.h>	// Primitive header
-#include <Shader.h>		// Shader header
-#include <Texture.h>	// Texture header
-#include <Camera.h>		// Camera header
-#include <Light.h>		// Light header
-#include <Model.h>		// Model header
-#include <ExampleGUI.h> // Custom GUI Widgets
+#include <rendering/Renderer.h> // Renderer header
+#include <utility/Utils.h>		// Utility header
+#include <gui/GUI.h>			// GUI header
+#include <object/Scene.h>		// Scene header
+#include <utility/CustomMath.h> // Math header
+#include <utility/FileSystem.h> // Filesystem header
+#include <object/Primitive.h>	// Primitive header
+#include <rendering/Shader.h>	// Shader header
+#include <rendering/Texture.h>	// Texture header
+#include <rendering/Camera.h>	// Camera header
+#include <rendering/Light.h>	// Light header
+#include <object/Model.h>		// Model header
+#include <gui/ExampleGUI.h>		// Custom GUI Widgets
 
 // Standard Headers
 #include <iostream>
