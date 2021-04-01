@@ -27,6 +27,8 @@ class Shader
 public:
 	unsigned int ID;										  // shader program ID
 	Shader(const char *vertexPath, const char *fragmentPath); // creates and links shader program
+	Shader(const std::string &vertexPath, const std::string &fragmentPath);
+	void CreateShader(const char *vertexPath, const char *fragmentPath);
 	unsigned int CompileShader(const char *code, SHADER_TYPE type);
 	// uses shader program
 	void use();

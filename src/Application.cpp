@@ -54,87 +54,76 @@ int main()
 	GUIWindow primitiveUI("Primitive UI");
 	GUIWindow objectUI("Object UI");
 
-	Primitive triangle(FileSystem::getPath("resources/primitives/2D/triangle.2d").c_str());
-	Primitive cube(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
-	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d").c_str());
-	Primitive plane(FileSystem::getPath("resources/primitives/3D/plane.3d").c_str());
-	Primitive quad(FileSystem::getPath("resources/primitives/3D/quad.3d").c_str());
-	Primitive quad2D(FileSystem::getPath("resources/primitives/2D/quad.2d").c_str());
-	Primitive skybox(FileSystem::getPath("resources/primitives/3D/cubemap.3d").c_str());
+	Primitive triangle(FileSystem::getPath("resources/primitives/2D/triangle.2d"));
+	Primitive cube(FileSystem::getPath("resources/primitives/3D/cube.3d"));
+	Primitive lightObject(FileSystem::getPath("resources/primitives/3D/cube.3d"));
+	Primitive plane(FileSystem::getPath("resources/primitives/3D/plane.3d"));
+	Primitive quad(FileSystem::getPath("resources/primitives/3D/quad.3d"));
+	Primitive quad2D(FileSystem::getPath("resources/primitives/2D/quad.2d"));
+	Primitive skybox(FileSystem::getPath("resources/primitives/3D/cubemap.3d"));
 
 	Model mainModel(FileSystem::getPath("resources/models/backpack/backpack.obj"), true);
 
-	Shader shader2D((FileSystem::getPath("shaders/modern/shader_2d.vs")).c_str(),
-					(FileSystem::getPath("shaders/modern/shader_2d.fs")).c_str());
-	Shader shader3D((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
-					(FileSystem::getPath("shaders/modern/shader_scene.fs")).c_str());
-	Shader sourceShader(FileSystem::getPath("shaders/modern/shader_source.vs").c_str(),
-						FileSystem::getPath("shaders/modern/shader_source.fs").c_str());
-	Shader modelShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
-					   (FileSystem::getPath("shaders/modern/shader_scene.fs")).c_str());
-	Shader planeShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
-					   (FileSystem::getPath("shaders/modern/shader_scene.fs")).c_str());
-	Shader outlineShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
-						 (FileSystem::getPath("shaders/other/shader_outline.fs")).c_str());
-	Shader transparentShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
-							 (FileSystem::getPath("shaders/modern/shader_transparent.fs")).c_str());
-	Shader shaderFrame((FileSystem::getPath("shaders/modern/shader_2d.vs")).c_str(),
-					   (FileSystem::getPath("shaders/modern/shader_frame.fs")).c_str());
-	Shader skyboxShader((FileSystem::getPath("shaders/modern/shader_skybox.vs")).c_str(),
-						(FileSystem::getPath("shaders/modern/shader_skybox.fs")).c_str());
-	Shader reflectShader((FileSystem::getPath("shaders/modern/shader_scene.vs")).c_str(),
-						 (FileSystem::getPath("shaders/modern/shader_reflect.fs")).c_str());
+	Shader shader2D(FileSystem::getPath("shaders/modern/shader_2d.vs"),
+					FileSystem::getPath("shaders/modern/shader_2d.fs"));
+	Shader shader3D(FileSystem::getPath("shaders/modern/shader_scene.vs"),
+					FileSystem::getPath("shaders/modern/shader_scene.fs"));
+	Shader sourceShader(FileSystem::getPath("shaders/modern/shader_source.vs"),
+						FileSystem::getPath("shaders/modern/shader_source.fs"));
+	Shader modelShader(FileSystem::getPath("shaders/modern/shader_scene.vs"),
+					   FileSystem::getPath("shaders/modern/shader_scene.fs"));
+	Shader planeShader(FileSystem::getPath("shaders/modern/shader_scene.vs"),
+					   FileSystem::getPath("shaders/modern/shader_scene.fs"));
+	Shader outlineShader(FileSystem::getPath("shaders/modern/shader_scene.vs"),
+						 FileSystem::getPath("shaders/other/shader_outline.fs"));
+	Shader transparentShader(FileSystem::getPath("shaders/modern/shader_scene.vs"),
+							 FileSystem::getPath("shaders/modern/shader_transparent.fs"));
+	Shader shaderFrame(FileSystem::getPath("shaders/modern/shader_2d.vs"),
+					   FileSystem::getPath("shaders/modern/shader_frame.fs"));
+	Shader skyboxShader(FileSystem::getPath("shaders/modern/shader_skybox.vs"),
+						FileSystem::getPath("shaders/modern/shader_skybox.fs"));
+	Shader reflectShader(FileSystem::getPath("shaders/modern/shader_scene.vs"),
+						 FileSystem::getPath("shaders/modern/shader_reflect.fs"));
 
 	vector<Texture> textures2D;
-	Texture mainTex;
-	mainTex.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/awesomeface.png").c_str());
-	mainTex.type = "texture_diffuse";
+	Texture mainTex = LoadTexture(TEXTURE_DIFFUSE, FileSystem::getPath("resources/textures/awesomeface.png"));
 	textures2D.push_back(mainTex);
 	triangle.SetupTextures(textures2D);
 
 	vector<Texture> textures3D, textures3DGamma;
 	Texture diffuse, specular, emmision, diffuseG, emmisionG;
-	diffuse.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/container2.png").c_str());
-	diffuse.type = "texture_diffuse";
+	diffuse = LoadTexture(TEXTURE_DIFFUSE, FileSystem::getPath("resources/textures/container2.png"));
+	specular = LoadTexture(TEXTURE_SPECULAR, FileSystem::getPath("resources/textures/container2_specular.png"));
+	emmision = LoadTexture(TEXTURE_EMMISION, FileSystem::getPath("resources/textures/matrix.jpg"));
 	textures3D.push_back(diffuse);
-	specular.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/container2_specular.png").c_str());
-	specular.type = "texture_specular";
 	textures3D.push_back(specular);
-	emmision.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/matrix.jpg").c_str());
-	emmision.type = "texture_emmision";
 	textures3D.push_back(emmision);
 	cube.SetupTextures(textures3D);
 
-	diffuseG.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/container2.png").c_str(),
-									  true, true);
-	diffuseG.type = "texture_diffuse";
+	diffuseG = LoadTexture(TEXTURE_DIFFUSE,
+						   FileSystem::getPath("resources/textures/container2.png"), true, true);
+	emmisionG = LoadTexture(TEXTURE_EMMISION,
+							FileSystem::getPath("resources/textures/matrix.jpg"), true, true);
 	textures3DGamma.push_back(diffuseG);
 	textures3DGamma.push_back(specular);
-	emmisionG.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/matrix.jpg").c_str(),
-									   true, true);
-	emmisionG.type = "texture_emmision";
 	textures3DGamma.push_back(emmisionG);
 
 	vector<Texture> planeTextures, planeTexturesGamma;
 	Texture marble, marbleGamma;
-	marble.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/marble.jpg").c_str());
-	marble.type = "texture_diffuse";
+	marble = LoadTexture(TEXTURE_DIFFUSE, FileSystem::getPath("resources/textures/marble.jpg"));
 	planeTextures.push_back(marble);
 	plane.SetupTextures(planeTextures);
-	marbleGamma.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/marble.jpg").c_str(),
-										 true, true);
-	marbleGamma.type = "texture_diffuse";
+	marbleGamma = LoadTexture(TEXTURE_DIFFUSE,
+							  FileSystem::getPath("resources/textures/marble.jpg"), true, true);
 	planeTexturesGamma.push_back(marbleGamma);
 
 	vector<Texture> quadTextures, windowTextures;
 	Texture grass, windowTex;
-	grass.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/grass.png").c_str(),
-								   true, true, true);
-	grass.type = "texture_diffuse";
+	grass = LoadTexture(TEXTURE_DIFFUSE,
+						FileSystem::getPath("resources/textures/grass.png"), true, true, true);
 	quadTextures.push_back(grass);
-	windowTex.id = LoadTextureFromPath(FileSystem::getPath("resources/textures/window.png").c_str(),
-									   true, true, true);
-	windowTex.type = "texture_diffuse";
+	windowTex = LoadTexture(TEXTURE_DIFFUSE,
+							FileSystem::getPath("resources/textures/window.png"), true, true, true);
 	windowTextures.push_back(windowTex);
 	quad.SetupTextures(quadTextures);
 
@@ -312,12 +301,9 @@ int main()
 		gui.NewFrame();
 		renderer.NewFrame();
 
-		renderer.frameBuffer.BindFBO();
-		glEnable(GL_DEPTH_TEST);
-		renderer.frameBuffer.RefreshRBO((int)renderer.GetCurrentWidth(),
-										(int)renderer.GetCurrentHeight());
-		renderer.frameBuffer.RefreshTexture((int)renderer.GetCurrentWidth(),
-											(int)renderer.GetCurrentHeight());
+		int currentWidth = (int)renderer.GetCurrentWidth();
+		int currentHeight = (int)renderer.GetCurrentHeight();
+		renderer.frameBuffer.NewFrame(currentWidth, currentHeight);
 
 		// Process Data
 		renderer.ProcessInput(canMoveCamera);
@@ -338,11 +324,11 @@ int main()
 		}
 		if (toCullFaces)
 		{
-			glEnable(GL_CULL_FACE);
+			EnableTest(FACE_CULL);
 		}
 		else
 		{
-			glDisable(GL_CULL_FACE);
+			DisableTest(FACE_CULL);
 		}
 
 		// View matrix :: WORLD TO VIEW
@@ -397,11 +383,13 @@ int main()
 			spotLights[i].cutoff = spotLightCutoff;
 			spotLights[i].outerCutoff = spotLightOuterCutoff;
 		}
+
 		// Render Objects
 		if (drawOutline)
 		{
 			glStencilMask(0x00);
 		}
+
 		// Draw Plane
 		if (gammaCorrection)
 		{
@@ -429,7 +417,8 @@ int main()
 		planeShader.SetMatrices(planeModel, view, projection);
 		plane.Draw(planeShader);
 
-		// First Render pass
+		// Draw Cubes
+		// First Render pass for Cubes
 		if (drawOutline)
 		{
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -480,12 +469,12 @@ int main()
 				cube.Draw(shader3D);
 			}
 		}
-		// Second Render Pass
+		// Second Render Pass for Cubes
 		if (drawOutline)
 		{
 			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 			glStencilMask(0x00);
-			glDisable(GL_DEPTH_TEST);
+			DisableTest(DEPTH_TEST);
 			if (showCubes)
 			{
 				float scale = 1.0f + outlineWidth;
@@ -494,7 +483,6 @@ int main()
 									  glm::vec3(cubeOutlineColor.x, cubeOutlineColor.y, cubeOutlineColor.z));
 				for (unsigned int i = 0; i < 10; i++)
 				{
-					// model matrix :: LOCAL TO WORLD
 					glm::mat4 model = glm::mat4(1.0f);
 					model = glm::translate(model, cubePositions[i]);
 					float angle = 15.0f * (i);
@@ -506,7 +494,7 @@ int main()
 			}
 			glStencilMask(0xFF);
 			glStencilFunc(GL_ALWAYS, 0, 0xFF);
-			glEnable(GL_DEPTH_TEST);
+			EnableTest(DEPTH_TEST);
 		}
 
 		// Draw Lights
@@ -574,6 +562,7 @@ int main()
 			mainModel.Draw(modelShader);
 		}
 
+		// Draw Transparent/Translucent Objects
 		transparentShader.use();
 		transparentShader.setBool("toDiscard", !isWindow);
 		if (isWindow)
@@ -590,7 +579,6 @@ int main()
 			float distance = glm::length((*(renderer.GetCamera())).Position - quadPositions[i]);
 			sorted[distance] = quadPositions[i];
 		}
-
 		for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin();
 			 it != sorted.rend();
 			 ++it)
@@ -610,6 +598,7 @@ int main()
 			triangle.Draw(shader2D);
 		}
 
+		// Draw Skybox
 		glDepthFunc(GL_LEQUAL);
 		skyboxShader.use();
 		glm::mat4 newView = glm::mat4(glm::mat3(view));
@@ -627,11 +616,12 @@ int main()
 		skybox.Draw(skyboxShader);
 		glDepthFunc(GL_LESS);
 
-		// Second pass
+		// Second Pass
+		// Draw FBO
 		renderer.frameBuffer.UnBindFBO(); // back to default
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glDisable(GL_DEPTH_TEST);
+		DisableTest(DEPTH_TEST);
 		renderer.SetDraw();
 
 		shaderFrame.use();
@@ -650,6 +640,7 @@ int main()
 		// Set UI
 		if (renderGui)
 		{
+			// Standard UI
 			standardUI.ShowGUI();
 			ImGui::Checkbox("Show FrameRate", &showFrameRate);
 			if (showFrameRate)
@@ -659,12 +650,18 @@ int main()
 				ImGui::Text("FrameRate:- %d", val);
 			}
 			standardUI.EndGUI();
+
+			// Camera UI
 			cameraUI.ShowGUI();
 			ImGui::Combo("Image Filters", &imageFilter, imageFliterOptions, 8);
 			ImGui::DragFloat("CheckBoxSize", &checkboxSize, 1, 1, 64);
 			cameraUI.EndGUI();
+
+			// Primitive UI
 			primitiveUI.ShowGUI();
 			primitiveUI.EndGUI();
+
+			// Object UI
 			objectUI.ShowGUI();
 			if (ImGui::Button("Reset Object"))
 			{

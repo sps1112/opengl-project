@@ -1,8 +1,8 @@
 #include <Primitive.h>
 
-Primitive::Primitive(const char *path)
+Primitive::Primitive(const std::string &path)
 {
-    SetupData(path);
+    SetupData((path).c_str());
     SetupPrimitive();
 }
 
@@ -172,16 +172,16 @@ void Primitive::ProcessData(char *fileData)
             i++;
         }
         /*
-            // Indices Set
-            if (((char)fileData[lineStartIndex]) == '\0')
-            {
-                std::cout << "End" << std::endl;
-            }
-            else
-            {
-                std::cout << "Not end " << ((char)fileData[lineStartIndex]) << "x" << std::endl;
-            }
-            */
+        // Indices Set
+        if (((char)fileData[lineStartIndex]) == '\0')
+        {
+            std::cout << "End" << std::endl;
+        }
+        else
+        {
+            std::cout << "Not end " << ((char)fileData[lineStartIndex]) << "x" << std::endl;
+        }
+        */
         delete[] vertexArray;
     }
     else
@@ -208,10 +208,13 @@ void Primitive::ProcessData(char *fileData)
         }
         // Log("Texture coords set");
         lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
-        for (int i = 0; i < vertexCount; i++)
+        if (CheckNextLine(fileData, lineStartIndex))
         {
-            lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
-            vertexArray[i].Color = GetVec3(fileData, 'c', is2D, lineStartIndex, i);
+            for (int i = 0; i < vertexCount; i++)
+            {
+                lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+                vertexArray[i].Color = GetVec3(fileData, 'c', is2D, lineStartIndex, i);
+            }
         }
         // Log("Color set");
         lineStartIndex = SkipLines(fileData, lineStartIndex, 2);

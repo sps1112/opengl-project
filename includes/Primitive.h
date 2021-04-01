@@ -48,7 +48,7 @@ public:
     vector<unsigned int> indices;
     vector<Texture> textures;
     VertexArray vertexArray;
-    Primitive(const char *path);
+    Primitive(const std::string &path);
     void SetupTextures(vector<Texture> textures);
     void Draw(Shader &shader);
 
