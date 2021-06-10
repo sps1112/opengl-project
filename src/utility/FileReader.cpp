@@ -223,9 +223,9 @@ int GetEndIndexString(char *mainCharArray, char *targetCharArray)
     return -1;
 }
 
-int SkipLines(char *charArray, int startIndex, int lines)
+int SkipLines(char *charArray, int startIndex, int n)
 {
-    for (int i = 0; i < lines; i++)
+    for (int i = 0; i < n; i++)
     {
         startIndex = GetLineStartIndex(charArray, startIndex);
     }

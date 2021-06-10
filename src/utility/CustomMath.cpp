@@ -1,22 +1,52 @@
 #include <utility/CustomMath.h>
 
-Transform::Transform()
+float clamp(float a, float min, float max)
 {
-    position = glm::vec3(0.0f);
-    rotation = glm::vec3(0.0f);
-    scale = glm::vec3(1.0f);
+    return glm::clamp(a, min, max);
 }
 
-Transform::Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
+float max(float a, float b)
+{
+    return ((a > b) ? a : b);
+}
+
+float min(float a, float b)
+{
+    return ((a > b) ? a : b);
+}
+
+float saturate(float a)
+{
+    return clamp(a, 0.0f, 1.0f);
+}
+
+float radian_to_degree(float rad)
+{
+    return ((rad / PI_VAL) * 180.0f);
+}
+
+float degree_to_radian(float degree)
+{
+    return ((degree / 180.0f) * PI_VAL);
+}
+
+Transform::Transform()
+{
+    position = Vec3(0.0f);
+    rotation = Vec3(0.0f);
+    scale = Vec3(1.0f);
+}
+
+Transform::Transform(Vec3 pos, Vec3 rot, Vec3 scl)
 {
     position = pos;
     rotation = rot;
     scale = scl;
 }
 
-void Transform::ResetToOrigin()
+void Transform::Reset()
 {
-    position = glm::vec3(0.0f);
-    rotation = glm::vec3(0.0f);
-    scale = glm::vec3(1.0f);
+    position = Vec3(0.0f);
+    rotation = Vec3(0.0f);
+    scale = Vec3(1.0f);
 }
