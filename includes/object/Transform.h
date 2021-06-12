@@ -1,6 +1,7 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+// Header declarations
 #include <utility/CustomMath.h>
 
 //Transform Class
@@ -20,4 +21,4 @@ public:
 private:
 };
 
-#endif
+#endif // !TRANSFORM_H

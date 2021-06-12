@@ -1,6 +1,9 @@
 #ifndef FILEREADER_H
 #define FILEREADER_H
 
+// Header Declarations
+#include <utility/Utils.h>
+
 #include <iostream>
 #include <sstream>
 
@@ -48,4 +51,4 @@ int GetEndIndexString(char *mainCharArray, char *targetCharArray);
 // Gets index of a line by skipping n lines from a startIndex
 int SkipLines(char *charArray, int startIndex, int n);
 
-#endif
+#endif // !FILEREADER_H

@@ -13,4 +13,4 @@ void Log(std::string message);
 // Logs a number to Output
 void Log(const float n);
 
-#endif
+#endif // !UTILS_H

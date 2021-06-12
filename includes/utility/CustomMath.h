@@ -8,6 +8,7 @@
 #include <external/glm/glm/gtc/quaternion.hpp>
 #include <external/glm/glm/gtx/quaternion.hpp>
 
+// Constant values
 #define PI_VAL 3.14159265
 
 // Custom Math Definitions
@@ -31,4 +32,4 @@ float radian_to_degree(float rad);
 // Converts an Angle given in degrees to radians
 float degree_to_radian(float degree);
 
-#endif
+#endif // !CUSTOM_MATH_H

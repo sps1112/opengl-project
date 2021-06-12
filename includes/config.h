@@ -35,4 +35,4 @@
 // Renderer Settings
 #define GAMMA_CORRECTION_ENABLED 1
 
-#endif
+#endif // !CONFIG_H

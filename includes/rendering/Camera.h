@@ -1,6 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+// Header declarations
 #include <external/glad/glad.h>
 #include <utility/CustomMath.h>
 #include <config.h>
@@ -8,7 +9,7 @@
 #include <vector>
 #include <iostream>
 
-// camera movement directions
+// Camera movement directions
 enum Camera_Movement
 {
 	FORWARD,
@@ -19,7 +20,7 @@ enum Camera_Movement
 	DOWN
 };
 
-// default values
+// Default values
 const float YAW = CAMERA_YAW;
 const float PITCH = CAMERA_PITCH;
 const float SPEED = CAMERA_SPEED;
@@ -28,7 +29,7 @@ const float ZOOM = CAMERA_ZOOM;
 const float MAXZOOM = CAMERA_MAXZOOM;
 const float MINZOOM = CAMERA_MINZOOM;
 
-// Camer Class
+// Camera Class
 class Camera
 {
 public:
@@ -54,17 +55,17 @@ public:
 	Camera(Vec3 position = Vec3(0.0f, 0.0f, 0.0f), Vec3 up = Vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
 	// Component constructor
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
-	// returns view matrix
+	// Returns view matrix
 	Mat4 GetViewMatrix();
-	// processes camera movement from keyboard
+	// Processes camera movement from keyboard
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
-	// process Camera rotation from mouse
+	// Process Camera rotation from mouse
 	void ProcessMouseMovement(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch = true);
-	// processes Camera Zoom from scroll wheel
+	// Processes Camera Zoom from scroll wheel
 	void ProcessMouseScroll(float yoffset);
 
 private:
-	// updates front,right and up vectors from angles
+	// Updates front, right and up vectors from angles
 	void updateCameraVectors();
 };
 

@@ -1,6 +1,5 @@
 #include <rendering/Camera.h>
 
-// Vector constructor
 Camera::Camera(Vec3 position, Vec3 up, float yaw, float pitch) : Front(Vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 {
     Position = position;
@@ -10,7 +9,6 @@ Camera::Camera(Vec3 position, Vec3 up, float yaw, float pitch) : Front(Vec3(0.0f
     updateCameraVectors();
 }
 
-// Component constructor
 Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(Vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
 {
     Position = Vec3(posX, posY, posZ);
@@ -20,31 +18,11 @@ Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float u
     updateCameraVectors();
 }
 
-// returns view matrix
 Mat4 Camera::GetViewMatrix()
 {
-    // Custom lookAt function
-    /*
-		glm::mat4 translation=glm::mat4(1.0f);
-		translation[3][0] = -Position.x;
-		translation[3][1] = -Position.y;
-		translation[3][2] = -Position.z;
-		glm::mat4 rotation = glm::mat4(1.0f);
-		rotation[0][0] = Right.x;
-		rotation[1][0] = Right.y;
-		rotation[2][0] = Right.z;
-		rotation[0][1] = Up.x;
-		rotation[1][1] = Up.y;
-		rotation[2][1] = Up.z;
-		rotation[0][2] = -Front.x;
-		rotation[1][2] = -Front.y;
-		rotation[2][2] = -Front.z;
-		return rotation * translation;
-		*/
     return glm::lookAt(Position, Position + Front, Up);
 }
 
-// processes camera movement from keyboard
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
     float velocity = MovementSpeed * deltaTime;
@@ -75,7 +53,6 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
     // Position.y = 0.0f; //for FPS CAMERA
 }
 
-// process Camera rotation from mouse
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch)
 {
     xoffset *= MouseSensitivity * deltaTime * 60;
@@ -98,7 +75,6 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, float deltaTime,
     updateCameraVectors();
 }
 
-// processes Camera Zoom from scroll wheel
 void Camera::ProcessMouseScroll(float yoffset)
 {
     Zoom -= (float)yoffset;
@@ -112,7 +88,6 @@ void Camera::ProcessMouseScroll(float yoffset)
     }
 }
 
-// updates front,right and up vectors from angles
 void Camera::updateCameraVectors()
 {
     glm::vec3 front;

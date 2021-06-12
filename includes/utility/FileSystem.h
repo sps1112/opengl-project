@@ -21,4 +21,4 @@ private:
     static std::string getPathRelativeBinary(const std::string &path);
 };
 
-#endif
+#endif // !FILESYSTEM_H

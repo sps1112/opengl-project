@@ -1,6 +1,5 @@
 #include <utility/FileReader.h>
 
-// Calculates length of character array
 int GetCharArrayLength(char *charArray)
 {
     int index = 0;
@@ -204,7 +203,7 @@ int GetStartIndexString(char *mainCharArray, char *targetCharArray)
         }
         return stringIndex;
     }
-    std::cout << "INVALID TARGET STRING" << std::endl;
+    Log("INVALID TARGET STRING");
     return -1;
 }
 
@@ -219,7 +218,7 @@ int GetEndIndexString(char *mainCharArray, char *targetCharArray)
         index += targetLength - 1;
         return index;
     }
-    std::cout << "INVALID TARGET STRING" << std::endl;
+    Log("INVALID TARGET STRING");
     return -1;
 }
 
