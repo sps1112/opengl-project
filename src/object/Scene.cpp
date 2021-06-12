@@ -104,7 +104,7 @@ void SceneObject::AddShader(std::string pathVertex, std::string pathFragment)
 void SceneObject::AddTexture(TEXTURE_TYPE type, std::string path,
                              bool gammaCorrection, bool isDiffuse, bool toClamp)
 {
-    Texture newTexture = LoadTexture(type, FileSystem::getPath(path), gammaCorrection, isDiffuse, toClamp);
+    Texture newTexture = LoadTexture(type, FileSystem::getPath(path), isDiffuse, toClamp);
     textures.push_back(newTexture);
 }
 

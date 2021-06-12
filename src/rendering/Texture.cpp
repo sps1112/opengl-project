@@ -1,40 +1,21 @@
 #include <rendering/Texture.h>
 
-Texture LoadTexture(TEXTURE_TYPE type, const std::string &path,
-                    bool gammaCorrection, bool isDiffuse, bool toClamp)
+Texture LoadTexture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse, bool toClamp)
 {
     Texture newTexture;
-    newTexture.id = LoadTextureFromPath((path.c_str()), gammaCorrection, isDiffuse, toClamp);
-    std::string texType = "";
-    switch (type)
-    {
-    case TEXTURE_DIFFUSE:
-        texType = "texture_diffuse";
-        break;
-    case TEXTURE_SPECULAR:
-        texType = "texture_specular";
-        break;
-    case TEXTURE_NORMAL:
-        texType = "texture_normal";
-        break;
-    case TEXTURE_HEIGHT:
-        texType = "texture_height";
-        break;
-    case TEXTURE_EMMISION:
-        texType = "texture_emmision";
-        break;
-    default:
-        texType = "texture_diffuse";
-    }
-    newTexture.type = texType;
+    newTexture.id = LoadTextureFromPath((path.c_str()), isDiffuse, toClamp);
+    newTexture.type = texture_type_strings[type];
+    newTexture.path = path;
     return newTexture;
 }
 
-unsigned int LoadTextureFromPath(const char *path,
-                                 bool gammaCorrection, bool isDiffuse, bool toClamp)
+unsigned int LoadTextureFromPath(const char *path, bool isDiffuse, bool toClamp)
 {
     unsigned int textureID = GenerateTexture();
-
+    bool gammaCorrection = false;
+#if GAMMA_CORRECTION_ENABLED
+    gammaCorrection = true;
+#endif
     int width, height, nrComponents;
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
@@ -79,10 +60,9 @@ unsigned int LoadTextureFromPath(const char *path,
     return textureID;
 }
 
-unsigned int LoadTextureFromPath(const std::string &path,
-                                 bool gammaCorrection, bool isDiffuse, bool toClamp)
+unsigned int LoadTextureFromPath(const std::string &path, bool isDiffuse, bool toClamp)
 {
-    return LoadTextureFromPath(path.c_str(), gammaCorrection, isDiffuse, toClamp);
+    return LoadTextureFromPath(path.c_str(), isDiffuse, toClamp);
 }
 
 unsigned int GenerateTexture()
