@@ -20,4 +20,19 @@
 #define DEFAULT_BACKGROUND_COLOR COLOR_BLACK
 #define DEFAULT_SCENE_COLOR COLOR_GRAY
 
+// Camera Settings
+#define CAMERA_YAW -90.0f
+#define CAMERA_PITCH 0.0f
+#define CAMERA_SPEED 4.5f
+#define CAMERA_SENSITIVITY 0.1f
+#define CAMERA_ZOOM 45.0f
+#define CAMERA_MAXZOOM 60.0f
+#define CAMERA_MINZOOM 1.0f
+
+// Scene Settings
+#define MAX_LOADED_SCENES_COUNT 3
+
+// Renderer Settings
+#define GAMMA_CORRECTION_ENABLED 1
+
 #endif
