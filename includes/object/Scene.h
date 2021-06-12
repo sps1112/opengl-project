@@ -9,6 +9,7 @@
 #include <rendering/Shader.h>
 #include <object/Model.h>
 #include <rendering/Texture.h>
+#include <object/Transform.h>
 
 #include <iostream>
 #include <vector>

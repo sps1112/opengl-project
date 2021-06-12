@@ -39,6 +39,7 @@ add_executable(
     src/object/Model.cpp
     src/object/Primitive.cpp
     src/object/Scene.cpp
+    src/object/Transform.cpp
     src/utility/FileSystem.cpp
     src/utility/Utils.cpp
     src/utility/FileReader.cpp
