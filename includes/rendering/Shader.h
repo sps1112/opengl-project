@@ -14,7 +14,7 @@
 #include <sstream>
 #include <iostream>
 
-enum SHADER_TYPE
+enum SHADER_COMPONENT
 {
 	VERTEX_SHADER,
 	FRAGMENT_SHADER,
@@ -30,7 +30,7 @@ public:
 	Shader(const char *vertexPath, const char *fragmentPath); // creates and links shader program
 	Shader(const std::string &vertexPath, const std::string &fragmentPath);
 	void CreateShader(const char *vertexPath, const char *fragmentPath);
-	unsigned int CompileShader(const char *code, SHADER_TYPE type);
+	unsigned int CompileShader(const char *code, SHADER_COMPONENT type);
 	// uses shader program
 	void use();
 	void FreeData();

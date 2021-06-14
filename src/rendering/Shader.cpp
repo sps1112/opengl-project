@@ -2,6 +2,7 @@
 
 Shader::Shader()
 {
+    // Default Constructor
 }
 
 // Creates and links shader program
@@ -69,7 +70,7 @@ void Shader::CreateShader(const char *vertexPath, const char *fragmentPath)
 }
 
 // returns a compiled shader id
-unsigned int Shader::CompileShader(const char *code, SHADER_TYPE type)
+unsigned int Shader::CompileShader(const char *code, SHADER_COMPONENT type)
 {
     unsigned int shader;
     if (type == VERTEX_SHADER)
