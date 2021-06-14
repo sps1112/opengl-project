@@ -35,6 +35,7 @@ add_executable(
     src/rendering/Texture.cpp
     src/rendering/Light.cpp
     src/rendering/Material.cpp
+    src/object/Actor.cpp
     src/object/Mesh.cpp
     src/object/Model.cpp
     src/object/Primitive.cpp

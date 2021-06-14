@@ -14,6 +14,17 @@
 #include <iostream>
 #include <vector>
 
+class SceneData
+{
+public:
+private:
+    std::vector<Primitive> prms;
+    std::vector<Shader> shaders;
+    std::vector<Texture> textures;
+    std::vector<Model> models;
+    std::vector<Light> lights;
+};
+
 enum OBJECT_TYPE
 {
     PRIMITIVE_OBJECT,
