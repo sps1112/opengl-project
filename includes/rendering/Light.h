@@ -1,9 +1,10 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-#include <rendering/Renderer.h>
+// Header declarations
 #include <utility/CustomMath.h>
 
+// Types of Light sources
 enum LIGHT_TYPE
 {
     LIGHT_NORMAL,
@@ -12,29 +13,33 @@ enum LIGHT_TYPE
     LIGHT_SPOTLIGHT,
 };
 
+// Base Light Class
 class Light
 {
 public:
     LIGHT_TYPE type;
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
+    Vec3 ambient;
+    Vec3 diffuse;
+    Vec3 specular;
     Light();
 
 private:
 };
 
+// Normal Point Light Source
 class NormalLight : public Light
 {
 public:
-    glm::vec3 position;
-    NormalLight();
-    NormalLight(glm::vec3 lightAmbient, glm::vec3 lightDiffuse, glm::vec3 lightSpecular,
-                glm::vec3 position);
+    Vec3 position;
+    NormalLight(Vec3 position = Vec3(0.0f),
+                Vec3 lightAmbient = Vec3(0.2f),
+                Vec3 lightDiffuse = Vec3(0.5f),
+                Vec3 lightSpecular = Vec3(0.6f));
 
 private:
 };
 
+// Point Light with Attenuation
 class PointLight : public NormalLight
 {
 public:
@@ -42,35 +47,38 @@ public:
     float linear;
     float quadratic;
     PointLight();
-    PointLight(glm::vec3 lightAmbient, glm::vec3 lightDiffuse, glm::vec3 lightSpecular,
-               glm::vec3 position, float constant = 1.0f, float linear = 0.22f, float quadratic = 0.2f);
+    PointLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
+               Vec3 position, float constant = 1.0f, float linear = 0.22f, float quadratic = 0.2f);
 
 private:
 };
 
+// Directional Light Source
 class DirectionalLight : public Light
 {
 public:
-    glm::vec3 direction;
+    Vec3 direction;
     DirectionalLight();
-    DirectionalLight(glm::vec3 lightAmbient, glm::vec3 lightDiffuse, glm::vec3 lightSpecular,
-                     glm::vec3 lightDir);
+    DirectionalLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
+                     Vec3 lightDir);
 
 private:
 };
 
+// Spot Light Source
 class SpotLight : public NormalLight
 {
 public:
-    glm::vec3 direction;
+    Vec3 direction;
     float cutoff;
     float outerCutoff;
     SpotLight();
-    SpotLight(glm::vec3 lightAmbient, glm::vec3 lightDiffuse, glm::vec3 lightSpecular,
-              glm::vec3 position, glm::vec3 lightDir, float lightCutoff, float lightOuterCutoff);
+    SpotLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
+              Vec3 position, Vec3 lightDir, float lightCutoff, float lightOuterCutoff);
 
 private:
 };
 
-glm::vec3 GetWorldPosition(glm::vec3 position, float angleVal, glm::vec3 scale);
-#endif
+Vec3 GetWorldPosition(Vec3 position, float angleVal, Vec3 scale);
+
+#endif // !LIGHT_H

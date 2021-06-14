@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+// All the Configuration details for the Project
+
 // OpenGL Settings
 #define OPENGL_MAJOR_VERSION 4
 #define OPENGL_MINOR_VERSION 6
@@ -34,5 +36,9 @@
 
 // Renderer Settings
 #define GAMMA_CORRECTION_ENABLED 1
+#define MAX_POINT_LIGHTS 6
+#define MAX_DIRECTIONAL_LIGHTS 4
+#define MAX_SPOT_LIGHT 4
+#define MAX_LIGHTS 12
 
 #endif // !CONFIG_H
