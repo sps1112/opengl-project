@@ -19,8 +19,10 @@
 #define COLOR_BLUE Vec3(0.1f, 0.1f, 1.0f)
 #define COLOR_YELLOW Vec3(1.0f, 1.0f, 0.1f)
 #define COLOR_WHITE Vec3(1.0f, 1.0f, 1.0f)
+#define COLOR_PURPLE Vec3(1.0f, 0.1f, 1.0f)
 #define DEFAULT_BACKGROUND_COLOR COLOR_BLACK
 #define DEFAULT_SCENE_COLOR COLOR_GRAY
+#define DEFAULT_SHADER_COLOR COLOR_BLUE
 
 // Camera Settings
 #define CAMERA_YAW -90.0f
