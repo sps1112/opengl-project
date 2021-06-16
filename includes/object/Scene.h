@@ -1,85 +1,116 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <utility/CustomMath.h>
-#include <rendering/Renderer.h>
-#include <utility/FileSystem.h>
+// Header Declarations
+#include <object/Actor.h>
 #include <object/Primitive.h>
-#include <utility/Utils.h>
 #include <rendering/Shader.h>
-#include <object/Model.h>
 #include <rendering/Texture.h>
-#include <object/Transform.h>
+#include <object/Model.h>
+#include <rendering/Light.h>
+#include <utility/FileSystem.h>
+#include <utility/CustomMath.h>
+#include <config.h>
 
 #include <iostream>
 #include <vector>
 
+// Template Data Class
+template <typename T>
+class ActorData
+{
+public:
+    T data;
+    unsigned int id;
+    ActorData(T data_, unsigned int id_)
+    {
+        data = data_;
+        id = id_;
+    }
+
+private:
+};
+
+// Template List Class of a Data Class
+template <typename T>
+class ActorDataList
+{
+public:
+    std::vector<ActorData<T>> list;
+    int count;
+
+    ActorDataList()
+    {
+        count = 0;
+    }
+
+    void add_data(ActorData<T> new_data)
+    {
+        list.push_back(new_data);
+        count++;
+    }
+
+    ActorData<T> get_data_point(unsigned int id)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            if (list[i].id == id)
+            {
+                return list[i];
+            }
+        }
+    }
+
+    bool is_id_present(unsigned int test_id)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            if (list[i].id == test_id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+private:
+};
+
+// Scene Data class holding unique reference
 class SceneData
 {
 public:
-private:
-    std::vector<Primitive> prms;
-    std::vector<Shader> shaders;
-    std::vector<Texture> textures;
-    std::vector<Model> models;
-    std::vector<Light> lights;
-};
-
-enum OBJECT_TYPE
-{
-    PRIMITIVE_OBJECT,
-    LIGHT_OBJECT,
-    MODEL_OBJECT,
-};
-
-class SceneObject
-{
-public:
-    std::string name;
-    std::string path;
-    OBJECT_TYPE objectType;
-    bool isVisible;
-    Shader shader;
-    std::vector<Texture> textures;
-    SceneObject();
-    SceneObject(std::string name, std::string path, OBJECT_TYPE objectType);
-    void AddShader(std::string pathVertex, std::string pathFragment);
-    void AddTexture(TEXTURE_TYPE type, std::string path,
-                    bool gammaCorrection = false, bool isDiffuse = true, bool toClamp = false);
+    glm::vec4 backgroundColor;
+    std::string sceneName;
+    SceneData(std::string sceneName_ = "New Scene");
+    void AddPrimitive(std::string path, unsigned int id);
+    void AddShader(std::string path1, std::string path2, unsigned int id);
+    void AddTexture(std::string path, unsigned int id);
+    void AddModel(std::string path, unsigned int id);
+    void AddLight();
+    void DrawObject(RenderActor &actor);
 
 private:
-    Transform transform;
-};
-
-class UniqueObject : public SceneObject
-{
-public:
-    int count;
-    UniqueObject(std::string name, std::string path, OBJECT_TYPE objectType);
-    void Draw(SceneObject *object);
-
-private:
-    Primitive primitive;
+    ActorDataList<Primitive> prms;
+    ActorDataList<Shader> shaders;
+    std::vector<ActorData<Texture>> textures;
+    std::vector<ActorData<Model>> models;
+    std::vector<ActorData<Light>> lights;
 };
 
 class Scene
 {
 public:
-    glm::vec4 backgroundColor;
-    std::string sceneName;
-    int objectCount;
-    std::vector<SceneObject> objects;
-    int uniqueCount;
-    std::vector<UniqueObject> uniques;
-    Scene(std::string name);
-    Scene();
-    void AddObject(const std::string &path, OBJECT_TYPE type);
+    SceneData data;
+    int actorCount;
+    std::vector<RenderActor> actorList;
+    Scene(std::string name = "New Scene");
+    void AddObject(TEMPLATE_ACTORS actor_choice);
     void DrawScene(Renderer &renderer);
-    UniqueObject *GetUnique(std::string path);
 
 private:
     // Functions
-    bool CheckList(std::string path);
+    bool CheckList(TEMPLATE_ACTORS actor_choice);
 };
 
 #endif

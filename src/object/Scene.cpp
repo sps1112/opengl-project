@@ -1,36 +1,86 @@
 #include <object/Scene.h>
 
-Scene::Scene(std::string name)
+SceneData::SceneData(std::string sceneName_)
 {
-    sceneName = name;
-    backgroundColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
-    objectCount = 0;
-    uniqueCount = 0;
+    sceneName = sceneName_;
+    backgroundColor = Vec4(DEFAULT_SCENE_COLOR, 1.0f);
 }
 
-Scene::Scene()
+void SceneData::AddPrimitive(std::string path, unsigned int id)
 {
-    backgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    objectCount = 0;
-    uniqueCount = 0;
-}
-
-void Scene::AddObject(const std::string &path, OBJECT_TYPE type)
-{
-    objectCount++;
-    SceneObject newObject("Object" + std::to_string(objectCount), path, type);
-    newObject.AddShader("shaders/modern/shader_2d.vs", "shaders/modern/shader_2d.fs");
-    newObject.AddTexture(TEXTURE_DIFFUSE, "resources/textures/awesomeface.png");
-    objects.push_back(newObject);
-    if (CheckList(path))
+    Log("Add Primitive");
+    if (!prms.is_id_present(id))
     {
-        GetUnique(path)->count++;
+        Log("Loading New Primitive");
+        Primitive prm(FileSystem::getPath(path));
+        ActorData datapoint(prm, id);
+        prms.add_data(datapoint);
     }
     else
     {
-        uniqueCount++;
-        UniqueObject newUnique("Unique" + std::to_string(uniqueCount), path, type);
-        uniques.push_back(newUnique);
+        Log("Primitive already present");
+    }
+}
+
+void SceneData::AddShader(std::string path1, std::string path2, unsigned int id)
+{
+    if (!shaders.is_id_present(id))
+    {
+        Shader shd(FileSystem::getPath(path1), FileSystem::getPath(path2));
+        ActorData datapoint(shd, id);
+        shaders.add_data(datapoint);
+    }
+}
+
+void SceneData::AddTexture(std::string path, unsigned int id)
+{
+}
+
+void SceneData::AddModel(std::string path, unsigned int id)
+{
+}
+
+void SceneData::AddLight()
+{
+}
+
+void SceneData::DrawObject(RenderActor &actor)
+{
+    unsigned int id = default_actor_id[actor.type];
+    switch (actor.type)
+    {
+    case PRIMITIVE_ACTOR:
+        shaders.get_data_point(id).data.use();
+        shaders.get_data_point(id).data.setVec3("matColor", actor.mat.albedo);
+        prms.get_data_point(id).data.Draw(shaders.get_data_point(id).data);
+        break;
+
+    default:
+        break;
+    }
+}
+
+Scene::Scene(std::string name)
+{
+    data = SceneData(name);
+    actorCount = 0;
+}
+
+void Scene::AddObject(TEMPLATE_ACTORS actor_choice)
+{
+    actorCount++;
+    std::string actor_file_path = resource_dir + template_actor_filepath[actor_choice];
+    RenderActor newActor("Object" + std::to_string(actorCount), actor_types[actor_choice], actor_file_path);
+    actorList.push_back(newActor);
+    switch (newActor.type)
+    {
+    case PRIMITIVE_ACTOR:
+        data.AddShader(GetVSPath(newActor.mat.type), GetFSPath(newActor.mat.type), default_actor_id[actor_choice]);
+        data.AddPrimitive(actor_file_path, default_actor_id[actor_choice]);
+        break;
+
+    default:
+        break;
     }
 }
 
@@ -40,96 +90,16 @@ void Scene::DrawScene(Renderer &renderer)
     /*int width = (int)renderer.GetCurrentWidth();
     int height = (int)renderer.GetCurrentHeight();*/
     // Refresh Last Frame
-    renderer.SetColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
+    renderer.SetColor(data.backgroundColor.x, data.backgroundColor.y, data.backgroundColor.z, 1.0f);
     // renderer.frameBuffer.NewFrame(width, height);
     // Render Objects
-    for (int i = 0; i < objectCount; i++)
+    for (int i = 0; i < actorCount; i++)
     {
-        if (objects[i].isVisible)
+        if (actorList[i].isVisible)
         {
-            GetUnique(objects[i].path)->Draw(&objects[i]);
+            data.DrawObject(actorList[i]);
         }
     }
     // Render FBO
     // renderer.frameBuffer.UnBindFBO();
-}
-
-bool Scene::CheckList(std::string path)
-{
-    bool objectLoaded = false;
-    for (int i = 0; i < uniqueCount; i++)
-    {
-        if (uniques[i].path == path)
-        {
-            objectLoaded = true;
-            break;
-        }
-    }
-    return objectLoaded;
-}
-
-UniqueObject *Scene::GetUnique(std::string path)
-{
-    int index = 0;
-    for (int i = 0; i < uniqueCount; i++)
-    {
-        if (uniques[i].path == path)
-        {
-            index = i;
-            break;
-        }
-    }
-    return &(uniques[index]);
-}
-
-SceneObject::SceneObject()
-{
-    isVisible = true;
-}
-
-SceneObject::SceneObject(std::string name, std::string path, OBJECT_TYPE objectType)
-{
-    this->name = name;
-    this->path = path;
-    this->objectType = objectType;
-    isVisible = true;
-}
-
-void SceneObject::AddShader(std::string pathVertex, std::string pathFragment)
-{
-    shader = Shader(FileSystem::getPath(pathVertex),
-                    FileSystem::getPath(pathFragment));
-}
-
-void SceneObject::AddTexture(TEXTURE_TYPE type, std::string path,
-                             bool gammaCorrection, bool isDiffuse, bool toClamp)
-{
-    Texture newTexture = LoadTexture(type, FileSystem::getPath(path), isDiffuse, toClamp);
-    textures.push_back(newTexture);
-}
-
-UniqueObject::UniqueObject(std::string name, std::string path, OBJECT_TYPE objectType)
-{
-    this->name = name;
-    this->path = path;
-    this->objectType = objectType;
-    this->count = 1;
-    switch (objectType)
-    {
-    case PRIMITIVE_OBJECT:
-        primitive = Primitive(FileSystem::getPath(path));
-        break;
-    }
-}
-
-void UniqueObject::Draw(SceneObject *object)
-{
-    switch (objectType)
-    {
-    case PRIMITIVE_OBJECT:
-        primitive.SetupTextures(object->textures);
-        (object->shader).use();
-        primitive.Draw(object->shader);
-        break;
-    }
 }

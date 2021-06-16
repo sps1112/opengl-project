@@ -1,4 +1,5 @@
 // Custom Headers
+#include <config.h>				// Configuration Header
 #include <rendering/Renderer.h> // Renderer header
 #include <utility/Utils.h>		// Utility header
 #include <gui/GUI.h>			// GUI header
@@ -12,28 +13,30 @@
 #include <rendering/Light.h>	// Light header
 #include <object/Model.h>		// Model header
 #include <gui/ExampleGUI.h>		// Custom GUI Widgets
+#include <object/Actor.h>		// Actor Header
 
 // Standard Headers
 #include <iostream>
 #include <vector>
 
 // Renderer Settings
-const int majorVersion = 4;
-const int minorVersion = 6;
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const int majorVersion = OPENGL_MAJOR_VERSION;
+const int minorVersion = OPENGL_MINOR_VERSION;
+const unsigned int SCR_WIDTH = DEFAULT_WINDOW_WIDTH;
+const unsigned int SCR_HEIGHT = DEFAULT_WINDOW_HEIGHT;
 const char *windowTitle = "OpenGL window";
 
 Renderer renderer(majorVersion, minorVersion, SCR_WIDTH, SCR_HEIGHT);
 
 // Scene Settings
 Scene *loadedScenes;
-const int maxSceneCount = 3; // Max Number of Scene loaded
-int currentSceneIndex = 0;	 // Index of  Current Scene in UI
-int loadIndex = -1;			 // Index of last loaded Scene in Array
-int loadedSceneCount = 0;	 // Number of last loaded Scene
-int listIndex;				 // Index of Current Loaded Scene in Array
+const int maxSceneCount = MAX_LOADED_SCENES_COUNT; // Max Number of Scene loaded
+int currentSceneIndex = 0;						   // Index of  Current Scene in UI
+int loadIndex = -1;								   // Index of last loaded Scene in Array
+int loadedSceneCount = 0;						   // Number of last loaded Scene
+int listIndex;									   // Index of Current Loaded Scene in Array
 
+// The States of the Application
 enum AppMode
 {
 	Empty_Scene,
@@ -184,7 +187,7 @@ void Draw()
 
 void ClearScreen()
 {
-	renderer.SetColor(0.0f, 0.0, 0.0f, 1.0f);
+	renderer.SetColor(DEFAULT_BACKGROUND_COLOR.r, DEFAULT_BACKGROUND_COLOR.g, DEFAULT_BACKGROUND_COLOR.b, 1.0f);
 }
 
 void DrawNormalScene()
@@ -263,7 +266,7 @@ void ShowEditMenu()
 	{
 		if (ImGui::BeginMenu("Edit Current Scene.."))
 		{
-			ImGui::ColorEdit4("Background Color", &(loadedScenes[listIndex]).backgroundColor.x);
+			ImGui::ColorEdit4("Background Color", &(loadedScenes[listIndex]).data.backgroundColor.x);
 			ImGui::Combo("Draw Mode", &drawOption, drawComboItems, 3);
 			ImGui::EndMenu();
 		}
@@ -271,15 +274,19 @@ void ShowEditMenu()
 		{
 			if (ImGui::MenuItem("Triangle"))
 			{
-				loadedScenes[listIndex].AddObject("resources/primitives/2D/triangle.2d", PRIMITIVE_OBJECT);
+				loadedScenes[listIndex].AddObject(TRIANGLE_2D);
 			}
 			if (ImGui::MenuItem("Rectangle"))
 			{
-				loadedScenes[listIndex].AddObject("resources/primitives/2D/rectangle.2d", PRIMITIVE_OBJECT);
+				loadedScenes[listIndex].AddObject(RECTANGLE_2D);
 			}
 			if (ImGui::MenuItem("Cube"))
 			{
-				loadedScenes[listIndex].AddObject("resources/primitives/3D/cube.3d", PRIMITIVE_OBJECT);
+				loadedScenes[listIndex].AddObject(CUBE_3D);
+			}
+			if (ImGui::MenuItem("Sphere"))
+			{
+				loadedScenes[listIndex].AddObject(SPHERE_MODEL);
 			}
 			/*if (ImGui::MenuItem("Backpack"))
 			{

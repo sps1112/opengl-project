@@ -66,13 +66,13 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                 if (ImGui::BeginTabItem("Objects"))
                 {
                     objectSelected = true;
-                    if (currentScene->objectCount > 0)
+                    if (currentScene->actorCount > 0)
                     {
-                        selectedIndexA %= currentScene->objectCount;
-                        for (int i = 0; i < currentScene->objectCount; i++)
+                        selectedIndexA %= currentScene->actorCount;
+                        for (int i = 0; i < currentScene->actorCount; i++)
                         {
                             char label[64];
-                            sprintf(label, (currentScene->objects[i].name).c_str());
+                            sprintf(label, (currentScene->actorList[i].name).c_str());
                             if (ImGui::Selectable(label, selectedIndexA == i))
                                 selectedIndexA = i;
                         }
@@ -86,7 +86,7 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                     }
                     ImGui::EndTabItem();
                 }
-                if (ImGui::BeginTabItem("Uniques"))
+                /* if (ImGui::BeginTabItem("Uniques"))
                 {
                     objectSelected = false;
                     if (currentScene->uniqueCount > 0)
@@ -108,7 +108,7 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                         selectedIndexB = 0;
                     }
                     ImGui::EndTabItem();
-                }
+                }*/
                 ImGui::EndTabBar();
             }
             ImGui::EndChild();
@@ -118,26 +118,27 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
 
         // Right
         {
-            SceneObject *selectedObject;
-            UniqueObject *selectedUnique;
+            RenderActor *selectedActor;
+            // SceneObject *selectedObject;
+            // UniqueObject *selectedUnique;
             ImGui::BeginGroup();
             ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
             if (objectSelected)
             {
-                if (currentScene->objectCount > 0)
+                if (currentScene->actorCount > 0)
                 {
-                    selectedObject = &(currentScene->objects[selectedIndexA]);
-                    ImGui::Text((selectedObject->name).c_str());
+                    selectedActor = &(currentScene->actorList[selectedIndexA]);
+                    ImGui::Text((selectedActor->name).c_str());
                 }
             }
-            else
+            /* else
             {
-                if (currentScene->uniqueCount > 0)
+                if (currentScene->actorCount > 0)
                 {
                     selectedUnique = &(currentScene->uniques[selectedIndexB]);
                     ImGui::Text((selectedUnique->name).c_str());
                 }
-            }
+            }*/
             ImGui::Separator();
             if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
             {
@@ -145,83 +146,52 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                 {
                     if (objectSelected)
                     {
-                        if (currentScene->objectCount > 0)
+                        if (currentScene->actorCount > 0)
                         {
-                            ImGui::TextWrapped(("Name: " + selectedObject->name +
-                                                "\nPath: " + selectedObject->path + "\n")
+                            ImGui::TextWrapped(("Name: " + selectedActor->name +
+                                                "\nPath: " + selectedActor->path + "\n")
                                                    .c_str());
-                            ImGui::Checkbox("Visibility", &(selectedObject->isVisible));
+                            ImGui::Checkbox("Visibility", &(selectedActor->isVisible));
                         }
                     }
-                    else
+                    /* else
                     {
-                        if (currentScene->uniqueCount > 0)
+                        if (currentScene->actorCount > 0)
                         {
                             ImGui::TextWrapped(("Name: " + selectedUnique->name +
                                                 "\nPath: " + selectedUnique->path + "\n")
                                                    .c_str());
                         }
-                    }
+                    }*/
                     ImGui::EndTabItem();
                 }
                 if (ImGui::BeginTabItem("Other"))
                 {
                     if (objectSelected)
                     {
-                        if (currentScene->objectCount > 0)
+                        if (currentScene->actorCount > 0)
                         {
-                            ImGui::TextWrapped(("Object Type: " + std::to_string(selectedObject->objectType) +
-                                                "\nUnique Name: " + (currentScene->GetUnique(selectedObject->path))->name +
-                                                "\nPath: " + selectedObject->path)
+                            ImGui::TextWrapped(("Object Type: " + std::to_string(selectedActor->type) +
+                                                "\nPath: " + selectedActor->path)
                                                    .c_str());
                         }
                     }
-                    else
+                    /* else
                     {
-                        if (currentScene->uniqueCount > 0)
+                        if (currentScene->actorCount > 0)
                         {
-                            ImGui::TextWrapped(("Object Type: " + std::to_string(selectedUnique->objectType) +
+                            ImGui::TextWrapped(("Object Type: " + std::to_string(selectedUnique->actorType) +
                                                 "\nCount: " + std::to_string(selectedUnique->count))
                                                    .c_str());
                         }
-                    }
+                    }*/
                     ImGui::EndTabItem();
                 }
                 ImGui::EndTabBar();
             }
             ImGui::EndChild();
-            if (ImGui::Button("Set Shader"))
-            {
-                ShowPropertyEditor(p_open, NULL);
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Set Texture"))
-            {
-            }
             ImGui::EndGroup();
         }
-    }
-    ImGui::End();
-}
-
-void ShowPropertyEditor(bool *p_open, SceneObject *object)
-{
-    ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("Scene Object List", p_open, ImGuiWindowFlags_MenuBar))
-    {
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("Close"))
-                    *p_open = false;
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
-
-        // Left
-        // Right
     }
     ImGui::End();
 }
