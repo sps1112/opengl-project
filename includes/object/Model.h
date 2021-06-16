@@ -33,6 +33,7 @@ public:
     vector<Mesh> meshes;
     string directory;
     bool gammaCorrection;
+    Model();
     Model(string const &path, bool gamma = false);
     void Draw(Shader &shader);
     void FreeData();

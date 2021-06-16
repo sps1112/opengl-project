@@ -1,5 +1,9 @@
 #include <object/Model.h>
 
+Model::Model()
+{
+}
+
 Model::Model(string const &path, bool gamma) : gammaCorrection(gamma)
 {
     loadModel(path);
