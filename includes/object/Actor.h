@@ -20,6 +20,25 @@ enum ACTOR_TYPES
     CAMERA_ACTOR,
 };
 
+// Default Actors
+enum TEMPLATE_ACTORS
+{
+    TRIANGLE_2D,
+    RECTANGLE_2D,
+    QUAD_2D,
+    CUBE_3D,
+    QUAD_3D,
+    PLANE_3D,
+    CUBEMAP_3D,
+    BACKPACK_MODEL,
+    SPHERE_MODEL,
+    NORMAL_LIGHT_ACTOR,
+    POINT_LIGHT_ACTOR,
+    DIR_LIGHT_ACTOR,
+    SPT_LIGHT_ACTOR,
+    CAMERA_OBJECT_ACTOR,
+};
+
 // Actor Class
 class Actor
 {
@@ -50,8 +69,9 @@ public:
     Material mat;
     std::string path;
     bool isVisible;
+    TEMPLATE_ACTORS actor_template;
     RenderActor();
-    RenderActor(std::string name_, ACTOR_TYPES type_, std::string path_ = "");
+    RenderActor(std::string name_, ACTOR_TYPES type_, TEMPLATE_ACTORS template_, std::string path_ = "");
 
 private:
 };
@@ -72,25 +92,6 @@ class LightActor : public RenderActor
 {
 public:
     LightActor();
-};
-
-// Default Actors
-enum TEMPLATE_ACTORS
-{
-    TRIANGLE_2D,
-    RECTANGLE_2D,
-    QUAD_2D,
-    CUBE_3D,
-    QUAD_3D,
-    PLANE_3D,
-    CUBEMAP_3D,
-    BACKPACK_MODEL,
-    SPHERE_MODEL,
-    NORMAL_LIGHT_ACTOR,
-    POINT_LIGHT_ACTOR,
-    DIR_LIGHT_ACTOR,
-    SPT_LIGHT_ACTOR,
-    CAMERA_OBJECT_ACTOR,
 };
 
 extern ACTOR_TYPES actor_types[14];

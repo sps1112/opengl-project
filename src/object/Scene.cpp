@@ -44,14 +44,14 @@ void SceneData::AddLight()
 {
 }
 
-void SceneData::DrawObject(RenderActor &actor)
+void SceneData::DrawObject(RenderActor *actor)
 {
-    unsigned int id = default_actor_id[actor.type];
-    switch (actor.type)
+    unsigned int id = default_actor_id[actor->actor_template];
+    switch (actor->type)
     {
     case PRIMITIVE_ACTOR:
         shaders.get_data_point(id).data.use();
-        shaders.get_data_point(id).data.setVec3("matColor", actor.mat.albedo);
+        shaders.get_data_point(id).data.setVec3("matColor", actor->mat.albedo);
         prms.get_data_point(id).data.Draw(shaders.get_data_point(id).data);
         break;
 
@@ -70,7 +70,7 @@ void Scene::AddObject(TEMPLATE_ACTORS actor_choice)
 {
     actorCount++;
     std::string actor_file_path = resource_dir + template_actor_filepath[actor_choice];
-    RenderActor newActor("Object" + std::to_string(actorCount), actor_types[actor_choice], actor_file_path);
+    RenderActor newActor("Object" + std::to_string(actorCount), actor_types[actor_choice], actor_choice, actor_file_path);
     actorList.push_back(newActor);
     switch (newActor.type)
     {
@@ -97,7 +97,7 @@ void Scene::DrawScene(Renderer &renderer)
     {
         if (actorList[i].isVisible)
         {
-            data.DrawObject(actorList[i]);
+            data.DrawObject(&actorList[i]);
         }
     }
     // Render FBO

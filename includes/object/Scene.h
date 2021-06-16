@@ -88,7 +88,7 @@ public:
     void AddTexture(std::string path, unsigned int id);
     void AddModel(std::string path, unsigned int id);
     void AddLight();
-    void DrawObject(RenderActor &actor);
+    void DrawObject(RenderActor *actor);
 
 private:
     ActorDataList<Primitive> prms;

@@ -13,11 +13,12 @@ RenderActor::RenderActor()
     mat = Material(defaultMat2D);
 }
 
-RenderActor::RenderActor(std::string name_, ACTOR_TYPES type_, std::string path_)
+RenderActor::RenderActor(std::string name_, ACTOR_TYPES type_, TEMPLATE_ACTORS template_, std::string path_)
 {
     name = name_;
     transform = Transform();
     type = type_;
+    actor_template = template_;
     path = path_;
     isVisible = true;
     mat = Material(DEFAULT_SHADER_COLOR, COLOR_BLACK, default_actor_shaders[type]);
