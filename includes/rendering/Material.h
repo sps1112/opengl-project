@@ -37,27 +37,57 @@ std::string GetVSPath(SHADER_TYPE type);
 // Get Fragment Shader file Path
 std::string GetFSPath(SHADER_TYPE type);
 
+// Material field struct
+struct MatField
+{
+    Colorf col;
+    TEXTURE_TEMPLATES tex;
+    int texID;
+    MatField() : col(COLOR_GRAY), texID(0) {}
+    MatField(Colorf col_) : col(col_), texID(0) {}
+};
+
 // Material Struct
 struct Material
 {
-    Colorf albedo;
-    Colorf emmision;
+    MatField albedo;
+    MatField specular;
+    MatField emmision;
     SHADER_TYPE type;
+
     Material()
-        : albedo(COLOR_GRAY), emmision(COLOR_BLACK), type(COLOR_2D) {}
+    {
+        albedo = MatField();
+        emmision = MatField(COLOR_BLACK);
+        type = COLOR_2D;
+    }
+
     Material(Colorf albedo_, Colorf emmision_, SHADER_TYPE type_)
-        : albedo(albedo_), emmision(emmision_), type(type_) {}
+    {
+        albedo = MatField(albedo_);
+        emmision = MatField(emmision_);
+        type = type_;
+    }
+
     Material(const Material &mat)
-        : albedo(mat.albedo), emmision(mat.emmision), type(mat.type) {}
+    {
+        albedo = mat.albedo;
+        emmision = mat.emmision;
+        type = mat.type;
+    }
 };
 
+// Template Material types
 enum MATERIAL_TEMPLATES
 {
     COLOR_2D_MAT,
     COLOR_3D_MAT,
     LIGHT_MAT,
+    TEX_2D_MAT,
+    TEX_3D_MAT,
 };
 
-extern Material material_template[3];
+// Template Material instances
+extern Material material_template[5];
 
 #endif // !MATERIAL_H
