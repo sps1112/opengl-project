@@ -24,22 +24,6 @@ RenderActor::RenderActor(std::string name_, TEMPLATE_ACTORS template_)
     mat = material_template[default_actor_materials[template_]];
 }
 
-PrimitiveActor::PrimitiveActor(std::string name_, std::string path_)
-{
-    name = name_;
-    transform = Transform();
-    type = PRIMITIVE_ACTOR;
-    path = path_;
-}
-
-ModelActor::ModelActor(std::string name_, std::string path_)
-{
-    name = name_;
-    transform = Transform();
-    type = MODEL_ACTOR;
-    path = path_;
-}
-
 LightActor::LightActor()
 {
 }
@@ -94,19 +78,3 @@ MATERIAL_TEMPLATES default_actor_materials[] = {
     LIGHT_MAT,
     LIGHT_MAT,
     COLOR_2D_MAT};
-
-unsigned int default_actor_id[] = {
-    0,
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13};

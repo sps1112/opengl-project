@@ -76,18 +76,6 @@ public:
 private:
 };
 
-class PrimitiveActor : public RenderActor
-{
-public:
-    PrimitiveActor(std::string name_, std::string path_ = "");
-};
-
-class ModelActor : public RenderActor
-{
-public:
-    ModelActor(std::string name_, std::string path_ = "");
-};
-
 class LightActor : public RenderActor
 {
 public:
@@ -102,5 +90,4 @@ extern std::string template_actor_filepath[14];
 
 extern MATERIAL_TEMPLATES default_actor_materials[14];
 
-extern unsigned int default_actor_id[14];
 #endif // !ACTOR_H
