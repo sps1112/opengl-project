@@ -10,18 +10,18 @@ CameraActor::CameraActor()
 RenderActor::RenderActor()
 {
     isVisible = true;
-    mat = Material(defaultMat2D);
+    mat = material_template[0];
 }
 
-RenderActor::RenderActor(std::string name_, ACTOR_TYPES type_, TEMPLATE_ACTORS template_, std::string path_)
+RenderActor::RenderActor(std::string name_, TEMPLATE_ACTORS template_)
 {
     name = name_;
     transform = Transform();
-    type = type_;
+    type = actor_types[template_];
     actor_template = template_;
-    path = path_;
+    path = resource_dir + template_actor_filepath[template_];
     isVisible = true;
-    mat = Material(DEFAULT_SHADER_COLOR, COLOR_BLACK, default_actor_shaders[type]);
+    mat = material_template[default_actor_materials[template_]];
 }
 
 PrimitiveActor::PrimitiveActor(std::string name_, std::string path_)
@@ -79,21 +79,21 @@ std::string template_actor_filepath[] = {
     " ",
     " "};
 
-SHADER_TYPE default_actor_shaders[] = {
-    COLOR_2D,
-    COLOR_2D,
-    COLOR_2D,
-    COLOR_3D,
-    COLOR_3D,
-    COLOR_3D,
-    COLOR_3D,
-    COLOR_3D,
-    COLOR_3D,
-    LIGHT_SHADER,
-    LIGHT_SHADER,
-    LIGHT_SHADER,
-    LIGHT_SHADER,
-    COLOR_2D};
+MATERIAL_TEMPLATES default_actor_materials[] = {
+    COLOR_2D_MAT,
+    COLOR_2D_MAT,
+    COLOR_2D_MAT,
+    COLOR_3D_MAT,
+    COLOR_3D_MAT,
+    COLOR_3D_MAT,
+    COLOR_3D_MAT,
+    COLOR_3D_MAT,
+    COLOR_3D_MAT,
+    LIGHT_MAT,
+    LIGHT_MAT,
+    LIGHT_MAT,
+    LIGHT_MAT,
+    COLOR_2D_MAT};
 
 unsigned int default_actor_id[] = {
     0,

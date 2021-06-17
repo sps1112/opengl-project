@@ -71,7 +71,7 @@ public:
     bool isVisible;
     TEMPLATE_ACTORS actor_template;
     RenderActor();
-    RenderActor(std::string name_, ACTOR_TYPES type_, TEMPLATE_ACTORS template_, std::string path_ = "");
+    RenderActor(std::string name_, TEMPLATE_ACTORS template_);
 
 private:
 };
@@ -100,7 +100,7 @@ extern std::string resource_dir;
 
 extern std::string template_actor_filepath[14];
 
-extern SHADER_TYPE default_actor_shaders[14];
+extern MATERIAL_TEMPLATES default_actor_materials[14];
 
 extern unsigned int default_actor_id[14];
 #endif // !ACTOR_H

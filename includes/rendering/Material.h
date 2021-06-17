@@ -1,14 +1,16 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
+// Header declarations
 #include <utility/Utils.h>
 #include <utility/CustomMath.h>
 #include <rendering/Texture.h>
 #include <config.h>
 
+// Color data types
 using Colorf = Vec3;
 
-// Types of Shaders
+// Types of Template Shaders
 enum SHADER_TYPE
 {
     COLOR_2D,
@@ -27,8 +29,13 @@ enum SHADER_TYPE
 
 // File Name for Shader Files
 extern std::string shader_type_strings[12];
-
+// Shader folder directory
 extern std::string shader_directory;
+
+// Get Vertex Shader file Path
+std::string GetVSPath(SHADER_TYPE type);
+// Get Fragment Shader file Path
+std::string GetFSPath(SHADER_TYPE type);
 
 // Material Struct
 struct Material
@@ -43,10 +50,14 @@ struct Material
     Material(const Material &mat)
         : albedo(mat.albedo), emmision(mat.emmision), type(mat.type) {}
 };
-const Material defaultMat2D(Colorf(DEFAULT_SHADER_COLOR), Colorf(COLOR_BLACK), COLOR_2D);
-const Material defaultMat3D(Colorf(DEFAULT_SHADER_COLOR), Colorf(COLOR_BLACK), COLOR_3D);
 
-std::string GetVSPath(SHADER_TYPE type);
-std::string GetFSPath(SHADER_TYPE type);
+enum MATERIAL_TEMPLATES
+{
+    COLOR_2D_MAT,
+    COLOR_3D_MAT,
+    LIGHT_MAT,
+};
 
-#endif
+extern Material material_template[3];
+
+#endif // !MATERIAL_H

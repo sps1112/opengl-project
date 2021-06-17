@@ -8,7 +8,6 @@ SceneData::SceneData(std::string sceneName_)
 
 void SceneData::AddPrimitive(std::string path, unsigned int id)
 {
-    Log("Add Primitive");
     if (!prms.is_id_present(id))
     {
         Log("Loading New Primitive");
@@ -70,7 +69,7 @@ void Scene::AddObject(TEMPLATE_ACTORS actor_choice)
 {
     actorCount++;
     std::string actor_file_path = resource_dir + template_actor_filepath[actor_choice];
-    RenderActor newActor("Object" + std::to_string(actorCount), actor_types[actor_choice], actor_choice, actor_file_path);
+    RenderActor newActor("Object" + std::to_string(actorCount), actor_choice);
     actorList.push_back(newActor);
     switch (newActor.type)
     {

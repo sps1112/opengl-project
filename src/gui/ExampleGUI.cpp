@@ -152,6 +152,8 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                                                 "\nPath: " + selectedActor->path + "\n")
                                                    .c_str());
                             ImGui::Checkbox("Visibility", &(selectedActor->isVisible));
+                            ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.r));
+                            ImGui::SliderFloat3("Position", &(selectedActor->transform.position.x), -5.0f, 5.0f);
                         }
                     }
                     /* else
