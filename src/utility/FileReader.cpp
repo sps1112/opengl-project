@@ -31,7 +31,6 @@ char *ConvertToCharArray(const char *charArray)
     return newArray;
 }
 
-// Converts character Array to string
 std::string ConvertToString(char *charArray)
 {
     std::string s = "";
@@ -42,7 +41,6 @@ std::string ConvertToString(char *charArray)
     return s;
 }
 
-// Converts chararcter array to float ("70" to 70.0)
 float ConvertToFloat(char *charArray)
 {
     std::string s = ConvertToString(charArray);
@@ -75,7 +73,6 @@ bool CompareCharArray(char *a, char *b)
     return isEqual;
 }
 
-// Gets Single Line from a starting Index till '\n'
 char *GetLine(char *charList, int startIndex)
 {
     char *newLine = new char[GetCharArrayLength(charList)];
@@ -90,7 +87,6 @@ char *GetLine(char *charList, int startIndex)
     return newLine;
 }
 
-// Returns part of line from start to end index(excluding the endIndex)
 char *GetLinePart(char *line, int startIndex, int endIndex)
 {
     int length = endIndex - startIndex;
@@ -140,7 +136,6 @@ int GetOtherCharIndex(char *charList, int startIndex, char targetChar)
     return otherIndex;
 }
 
-// Gets ending index of a line from a starting Index
 int GetLineEndIndex(char *charList, int startIndex)
 {
     int index = startIndex;
@@ -151,13 +146,11 @@ int GetLineEndIndex(char *charList, int startIndex)
     return index;
 }
 
-// Gets starting index of next line from a starting Index
 int GetLineStartIndex(char *charList, int startIndex)
 {
     return (GetLineEndIndex(charList, startIndex) + 1);
 }
 
-// Get starting Index of a char array in another char array
 int GetStartIndexString(char *mainCharArray, char *targetCharArray)
 {
     int mainLength = GetCharArrayLength(mainCharArray);
@@ -207,7 +200,6 @@ int GetStartIndexString(char *mainCharArray, char *targetCharArray)
     return -1;
 }
 
-// Get ending Index of a char array in another char array
 int GetEndIndexString(char *mainCharArray, char *targetCharArray)
 {
     int mainLength = GetCharArrayLength(mainCharArray);
