@@ -5,6 +5,8 @@
 #include <object/Scene.h>
 #include <gui/ObjectUI.h>
 
+extern char *texComboItems[18];
+
 // Shows a Simple Overlay
 void ShowSimpleOverlay(bool *p_open, int sceneNumber);
 

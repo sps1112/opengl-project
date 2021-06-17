@@ -1,5 +1,25 @@
 #include <gui/ExampleGUI.h>
 
+char *texComboItems[] = {
+    "None",
+    "awesomeface",
+    "wall",
+    "brickwall",
+    "brickwall_normal",
+    "brickwall2",
+    "brickwall2_normal",
+    "brickwall2_disp",
+    "container",
+    "container2",
+    "container2_specular",
+    "container2_specular_color",
+    "marble",
+    "metal",
+    "wood",
+    "window",
+    "grass",
+    "matrix"};
+
 void ShowSimpleOverlay(bool *p_open, int sceneNumber)
 {
     const float DISTANCE = 25.0f;
@@ -148,12 +168,12 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                     {
                         if (currentScene->actorCount > 0)
                         {
-                            ImGui::TextWrapped(("Name: " + selectedActor->name +
-                                                "\nPath: " + selectedActor->path + "\n")
-                                                   .c_str());
+                            ImGui::InputText("Name: ", &(selectedActor->name[0]), 30);
+                            ImGui::TextWrapped(("Path: " + selectedActor->path + "\n").c_str());
                             ImGui::Checkbox("Visibility", &(selectedActor->isVisible));
-                            ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.r));
                             ImGui::SliderFloat3("Position", &(selectedActor->transform.position.x), -5.0f, 5.0f);
+                            ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
+                            ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18);
                         }
                     }
                     /* else
