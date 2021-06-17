@@ -1,5 +1,63 @@
 #include <rendering/Texture.h>
 
+std::string texture_type_strings[] = {
+    "texture_diffuse",
+    "texture_specular",
+    "texture_emmision",
+    "texture_normal",
+    "texture_height"};
+
+TEXTURE_TEMPLATES GetTexTemplate(int i)
+{
+    return static_cast<TEXTURE_TEMPLATES>(i);
+}
+
+std::string texture_folder_path = "resources/textures/";
+
+std::string texture_file_name[17] = {
+    "awesomeface.png",
+    "wall.jpg",
+    "brickwall.jpg",
+    "brickwall_normal.jpg",
+    "bricks2.jpg",
+    "bricks2_normal.jpg",
+    "bricks2_disp.jpg",
+    "container.jpg",
+    "container2.png",
+    "container2_specular.png",
+    "container2_specular_color.png",
+    "marble.jpg",
+    "metal.png",
+    "wood.png",
+    "window.png",
+    "grass.png",
+    "matrix.jpg"};
+
+TEXTURE_TYPE template_textype[17] = {
+    TEXTURE_DIFFUSE,
+    TEXTURE_DIFFUSE,
+    TEXTURE_DIFFUSE,
+    TEXTURE_NORMAL,
+    TEXTURE_DIFFUSE,
+    TEXTURE_NORMAL,
+    TEXTURE_HEIGHT,
+    TEXTURE_DIFFUSE,
+    TEXTURE_DIFFUSE,
+    TEXTURE_SPECULAR,
+    TEXTURE_SPECULAR,
+    TEXTURE_DIFFUSE,
+    TEXTURE_DIFFUSE,
+    TEXTURE_DIFFUSE,
+    TEXTURE_DIFFUSE,
+    TEXTURE_DIFFUSE,
+    TEXTURE_EMMISION};
+
+Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp)
+{
+    std::string path = texture_folder_path + texture_file_name[template_];
+    return LoadTexture(template_textype[template_], FileSystem::getPath(path), (template_textype[template_] == TEXTURE_DIFFUSE), toClamp);
+}
+
 Texture LoadTexture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse, bool toClamp)
 {
     Texture newTexture;

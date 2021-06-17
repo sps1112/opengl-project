@@ -6,6 +6,7 @@
 #include <external/GLFW/glfw3.h>
 #include <external/stb_image.h>
 #include <config.h>
+#include <utility/FileSystem.h>
 
 #include <iostream>
 
@@ -20,12 +21,34 @@ enum TEXTURE_TYPE
 };
 
 // Texture typestrings
-const std::string texture_type_strings[] = {
-    "texture_diffuse",
-    "texture_specular",
-    "texture_emmision",
-    "texture_normal",
-    "texture_height"};
+extern std::string texture_type_strings[5];
+
+// Template Textures
+enum TEXTURE_TEMPLATES
+{
+    FACE_TEX,
+    WALL_TEX,
+    BRICK_WALL_TEX,
+    BRICK_WALL_NORMAL,
+    REDBRICK_WALL_TEX,
+    REDBRICK_WALL_NORMAL,
+    REDBRICK_WALL_DIS,
+    CONTAINER_TEX,
+    CONTAINER_BORDER_TEX,
+    CONTAINER_BORDER_SPEC,
+    CONTAINER_BORDER_SPEC_COL,
+    MARBLE_TEX,
+    METAL_TEX,
+    WOOD_TEX,
+    WINDOW_TEX,
+    GRASS_TEX,
+    MATRIX_TEX,
+};
+TEXTURE_TEMPLATES GetTexTemplate(int i);
+
+extern std::string texture_folder_path;
+extern std::string texture_file_name[17];
+extern TEXTURE_TYPE template_textype[17];
 
 // Texture Struct
 struct Texture
@@ -44,6 +67,7 @@ unsigned int LoadTextureFromPath(const char *path, bool isDiffuse = true, bool t
 // Loads a Texture and returns id
 unsigned int LoadTextureFromPath(const std::string &path, bool isDiffuse = true, bool toClamp = false);
 
+Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp = false);
 // Generating Textures
 
 // Generates a Texture and returns its id
