@@ -173,7 +173,10 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                             ImGui::Checkbox("Visibility", &(selectedActor->isVisible));
                             ImGui::SliderFloat3("Position", &(selectedActor->transform.position.x), -5.0f, 5.0f);
                             ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
-                            ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18);
+                            if (ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18))
+                            {
+                                currentScene->UpdateActor(selectedActor);
+                            }
                         }
                     }
                     /* else

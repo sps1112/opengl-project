@@ -13,12 +13,13 @@ RenderActor::RenderActor()
     mat = material_template[0];
 }
 
-RenderActor::RenderActor(std::string name_, TEMPLATE_ACTORS template_)
+RenderActor::RenderActor(std::string name_, TEMPLATE_ACTORS template_, int id_)
 {
     name = name_;
     transform = Transform();
     type = actor_types[template_];
     actor_template = template_;
+    id = id_;
     path = resource_dir + template_actor_filepath[template_];
     isVisible = true;
     mat = material_template[default_actor_materials[template_]];

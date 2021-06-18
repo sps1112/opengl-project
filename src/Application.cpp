@@ -45,8 +45,9 @@ enum AppMode
 AppMode currentMode = Empty_Scene;
 
 // UI booleans
+bool showDemoUI = false;
 bool overlayOpen = true;
-bool listOpen = false;
+bool listOpen = true;
 
 // Method Declarations
 int SetupRenderer();
@@ -198,7 +199,10 @@ void DrawNormalScene()
 	loadedScenes[listIndex].DrawScene(renderer);
 
 	// Render GUI
-	ImGui::ShowDemoWindow();
+	if (showDemoUI)
+	{
+		ImGui::ShowDemoWindow();
+	}
 	if (overlayOpen)
 	{
 		ShowSimpleOverlay(&overlayOpen, sceneNumber);
@@ -274,23 +278,23 @@ void ShowEditMenu()
 		{
 			if (ImGui::MenuItem("Triangle"))
 			{
-				loadedScenes[listIndex].AddObject(TRIANGLE_2D);
+				loadedScenes[listIndex].AddActor(TRIANGLE_2D);
 			}
 			if (ImGui::MenuItem("Rectangle"))
 			{
-				loadedScenes[listIndex].AddObject(RECTANGLE_2D);
+				loadedScenes[listIndex].AddActor(RECTANGLE_2D);
 			}
 			if (ImGui::MenuItem("Cube"))
 			{
-				loadedScenes[listIndex].AddObject(CUBE_3D);
+				loadedScenes[listIndex].AddActor(CUBE_3D);
 			}
 			if (ImGui::MenuItem("Sphere"))
 			{
-				loadedScenes[listIndex].AddObject(SPHERE_MODEL);
+				loadedScenes[listIndex].AddActor(SPHERE_MODEL);
 			}
 			/*if (ImGui::MenuItem("Backpack"))
 			{
-				loadedScenes[listIndex].AddObject("resources/models/backpack/backpack.obj", MODEL_OBJECT);
+				loadedScenes[listIndex].AddActor("resources/models/backpack/backpack.obj", MODEL_OBJECT);
 			}*/
 			ImGui::EndMenu();
 		}
@@ -307,6 +311,7 @@ void ShowViewMenu()
 	{
 		if (ImGui::BeginMenu("SetView"))
 		{
+			ImGui::MenuItem("Demo UI", NULL, &showDemoUI);
 			ImGui::MenuItem("Overlay", NULL, &overlayOpen);
 			ImGui::MenuItem("Object List", NULL, &listOpen);
 			ImGui::EndMenu();

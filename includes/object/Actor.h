@@ -70,8 +70,9 @@ public:
     std::string path;
     bool isVisible;
     TEMPLATE_ACTORS actor_template;
+    int id;
     RenderActor();
-    RenderActor(std::string name_, TEMPLATE_ACTORS template_);
+    RenderActor(std::string name_, TEMPLATE_ACTORS template_, int id_);
 
 private:
 };
