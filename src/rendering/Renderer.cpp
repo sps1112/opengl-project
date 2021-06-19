@@ -14,10 +14,12 @@ void Renderer::SetupGLFW()
 {
     // glfw initialise
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);             // open gl version 3.x
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);             // version is 3.3
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // use core profile
-    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // for Mac
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);        // open gl version 3.x
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);        // version is 3.3
+    glfwWindowHint(GLFW_OPENGL_PROFILE, OPENGL_PROFILE_USED); // use core profile
+#if __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // for Mac
+#endif
 }
 
 void Renderer::TerminateGLFW()
@@ -27,7 +29,11 @@ void Renderer::TerminateGLFW()
 
 void Renderer::CreateWindow(const char *title, GLFWmonitor *monitor, GLFWwindow *share)
 {
+#if ENABLE_FULLSCREEN_MODE
+    window = glfwCreateWindow(width, height, title, glfwGetPrimaryMonitor(), share);
+#else
     window = glfwCreateWindow(width, height, title, monitor, share);
+#endif
     if (window == NULL)
     {
         Log("Failed to create GLFW window");
@@ -40,8 +46,14 @@ void Renderer::SetData()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
-    // glfwSetWindowAspectRatio(window, 16, 9);
-    // glfwSetWindowSizeLimits(window, 160, 90, 1600, 900);
+#if !ENABLE_FULLSCREEN_MODE
+#if ASPECT_RATIO_LOCKED
+    glfwSetWindowAspectRatio(window, ASPECT_RATIO.x, ASPECT_RATIO.y);
+#endif
+#if WINDOW_SIZE_LIMITED
+    glfwSetWindowSizeLimits(window, WINDOW_SIZE_LIMITS.x, WINDOW_SIZE_LIMITS.y, WINDOW_SIZE_LIMITS.z, WINDOW_SIZE_LIMITS.w);
+#endif
+#endif
 }
 
 void Renderer::SetOtherData()

@@ -13,6 +13,7 @@
 #include <utility/Utils.h>
 #include <utility/CustomMath.h>
 #include <rendering/Texture.h>
+#include <config.h>
 
 struct RenderCamera
 {

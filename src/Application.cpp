@@ -266,6 +266,10 @@ void ShowFileMenu()
 
 void ShowEditMenu()
 {
+	if (ImGui::BeginMenu("Edit Window"))
+	{
+		ImGui::EndMenu();
+	}
 	if (currentMode == Normal_Scene)
 	{
 		if (ImGui::BeginMenu("Edit Current Scene.."))
