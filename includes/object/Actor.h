@@ -46,6 +46,7 @@ public:
     std::string name;
     Transform transform;
     ACTOR_TYPES type;
+    int id;
     // Class Constructor
     Actor(std::string name_ = "New Actor", Transform transform_ = Transform());
 
@@ -56,7 +57,8 @@ private:
 class CameraActor : public Actor
 {
 public:
-    CameraActor();
+    CameraActor(std::string name_, int id_, Transform transform_ = Transform(CAMERA_ORIGIN, Vec3(0.0f), Vec3(1.0f)));
+    Camera *GetCamera();
 
 private:
     Camera cam;
@@ -70,7 +72,6 @@ public:
     std::string path;
     bool isVisible;
     TEMPLATE_ACTORS actor_template;
-    int id;
     RenderActor();
     RenderActor(std::string name_, TEMPLATE_ACTORS template_, int id_);
 

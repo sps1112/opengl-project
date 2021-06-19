@@ -62,13 +62,27 @@ void SceneData::AddLight()
 {
 }
 
-void SceneData::DrawActor(RenderActor *actor, int actor_id)
+void SceneData::DrawActor(RenderActor *actor, int actor_id, Camera *cam, Vec2 screen_dimension)
 {
+    Mat4 view = cam->GetViewMatrix();
+    Mat4 projection = glm::perspective(glm::radians(cam->Zoom), ((float)screen_dimension.x) / ((float)screen_dimension.y), 0.1f, 100.0f);
+
+    Vec3 actorPos(actor->transform.position);
+    Vec3 actorRot(actor->transform.rotation);
+    Vec3 actorScale(actor->transform.scale);
+    Mat4 model(1.0f);
+    model = glm::translate(model, actorPos);
+    model = glm::rotate(model, glm::radians(actorRot.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(actorRot.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, glm::radians(actorRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, actorScale);
+
     switch (actor->type)
     {
     case PRIMITIVE_ACTOR:
         shaders.get_data_point_from_actor(actor_id)->data.use();
         shaders.get_data_point_from_actor(actor_id)->data.setVec3("matColor", actor->mat.albedo.col);
+        shaders.get_data_point_from_actor(actor_id)->data.SetMatrices(model, view, projection);
         if (textures.get_data_count_from_actor(actor_id) > 0)
         {
             std::vector<Texture> prmTexs;
@@ -106,23 +120,34 @@ Scene::Scene(std::string name)
 {
     data = SceneData(name);
     actorCount = 0;
+    camCount = 0;
+    AddActor(CAMERA_OBJECT_ACTOR);
 }
 
 void Scene::AddActor(TEMPLATE_ACTORS actor_choice)
 {
-    actorCount++;
-    std::string actor_file_path = resource_dir + template_actor_filepath[actor_choice];
-    RenderActor newActor("Object" + std::to_string(actorCount), actor_choice, actorCount);
-    actorList.push_back(newActor);
-    switch (newActor.type)
+    if (actor_types[actor_choice] == CAMERA_ACTOR)
     {
-    case PRIMITIVE_ACTOR:
-        data.AddShader(GetVSPath(newActor.mat.type), GetFSPath(newActor.mat.type), static_cast<int>(newActor.mat.type), actorCount);
-        data.AddPrimitive(actor_file_path, static_cast<int>(actor_choice), actorCount);
-        break;
+        camCount++;
+        CameraActor newActor("Main Camera", camCount);
+        cameraList.push_back(newActor);
+    }
+    else
+    {
+        actorCount++;
+        std::string actor_file_path = resource_dir + template_actor_filepath[actor_choice];
+        RenderActor newActor("Object" + std::to_string(actorCount), actor_choice, actorCount);
+        actorList.push_back(newActor);
+        switch (newActor.type)
+        {
+        case PRIMITIVE_ACTOR:
+            data.AddShader(GetVSPath(newActor.mat.type), GetFSPath(newActor.mat.type), static_cast<int>(newActor.mat.type), actorCount);
+            data.AddPrimitive(actor_file_path, static_cast<int>(actor_choice), actorCount);
+            break;
 
-    default:
-        break;
+        default:
+            break;
+        }
     }
 }
 
@@ -151,17 +176,19 @@ void Scene::UpdateActor(RenderActor *actor)
 void Scene::DrawScene(Renderer &renderer)
 {
     // Get Data
-    /*int width = (int)renderer.GetCurrentWidth();
-    int height = (int)renderer.GetCurrentHeight();*/
+    int width = (int)renderer.GetCurrentWidth();
+    int height = (int)renderer.GetCurrentHeight();
     // Refresh Last Frame
     renderer.SetColor(data.backgroundColor.x, data.backgroundColor.y, data.backgroundColor.z, 1.0f);
     // renderer.frameBuffer.NewFrame(width, height);
+    // Refresh Camera
+    renderer.SetCamera(cameraList[0].GetCamera());
     // Render Objects
     for (int i = 0; i < actorCount; i++)
     {
         if (actorList[i].isVisible)
         {
-            data.DrawActor(&actorList[i], (i + 1));
+            data.DrawActor(&actorList[i], actorList[i].id, renderer.GetCamera(), Vec2(width, height));
         }
     }
     // Render FBO

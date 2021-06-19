@@ -136,9 +136,9 @@ void Renderer::NewFrame()
     prevFrameTime = currentFrameTime;
 }
 
-void Renderer::SetCamera(Camera camera)
+void Renderer::SetCamera(Camera *camera)
 {
-    rCamera.camera = Camera(camera.Position);
+    rCamera.camera = Camera(camera->Position);
     rCamera.lastX = width / 2.0f;
     rCamera.lastY = height / 2.0f;
     rCamera.isFirstMouse = true;

@@ -3,8 +3,18 @@
 Actor::Actor(std::string name_, Transform transform_)
     : name(name_), transform(transform_) {}
 
-CameraActor::CameraActor()
+CameraActor::CameraActor(std::string name_, int id_, Transform transform_)
 {
+    name = name_;
+    id = id_;
+    cam = Camera(transform_.position);
+    transform = Transform(cam.Position, Vec3(0.0f), Vec3(1.0f));
+}
+
+Camera *CameraActor::GetCamera()
+{
+    cam.Position = transform.position;
+    return &cam;
 }
 
 RenderActor::RenderActor()

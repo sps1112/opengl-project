@@ -236,7 +236,7 @@ public:
     void AddTexture(int id, int actor_id);
     void AddModel(std::string path, int id, int actor_id);
     void AddLight();
-    void DrawActor(RenderActor *actor, int actor_id);
+    void DrawActor(RenderActor *actor, int actor_id, Camera *cam, Vec2 screen_dimension);
     void RemoveActor(int actor_id, DataTypes type);
 
 private:
@@ -253,6 +253,8 @@ public:
     SceneData data;
     int actorCount;
     std::vector<RenderActor> actorList;
+    int camCount;
+    std::vector<CameraActor> cameraList;
     Scene(std::string name = "New Scene");
     void AddActor(TEMPLATE_ACTORS actor_choice);
     void UpdateActor(RenderActor *actor);

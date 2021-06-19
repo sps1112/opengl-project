@@ -14,7 +14,7 @@
 #define ENABLE_FULLSCREEN_MODE 0
 #define ASPECT_RATIO_LOCKED 1
 #define ASPECT_RATIO Vec2(4, 3)
-#define WINDOW_SIZE_LIMITED 1
+#define WINDOW_SIZE_LIMITED 0
 #define WINDOW_SIZE_LIMITS Vec4(160, 120, 1000, 750)
 
 // Color Settings
@@ -31,6 +31,7 @@
 #define DEFAULT_SHADER_COLOR COLOR_PURPLE
 
 // Camera Settings
+#define CAMERA_ORIGIN Vec3(0.0f, 0.0f, 5.0f)
 #define CAMERA_YAW -90.0f
 #define CAMERA_PITCH 0.0f
 #define CAMERA_SPEED 4.5f

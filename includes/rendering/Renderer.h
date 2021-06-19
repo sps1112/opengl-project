@@ -99,7 +99,7 @@ public:
     void SwapBuffers(bool lockFramerate = true);
     void StartTimer();
     void NewFrame();
-    void SetCamera(Camera camera);
+    void SetCamera(Camera *camera);
     float GetZoom();
     Camera *GetCamera();
     void SetCursor(bool status);
