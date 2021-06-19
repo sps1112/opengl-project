@@ -133,6 +133,7 @@ void Scene::UpdateActor(RenderActor *actor)
         data.RemoveActor(actor->id, SHADER_DATA);
         data.RemoveActor(actor->id, TEXTURE_DATA);
         actor->mat.albedo.tex = GetTexTemplate((actor->mat.albedo.texID - 1));
+        actor->mat.albedo.col = COLOR_WHITE;
         actor->mat.type = ((actor->mat.type == COLOR_2D) ? TEXTURE_2D : ((actor->mat.type == COLOR_3D) ? TEXTURE_3D : actor->mat.type));
         data.AddShader(GetVSPath(actor->mat.type), GetFSPath(actor->mat.type), static_cast<int>(actor->mat.type), actor->id);
         data.AddTexture(actor->mat.albedo.texID - 1, actor->id);
@@ -141,6 +142,7 @@ void Scene::UpdateActor(RenderActor *actor)
     {
         data.RemoveActor(actor->id, SHADER_DATA);
         data.RemoveActor(actor->id, TEXTURE_DATA);
+        actor->mat.albedo.col = DEFAULT_SHADER_COLOR;
         actor->mat.type = ((actor->mat.type == TEXTURE_2D) ? COLOR_2D : ((actor->mat.type == TEXTURE_3D) ? COLOR_3D : actor->mat.type));
         data.AddShader(GetVSPath(actor->mat.type), GetFSPath(actor->mat.type), static_cast<int>(actor->mat.type), actor->id);
     }
