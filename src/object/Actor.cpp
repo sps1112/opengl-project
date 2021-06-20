@@ -75,9 +75,9 @@ std::string template_actor_filepath[] = {
     " "};
 
 MATERIAL_TEMPLATES default_actor_materials[] = {
-    COLOR_2D_MAT,
-    COLOR_2D_MAT,
-    COLOR_2D_MAT,
+    COLOR_3D_MAT,
+    COLOR_3D_MAT,
+    COLOR_3D_MAT,
     COLOR_3D_MAT,
     COLOR_3D_MAT,
     COLOR_3D_MAT,

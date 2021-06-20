@@ -57,80 +57,84 @@ void ShowSimpleOverlay(bool *p_open, int sceneNumber)
     ImGui::End();
 }
 
+int AddActorUI(Scene *currentScene)
+{
+    if (ImGui::BeginMenu("Add Actor.."))
+    {
+        if (ImGui::MenuItem("Triangle"))
+        {
+            currentScene->AddActor(TRIANGLE_2D);
+        }
+        if (ImGui::MenuItem("Rectangle"))
+        {
+            currentScene->AddActor(RECTANGLE_2D);
+        }
+        if (ImGui::MenuItem("Cube"))
+        {
+            currentScene->AddActor(CUBE_3D);
+        }
+        if (ImGui::MenuItem("Sphere"))
+        {
+            currentScene->AddActor(SPHERE_MODEL);
+        }
+        /*if (ImGui::MenuItem("Backpack"))
+			{
+				loadedScenes[listIndex].AddActor("resources/models/backpack/backpack.obj", MODEL_OBJECT);
+			}*/
+        ImGui::EndMenu();
+    }
+    return (currentScene->actorCount - 1);
+}
+
 // Demonstrate create a window with multiple child windows.
 void ShowAppLayout(bool *p_open, Scene *currentScene)
 {
     ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("Scene Object List", p_open, ImGuiWindowFlags_MenuBar))
+    static int selectedIndex = 0;
+    if (ImGui::Begin("SCENE ACTOR LIST", p_open, ImGuiWindowFlags_MenuBar))
     {
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("File"))
             {
+                selectedIndex = AddActorUI(currentScene);
                 if (ImGui::MenuItem("Close"))
+                {
                     *p_open = false;
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
         }
 
         // Left
-        static int selectedIndexA = 0;
-        static int selectedIndexB = 0;
-        static bool objectSelected = true;
         {
             ImGui::BeginGroup();
             ImGui::BeginChild("left pane", ImVec2(150, 0), true);
-            if (ImGui::BeginTabBar("##ObjectTabs", ImGuiTabBarFlags_None))
+            if (ImGui::Selectable("Camera", selectedIndex == 0))
             {
-                if (ImGui::BeginTabItem("Objects"))
-                {
-                    objectSelected = true;
-                    if (currentScene->actorCount > 0)
-                    {
-                        selectedIndexA %= currentScene->actorCount;
-                        for (int i = 0; i < currentScene->actorCount; i++)
-                        {
-                            char label[64];
-                            sprintf(label, (currentScene->actorList[i].name).c_str());
-                            if (ImGui::Selectable(label, selectedIndexA == i))
-                                selectedIndexA = i;
-                        }
-                    }
-                    else
-                    {
-                        char label[64];
-                        sprintf(label, "No Object Loaded");
-                        ImGui::Selectable(label, false);
-                        selectedIndexA = 0;
-                    }
-                    ImGui::EndTabItem();
-                }
-                /* if (ImGui::BeginTabItem("Uniques"))
-                {
-                    objectSelected = false;
-                    if (currentScene->uniqueCount > 0)
-                    {
-                        selectedIndexB %= currentScene->uniqueCount;
-                        for (int i = 0; i < currentScene->uniqueCount; i++)
-                        {
-                            char label[64];
-                            sprintf(label, (currentScene->uniques[i].name).c_str());
-                            if (ImGui::Selectable(label, selectedIndexB == i))
-                                selectedIndexB = i;
-                        }
-                    }
-                    else
-                    {
-                        char label[64];
-                        sprintf(label, "No Unique Loaded");
-                        ImGui::Selectable(label, false);
-                        selectedIndexB = 0;
-                    }
-                    ImGui::EndTabItem();
-                }*/
-                ImGui::EndTabBar();
+                selectedIndex = 0;
             }
+            if (currentScene->actorCount > 0)
+            {
+                selectedIndex %= currentScene->actorCount;
+                for (int i = 0; i < currentScene->actorCount; i++)
+                {
+                    char label[64];
+                    sprintf(label, (currentScene->actorList[i].name).c_str());
+                    if (ImGui::Selectable(label, selectedIndex == i))
+                    {
+                        selectedIndex = i;
+                    }
+                }
+            }
+            /*else
+            {
+                char label[64];
+                sprintf(label, "No Object Loaded");
+                ImGui::Selectable(label, false);
+                selectedIndex = 0;
+            }*/
             ImGui::EndChild();
             ImGui::EndGroup();
         }
@@ -139,80 +143,46 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
         // Right
         {
             RenderActor *selectedActor;
-            // SceneObject *selectedObject;
-            // UniqueObject *selectedUnique;
             ImGui::BeginGroup();
             ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-            if (objectSelected)
+            if (currentScene->actorCount > 0)
             {
-                if (currentScene->actorCount > 0)
-                {
-                    selectedActor = &(currentScene->actorList[selectedIndexA]);
-                    ImGui::Text((selectedActor->name).c_str());
-                }
+                selectedActor = &(currentScene->actorList[selectedIndex]);
+                ImGui::Text((selectedActor->name).c_str());
             }
-            /* else
-            {
-                if (currentScene->actorCount > 0)
-                {
-                    selectedUnique = &(currentScene->uniques[selectedIndexB]);
-                    ImGui::Text((selectedUnique->name).c_str());
-                }
-            }*/
             ImGui::Separator();
-            if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
+            if (currentScene->actorCount > 0)
             {
-                if (ImGui::BeginTabItem("Details"))
+                ImGui::Text("DATA");
+                ImGui::Text("---------------------------");
+                ImGui::InputText("Name: ", &(selectedActor->name[0]), 30);
+                ImGui::TextWrapped(("Path: " + selectedActor->path + "\n").c_str());
+                ImGui::Checkbox("Visibility", &(selectedActor->isVisible));
+                ImGui::Text("---------------------------");
+                ImGui::Text("---------------------------");
+                ImGui::Text("        ");
+                ImGui::Text("TRANSFORM");
+                ImGui::Text("---------------------------");
+                ImGui::SliderFloat3("Position", &(selectedActor->transform.position.x), -5.0f, 5.0f);
+                ImGui::SliderFloat3("Rotation", &(selectedActor->transform.rotation.x), -180.0f, 180.0f);
+                ImGui::SliderFloat3("Scale", &(selectedActor->transform.scale.x), 0.0001f, 10.0f);
+                if (ImGui::Button("Reset Transform"))
                 {
-                    if (objectSelected)
-                    {
-                        if (currentScene->actorCount > 0)
-                        {
-                            ImGui::InputText("Name: ", &(selectedActor->name[0]), 30);
-                            ImGui::TextWrapped(("Path: " + selectedActor->path + "\n").c_str());
-                            ImGui::Checkbox("Visibility", &(selectedActor->isVisible));
-                            ImGui::SliderFloat3("Position", &(selectedActor->transform.position.x), -5.0f, 5.0f);
-                            ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
-                            if (ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18))
-                            {
-                                currentScene->UpdateActor(selectedActor);
-                            }
-                        }
-                    }
-                    /* else
-                    {
-                        if (currentScene->actorCount > 0)
-                        {
-                            ImGui::TextWrapped(("Name: " + selectedUnique->name +
-                                                "\nPath: " + selectedUnique->path + "\n")
-                                                   .c_str());
-                        }
-                    }*/
-                    ImGui::EndTabItem();
+                    selectedActor->transform.Reset();
                 }
-                if (ImGui::BeginTabItem("Other"))
+                ImGui::Text("---------------------------");
+                ImGui::Text("---------------------------");
+                ImGui::Text("        ");
+                ImGui::Text("MATERIAL");
+                ImGui::Text("---------------------------");
+                ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
+                if (ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18))
                 {
-                    if (objectSelected)
-                    {
-                        if (currentScene->actorCount > 0)
-                        {
-                            ImGui::TextWrapped(("Object Type: " + std::to_string(selectedActor->type) +
-                                                "\nPath: " + selectedActor->path)
-                                                   .c_str());
-                        }
-                    }
-                    /* else
-                    {
-                        if (currentScene->actorCount > 0)
-                        {
-                            ImGui::TextWrapped(("Object Type: " + std::to_string(selectedUnique->actorType) +
-                                                "\nCount: " + std::to_string(selectedUnique->count))
-                                                   .c_str());
-                        }
-                    }*/
-                    ImGui::EndTabItem();
+                    currentScene->UpdateActor(selectedActor);
                 }
-                ImGui::EndTabBar();
+                ImGui::Text("---------------------------");
+                ImGui::Text("---------------------------");
+                ImGui::Text("        ");
             }
             ImGui::EndChild();
             ImGui::EndGroup();

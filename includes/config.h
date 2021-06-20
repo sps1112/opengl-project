@@ -11,6 +11,7 @@
 // Window Settings
 #define DEFAULT_WINDOW_HEIGHT 600
 #define DEFAULT_WINDOW_WIDTH 800
+#define DEFAULT_WINDOW_TITLE "OpenGL Window"
 #define ENABLE_FULLSCREEN_MODE 0
 #define ASPECT_RATIO_LOCKED 1
 #define ASPECT_RATIO Vec2(4, 3)
@@ -49,5 +50,14 @@
 #define MAX_DIRECTIONAL_LIGHTS 4
 #define MAX_SPOT_LIGHT 4
 #define MAX_LIGHTS 12
+
+// Key Settings
+#define KEY_ESC GLFW_KEY_ESCAPE
+#define KEY_W GLFW_KEY_W
+#define KEY_S GLFW_KEY_S
+#define KEY_A GLFW_KEY_A
+#define KEY_D GLFW_KEY_D
+#define KEY_Q GLFW_KEY_Q
+#define KEY_E GLFW_KEY_E
 
 #endif // !CONFIG_H

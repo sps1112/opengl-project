@@ -20,13 +20,7 @@
 #include <vector>
 
 // Renderer Settings
-const int majorVersion = OPENGL_MAJOR_VERSION;
-const int minorVersion = OPENGL_MINOR_VERSION;
-const unsigned int SCR_WIDTH = DEFAULT_WINDOW_WIDTH;
-const unsigned int SCR_HEIGHT = DEFAULT_WINDOW_HEIGHT;
-const char *windowTitle = "OpenGL window";
-
-Renderer renderer(majorVersion, minorVersion, SCR_WIDTH, SCR_HEIGHT);
+Renderer renderer(OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
 // Scene Settings
 Scene *loadedScenes;
@@ -80,7 +74,7 @@ int main()
 int SetupRenderer()
 {
 	renderer.SetupGLFW();
-	renderer.CreateWindow(windowTitle);
+	renderer.CreateWindow(DEFAULT_WINDOW_TITLE);
 	if (renderer.window == NULL)
 	{
 		return -1;
@@ -99,7 +93,7 @@ int SetupRenderer()
 void Draw()
 {
 	// Setup GUI
-	GUI gui(renderer.window, majorVersion, minorVersion);
+	GUI gui(renderer.window, OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION);
 	loadedScenes = new Scene[maxSceneCount];
 
 	// Start Render Loop
@@ -278,30 +272,7 @@ void ShowEditMenu()
 			ImGui::Combo("Draw Mode", &drawOption, drawComboItems, 3);
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("Add Object.."))
-		{
-			if (ImGui::MenuItem("Triangle"))
-			{
-				loadedScenes[listIndex].AddActor(TRIANGLE_2D);
-			}
-			if (ImGui::MenuItem("Rectangle"))
-			{
-				loadedScenes[listIndex].AddActor(RECTANGLE_2D);
-			}
-			if (ImGui::MenuItem("Cube"))
-			{
-				loadedScenes[listIndex].AddActor(CUBE_3D);
-			}
-			if (ImGui::MenuItem("Sphere"))
-			{
-				loadedScenes[listIndex].AddActor(SPHERE_MODEL);
-			}
-			/*if (ImGui::MenuItem("Backpack"))
-			{
-				loadedScenes[listIndex].AddActor("resources/models/backpack/backpack.obj", MODEL_OBJECT);
-			}*/
-			ImGui::EndMenu();
-		}
+		AddActorUI(&(loadedScenes[listIndex]));
 	}
 	else
 	{

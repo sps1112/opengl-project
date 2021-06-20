@@ -188,33 +188,33 @@ bool Renderer::CheckInput(int key)
 // check exit input
 void Renderer::ProcessInput(bool moveStatus)
 {
-    if (CheckInput(GLFW_KEY_ESCAPE))
+    if (CheckInput(KEY_ESC))
     {
         QuitWindow();
     }
     if (moveStatus)
     {
-        if (CheckInput(GLFW_KEY_W))
+        if (CheckInput(KEY_W))
         {
             rCamera.camera.ProcessKeyboard(FORWARD, deltaTime);
         }
-        if (CheckInput(GLFW_KEY_S))
+        if (CheckInput(KEY_S))
         {
             rCamera.camera.ProcessKeyboard(BACKWARD, deltaTime);
         }
-        if (CheckInput(GLFW_KEY_A))
+        if (CheckInput(KEY_A))
         {
             rCamera.camera.ProcessKeyboard(LEFT, deltaTime);
         }
-        if (CheckInput(GLFW_KEY_D))
+        if (CheckInput(KEY_D))
         {
             rCamera.camera.ProcessKeyboard(RIGHT, deltaTime);
         }
-        if (CheckInput(GLFW_KEY_UP))
+        if (CheckInput(KEY_Q))
         {
             rCamera.camera.ProcessKeyboard(UP, deltaTime);
         }
-        if (CheckInput(GLFW_KEY_DOWN))
+        if (CheckInput(KEY_E))
         {
             rCamera.camera.ProcessKeyboard(DOWN, deltaTime);
         }
