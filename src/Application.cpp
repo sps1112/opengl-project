@@ -188,7 +188,7 @@ void ClearScreen()
 void DrawNormalScene()
 {
 	// Draw Scene
-	int sceneNumber = max(1, loadedSceneCount - 2) + currentSceneIndex;
+	int sceneNumber = max(1, loadedSceneCount - (maxSceneCount - 1)) + currentSceneIndex;
 	listIndex = (sceneNumber + maxSceneCount - 1) % maxSceneCount;
 	loadedScenes[listIndex].DrawScene(renderer);
 
@@ -216,7 +216,7 @@ void ShowFileMenu()
 		loadIndex = (loadIndex + 1) % maxSceneCount;
 		loadedSceneCount++;
 		loadedScenes[loadIndex] = nextScene;
-		currentSceneIndex = (loadedSceneCount >= maxSceneCount) ? 2 : loadIndex;
+		currentSceneIndex = (loadedSceneCount >= maxSceneCount) ? (maxSceneCount - 1) : loadIndex;
 	}
 	ImGui::Separator();
 	if (ImGui::MenuItem("Open Scene")) // Load a Template Scene
@@ -230,7 +230,7 @@ void ShowFileMenu()
 		}
 		else
 		{
-			int startIndex = max(1, loadedSceneCount - 2);
+			int startIndex = max(1, loadedSceneCount - (maxSceneCount - 1));
 			for (int i = startIndex; i <= loadedSceneCount; i++)
 			{
 				std::string name = "Scene " + std::to_string(i);
