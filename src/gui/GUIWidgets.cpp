@@ -1,4 +1,4 @@
-#include <gui/ExampleGUI.h>
+#include <gui/GUIWidgets.h>
 
 char *texComboItems[] = {
     "None",

@@ -46,7 +46,7 @@ add_executable(
     src/utility/FileReader.cpp
     src/utility/CustomMath.cpp
     src/gui/GUI.cpp
-    src/gui/ExampleGUI.cpp
+    src/gui/GUIWidgets.cpp
     src/gui/ObjectUI.cpp
 
     includes/external/imgui/imgui.cpp

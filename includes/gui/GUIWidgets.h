@@ -1,5 +1,5 @@
-#ifndef EXAMPLE_GUI_H
-#define EXAMPLE_GUI_H
+#ifndef GUI_WIDGETS_H
+#define GUI_WIDGETS_H
 
 #include <gui/GUI.h>
 #include <object/Scene.h>

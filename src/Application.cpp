@@ -12,7 +12,7 @@
 #include <rendering/Camera.h>	// Camera header
 #include <rendering/Light.h>	// Light header
 #include <object/Model.h>		// Model header
-#include <gui/ExampleGUI.h>		// Custom GUI Widgets
+#include <gui/GUIWidgets.h>		// Custom GUI Widgets
 #include <object/Actor.h>		// Actor Header
 
 // Standard Headers
