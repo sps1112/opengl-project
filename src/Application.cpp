@@ -46,16 +46,12 @@ bool listOpen = true;
 // Method Declarations
 int SetupRenderer();
 void Draw();
-void ClearScreen();
+void DrawNormalScene();
+void DrawEmptyScene();
+void ShowMainMenuBar();
 void ShowFileMenu();
 void ShowEditMenu();
 void ShowViewMenu();
-void DrawNormalScene();
-
-// Project Settings
-int drawOption = 2;
-const char *drawComboItems[] = {
-	"Draw Line", "Draw Point", "Draw Fill"};
 
 // Main Function
 int main()
@@ -100,71 +96,45 @@ void Draw()
 	renderer.StartTimer();
 	/*
 	Render Loop
-	1. New Frame
-	2. Process Data
-	3. Get New Data
-	4. Refresh Last Frame
-		a. Clear Screen
-		b. Bind FBO
-	5. Render Objects
-		a. Draw Opaque Objects
-			i. Ground First
-			ii. Others Second
-		b. Draw Translucent Objects
-			i. Farthest to Closest
-		c. Draw Skybox
-		d. Draw 2D objects
-	6. Render FBO
-		a. Unbind FBO
-		b. Clear Screen
-		c. Draw Texture
-	7. Render GUI
-	8. End Frame
+	1. New Frame :- Application
+	2. Process Scene:- Application
+		a. Process Data :- Scene
+		b. Get New Data :- Scene
+		c. Refresh Last Frame :- Scene
+			i. Clear Screen
+			ii. Bind FBO
+		d. Render Objects :- Scene
+			i. Draw Opaque Objects
+				i. Ground First
+				ii. Others Second
+			ii. Draw Translucent Objects
+				i. Farthest to Closest
+			iii. Draw Skybox
+			iv. Draw 2D objects
+		e. Render FBO :- Scene
+			i. Unbind FBO
+			ii. Clear Screen
+			iii. Draw Texture
+	8. Render GUI :- Application
+	9. End Frame :- Applicarion
 	*/
 	while (!renderer.CheckWindowFlag())
 	{
 		// New Frame
 		gui.NewFrame();
 		renderer.NewFrame();
-
-		// Process Data
-		renderer.ProcessInput();
-		renderer.SetDraw(drawOption);
-
-		// Get New Data
-
-		// Refresh Frame
+		// Process Scene
 		switch (currentMode)
 		{
 		case Empty_Scene:
-			ClearScreen();
+			DrawEmptyScene();
 			break;
 		case Normal_Scene:
 			DrawNormalScene();
 			break;
 		}
-
 		// Render GUI
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				ShowFileMenu();
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Edit"))
-			{
-				ShowEditMenu();
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("View"))
-			{
-				ShowViewMenu();
-				ImGui::EndMenu();
-			}
-			ImGui::EndMainMenuBar();
-		}
-
+		ShowMainMenuBar();
 		// End Frame
 		gui.RenderGUI();
 		renderer.SwapBuffers();
@@ -178,8 +148,11 @@ void Draw()
 	gui.TerminateGUI();
 }
 
-void ClearScreen()
+void DrawEmptyScene()
 {
+	// Process Data
+	renderer.ProcessInput();
+	// Clear Screen
 	renderer.SetColor(DEFAULT_BACKGROUND_COLOR.r, DEFAULT_BACKGROUND_COLOR.g, DEFAULT_BACKGROUND_COLOR.b, 1.0f);
 }
 
@@ -202,6 +175,29 @@ void DrawNormalScene()
 	if (listOpen)
 	{
 		ShowAppLayout(&listOpen, &(loadedScenes[listIndex]));
+	}
+}
+
+void ShowMainMenuBar()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			ShowFileMenu();
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			ShowEditMenu();
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("View"))
+		{
+			ShowViewMenu();
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
 	}
 }
 
@@ -263,7 +259,7 @@ void ShowEditMenu()
 		if (ImGui::BeginMenu("Edit Current Scene.."))
 		{
 			ImGui::ColorEdit4("Background Color", &(loadedScenes[listIndex]).data.backgroundColor.x);
-			ImGui::Combo("Draw Mode", &drawOption, drawComboItems, 3);
+			ImGui::Combo("Draw Mode", &(loadedScenes[listIndex].data.drawMode), drawComboItems, 3);
 			ImGui::EndMenu();
 		}
 	}

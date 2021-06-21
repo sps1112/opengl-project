@@ -1,9 +1,13 @@
 #include <object/Scene.h>
 
+char *drawComboItems[] = {
+    "Draw Line", "Draw Point", "Draw Fill"};
+
 SceneData::SceneData(std::string sceneName_)
 {
     sceneName = sceneName_;
     backgroundColor = Vec4(DEFAULT_SCENE_COLOR, 1.0f);
+    drawMode = 2;
 }
 
 void SceneData::AddPrimitive(std::string path, int id, int actor_id)
@@ -185,7 +189,10 @@ void Scene::UpdateActor(RenderActor *actor)
 
 void Scene::DrawScene(Renderer &renderer)
 {
-    // Get Data
+    // Process Data
+    renderer.ProcessInput();
+    renderer.SetDraw(data.drawMode);
+    // Get New Data
     int width = (int)renderer.GetCurrentWidth();
     int height = (int)renderer.GetCurrentHeight();
     // Refresh Last Frame

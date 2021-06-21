@@ -224,12 +224,15 @@ enum DataTypes
     LIGHT_DATA,
 };
 
+extern char *drawComboItems[3];
+
 // Scene Data class holding unique reference
 class SceneData
 {
 public:
-    glm::vec4 backgroundColor;
     std::string sceneName;
+    Vec4 backgroundColor;
+    int drawMode;
     SceneData(std::string sceneName_ = "New Scene");
     void AddPrimitive(std::string path, int id, int actor_id);
     void AddShader(std::string path1, std::string path2, int id, int actor_id);
