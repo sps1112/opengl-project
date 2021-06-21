@@ -132,8 +132,6 @@ void Draw()
 		renderer.SetDraw(drawOption);
 
 		// Get New Data
-		/*int currentWidth = (int)renderer.GetCurrentWidth();
-		int currentHeight = (int)renderer.GetCurrentHeight();*/
 
 		// Refresh Frame
 		switch (currentMode)
@@ -260,10 +258,6 @@ void ShowFileMenu()
 
 void ShowEditMenu()
 {
-	if (ImGui::BeginMenu("Edit Window"))
-	{
-		ImGui::EndMenu();
-	}
 	if (currentMode == Normal_Scene)
 	{
 		if (ImGui::BeginMenu("Edit Current Scene.."))
@@ -272,7 +266,6 @@ void ShowEditMenu()
 			ImGui::Combo("Draw Mode", &drawOption, drawComboItems, 3);
 			ImGui::EndMenu();
 		}
-		AddActorUI(&(loadedScenes[listIndex]));
 	}
 	else
 	{

@@ -77,16 +77,17 @@ int AddActorUI(Scene *currentScene)
         {
             currentScene->AddActor(SPHERE_MODEL);
         }
-        /*if (ImGui::MenuItem("Backpack"))
-			{
-				loadedScenes[listIndex].AddActor("resources/models/backpack/backpack.obj", MODEL_OBJECT);
-			}*/
+        /*
+        if (ImGui::MenuItem("Backpack"))
+		{
+			loadedScenes[listIndex].AddActor("resources/models/backpack/backpack.obj", MODEL_OBJECT);
+		}
+        */
         ImGui::EndMenu();
     }
-    return (currentScene->actorCount - 1);
+    return (currentScene->actorCount);
 }
 
-// Demonstrate create a window with multiple child windows.
 void ShowAppLayout(bool *p_open, Scene *currentScene)
 {
     ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
@@ -111,20 +112,20 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
         {
             ImGui::BeginGroup();
             ImGui::BeginChild("left pane", ImVec2(150, 0), true);
-            if (ImGui::Selectable("Camera", selectedIndex == 0))
+            if (ImGui::Selectable(currentScene->cameraList[0].name.c_str(), selectedIndex == 0))
             {
                 selectedIndex = 0;
             }
             if (currentScene->actorCount > 0)
             {
-                selectedIndex %= currentScene->actorCount;
+                selectedIndex %= (currentScene->actorCount) + 1;
                 for (int i = 0; i < currentScene->actorCount; i++)
                 {
                     char label[64];
                     sprintf(label, (currentScene->actorList[i].name).c_str());
-                    if (ImGui::Selectable(label, selectedIndex == i))
+                    if (ImGui::Selectable(label, selectedIndex == i + 1))
                     {
-                        selectedIndex = i;
+                        selectedIndex = i + 1;
                     }
                 }
             }
@@ -145,44 +146,75 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
             RenderActor *selectedActor;
             ImGui::BeginGroup();
             ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-            if (currentScene->actorCount > 0)
+            if (selectedIndex == 0)
             {
-                selectedActor = &(currentScene->actorList[selectedIndex]);
-                ImGui::Text((selectedActor->name).c_str());
-            }
-            ImGui::Separator();
-            if (currentScene->actorCount > 0)
-            {
+                CameraActor *cam = &(currentScene->cameraList[0]);
                 ImGui::Text("DATA");
                 ImGui::Text("---------------------------");
-                ImGui::InputText("Name: ", &(selectedActor->name[0]), 30);
-                ImGui::TextWrapped(("Path: " + selectedActor->path + "\n").c_str());
-                ImGui::Checkbox("Visibility", &(selectedActor->isVisible));
+                ImGui::InputText("Name: ", &(currentScene->cameraList[0].name[0]), 30);
                 ImGui::Text("---------------------------");
                 ImGui::Text("---------------------------");
                 ImGui::Text("        ");
                 ImGui::Text("TRANSFORM");
                 ImGui::Text("---------------------------");
-                ImGui::SliderFloat3("Position", &(selectedActor->transform.position.x), -5.0f, 5.0f);
-                ImGui::SliderFloat3("Rotation", &(selectedActor->transform.rotation.x), -180.0f, 180.0f);
-                ImGui::SliderFloat3("Scale", &(selectedActor->transform.scale.x), 0.0001f, 10.0f);
+                ImGui::SliderFloat3("Position", &(cam->transform.position.x), -5.0f, 5.0f);
+                ImGui::SliderFloat3("Rotation", &(cam->transform.rotation.x), -180.0f, 180.0f);
+                ImGui::SliderFloat3("Scale", &(cam->transform.scale.x), 0.0001f, 10.0f);
                 if (ImGui::Button("Reset Transform"))
                 {
-                    selectedActor->transform.Reset();
+                    cam->transform.Reset();
                 }
                 ImGui::Text("---------------------------");
                 ImGui::Text("---------------------------");
                 ImGui::Text("        ");
-                ImGui::Text("MATERIAL");
+                ImGui::Text("CAMERA");
                 ImGui::Text("---------------------------");
-                ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
-                if (ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18))
+                ImGui::Checkbox("Orthographic", &(cam->isOrtho));
+                ImGui::DragFloat("Camera Size", &(cam->camSize), 0.2f, 0.0f, 15.0f);
+                ImGui::Checkbox("Can Move", &(cam->canMove));
+                ImGui::Checkbox("Can Rotate", &(cam->canRotate));
+            }
+            else
+            {
+                if (currentScene->actorCount > 0)
                 {
-                    currentScene->UpdateActor(selectedActor);
+                    selectedActor = &(currentScene->actorList[selectedIndex - 1]);
+                    ImGui::Text((selectedActor->name).c_str());
                 }
-                ImGui::Text("---------------------------");
-                ImGui::Text("---------------------------");
-                ImGui::Text("        ");
+                ImGui::Separator();
+                if (currentScene->actorCount > 0)
+                {
+                    ImGui::Text("DATA");
+                    ImGui::Text("---------------------------");
+                    ImGui::InputText("Name: ", &(selectedActor->name[0]), 30);
+                    ImGui::TextWrapped(("Path: " + selectedActor->path + "\n").c_str());
+                    ImGui::Checkbox("Visibility", &(selectedActor->isVisible));
+                    ImGui::Text("---------------------------");
+                    ImGui::Text("---------------------------");
+                    ImGui::Text("        ");
+                    ImGui::Text("TRANSFORM");
+                    ImGui::Text("---------------------------");
+                    ImGui::SliderFloat3("Position", &(selectedActor->transform.position.x), -5.0f, 5.0f);
+                    ImGui::SliderFloat3("Rotation", &(selectedActor->transform.rotation.x), -180.0f, 180.0f);
+                    ImGui::SliderFloat3("Scale", &(selectedActor->transform.scale.x), 0.0001f, 10.0f);
+                    if (ImGui::Button("Reset Transform"))
+                    {
+                        selectedActor->transform.Reset();
+                    }
+                    ImGui::Text("---------------------------");
+                    ImGui::Text("---------------------------");
+                    ImGui::Text("        ");
+                    ImGui::Text("MATERIAL");
+                    ImGui::Text("---------------------------");
+                    ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
+                    if (ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18))
+                    {
+                        currentScene->UpdateActor(selectedActor);
+                    }
+                    ImGui::Text("---------------------------");
+                    ImGui::Text("---------------------------");
+                    ImGui::Text("        ");
+                }
             }
             ImGui::EndChild();
             ImGui::EndGroup();

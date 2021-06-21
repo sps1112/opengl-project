@@ -18,6 +18,11 @@
 #define WINDOW_SIZE_LIMITED 0
 #define WINDOW_SIZE_LIMITS Vec4(160, 120, 1000, 750)
 
+// Vector Settings
+#define WORLD_UP Vec3(0.0f, 1.0f, 0.0f)
+#define WORLD_RIGHT Vec3(1.0f, 0.0f, 0.0f)
+#define WORLD_FORWARD Vec3(0.0f, 0.0f, 1.0f)
+
 // Color Settings
 #define COLOR_BLACK Vec3(0.0f, 0.0f, 0.0f)
 #define COLOR_GRAY Vec3(0.1f, 0.1f, 0.1f)
@@ -40,6 +45,8 @@
 #define CAMERA_ZOOM 45.0f
 #define CAMERA_MAXZOOM 60.0f
 #define CAMERA_MINZOOM 1.0f
+#define CAMERA_FAR_PLANE 100.0f
+#define CAMERA_NEAR_PLANE 0.01f
 
 // Scene Settings
 #define MAX_LOADED_SCENES_COUNT 3

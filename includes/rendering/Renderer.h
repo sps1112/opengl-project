@@ -17,7 +17,7 @@
 
 struct RenderCamera
 {
-    Camera camera;
+    Camera *camera;
     float lastX;
     float lastY;
     bool isFirstMouse;

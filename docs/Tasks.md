@@ -20,6 +20,7 @@ A list of common tasks to do and features to implemet in the Renderer.
 - [ ] Adding Shadows
 - [ ] Post Processing
 - [ ] Anti Aliasing
+- [ ] Add Console
 - [ ] PBR Implementation
 
 
@@ -45,3 +46,4 @@ A list of common tasks to do and features to implemet in the Renderer.
   - [ ] Transform
 - [ ] Texture
   - [ ] Material
+- [ ] Application

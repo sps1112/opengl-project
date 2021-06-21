@@ -10,6 +10,7 @@ extern char *texComboItems[18];
 // Shows a Simple Overlay
 void ShowSimpleOverlay(bool *p_open, int sceneNumber);
 
+// Add Actor UI window
 int AddActorUI(Scene *currentScene);
 
 // Demonstrate create a window with multiple child windows.

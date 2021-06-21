@@ -57,6 +57,10 @@ private:
 class CameraActor : public Actor
 {
 public:
+    bool canMove;
+    bool canRotate;
+    bool isOrtho;
+    float camSize;
     CameraActor(std::string name_, int id_, Transform transform_ = Transform(CAMERA_ORIGIN, Vec3(0.0f), Vec3(1.0f)));
     Camera *GetCamera();
 

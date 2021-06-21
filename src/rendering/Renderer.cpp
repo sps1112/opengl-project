@@ -138,7 +138,7 @@ void Renderer::NewFrame()
 
 void Renderer::SetCamera(Camera *camera)
 {
-    rCamera.camera = Camera(camera->Position);
+    rCamera.camera = camera;
     rCamera.lastX = width / 2.0f;
     rCamera.lastY = height / 2.0f;
     rCamera.isFirstMouse = true;
@@ -148,12 +148,12 @@ void Renderer::SetCamera(Camera *camera)
 
 float Renderer::GetZoom()
 {
-    return rCamera.camera.Zoom;
+    return rCamera.camera->Zoom;
 }
 
 Camera *Renderer::GetCamera()
 {
-    return &(rCamera.camera);
+    return (rCamera.camera);
 }
 
 void Renderer::SetCursor(bool status)
@@ -196,27 +196,27 @@ void Renderer::ProcessInput(bool moveStatus)
     {
         if (CheckInput(KEY_W))
         {
-            rCamera.camera.ProcessKeyboard(FORWARD, deltaTime);
+            rCamera.camera->ProcessKeyboard(FORWARD, deltaTime);
         }
         if (CheckInput(KEY_S))
         {
-            rCamera.camera.ProcessKeyboard(BACKWARD, deltaTime);
+            rCamera.camera->ProcessKeyboard(BACKWARD, deltaTime);
         }
         if (CheckInput(KEY_A))
         {
-            rCamera.camera.ProcessKeyboard(LEFT, deltaTime);
+            rCamera.camera->ProcessKeyboard(LEFT, deltaTime);
         }
         if (CheckInput(KEY_D))
         {
-            rCamera.camera.ProcessKeyboard(RIGHT, deltaTime);
+            rCamera.camera->ProcessKeyboard(RIGHT, deltaTime);
         }
         if (CheckInput(KEY_Q))
         {
-            rCamera.camera.ProcessKeyboard(UP, deltaTime);
+            rCamera.camera->ProcessKeyboard(UP, deltaTime);
         }
         if (CheckInput(KEY_E))
         {
-            rCamera.camera.ProcessKeyboard(DOWN, deltaTime);
+            rCamera.camera->ProcessKeyboard(DOWN, deltaTime);
         }
     }
 }
@@ -226,7 +226,7 @@ void Renderer::ProcessMouse(bool rotateStatus)
     if (rotateStatus)
     {
         SetCursor(false);
-        rCamera.camera.ProcessMouseMovement(rCamera.xOff, rCamera.yOff, deltaTime);
+        rCamera.camera->ProcessMouseMovement(rCamera.xOff, rCamera.yOff, deltaTime);
     }
     else
     {
@@ -391,7 +391,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 // callback for the mouse scroll wheel
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    rCamera.camera.ProcessMouseScroll(yoffset);
+    rCamera.camera->ProcessMouseScroll(yoffset);
 }
 
 FrameBuffer::FrameBuffer()

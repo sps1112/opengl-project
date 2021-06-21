@@ -3,6 +3,7 @@
 
 // Header declarations
 #include <utility/CustomMath.h>
+#include <config.h>
 
 //Transform Class
 class Transform
@@ -17,6 +18,12 @@ public:
     Transform(Vec3 pos, Vec3 rot, Vec3 scl);
     // Resets the transform the object and sets position at origin
     void Reset();
+    // Gets Local Front Vector
+    Vec3 GetFront();
+    // Gets Local Right Vector
+    Vec3 GetRight();
+    // Gets Local Up Vector
+    Vec3 GetUp();
 
 private:
 };

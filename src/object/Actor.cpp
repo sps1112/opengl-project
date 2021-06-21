@@ -9,11 +9,18 @@ CameraActor::CameraActor(std::string name_, int id_, Transform transform_)
     id = id_;
     cam = Camera(transform_.position);
     transform = Transform(cam.Position, Vec3(0.0f), Vec3(1.0f));
+    canMove = false;
+    canRotate = false;
+    isOrtho = false;
+    camSize = 5.0f;
 }
 
 Camera *CameraActor::GetCamera()
 {
     cam.Position = transform.position;
+    cam.Front = transform.GetFront();
+    cam.Right = transform.GetRight();
+    cam.Up = transform.GetUp();
     return &cam;
 }
 
