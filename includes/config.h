@@ -40,6 +40,7 @@
 #define CAMERA_ORIGIN Vec3(0.0f, 0.0f, 5.0f)
 #define CAMERA_YAW -90.0f
 #define CAMERA_PITCH 0.0f
+#define CAMERA_MAX_PITCH 89.0f
 #define CAMERA_SPEED 4.5f
 #define CAMERA_SENSITIVITY 0.1f
 #define CAMERA_ZOOM 45.0f
@@ -66,5 +67,7 @@
 #define KEY_D GLFW_KEY_D
 #define KEY_Q GLFW_KEY_Q
 #define KEY_E GLFW_KEY_E
+#define KEY_SPACE GLFW_KEY_SPACE
+#define KEY_LFT_ALT GLFW_KEY_LEFT_ALT
 
 #endif // !CONFIG_H

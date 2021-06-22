@@ -28,6 +28,12 @@ float max(float a, float b);
 float min(float a, float b);
 // Clamps the value of a b/w 0 and 1
 float saturate(float a);
+// Overflows the value of a from -period/2 to period/2
+float overflow(float a, float period);
+// Makes a greater than said value
+float floor(float a, float val, float diff = 0.001);
+// Makes a less than said value
+float ciel(float a, float val, float diff = 0.001);
 // Converts an Angle given in radians to degrees
 float radian_to_degree(float rad);
 // Converts an Angle given in degrees to radians

@@ -265,6 +265,7 @@ public:
 
 private:
     // Functions
+    bool is_camera_set;
     bool CheckList(TEMPLATE_ACTORS actor_choice);
 };
 

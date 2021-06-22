@@ -63,14 +63,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, float deltaTime,
 
     if (constrainPitch)
     {
-        if (Pitch > 89.0f)
-        {
-            Pitch = 89.0f;
-        }
-        if (Pitch < -89.0f)
-        {
-            Pitch = -89.0f;
-        }
+        Pitch = clamp(Pitch, -CAMERA_MAX_PITCH, CAMERA_MAX_PITCH);
     }
     updateCameraVectors();
 }
@@ -78,14 +71,7 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, float deltaTime,
 void Camera::ProcessMouseScroll(float yoffset)
 {
     Zoom -= (float)yoffset;
-    if (Zoom < MINZOOM)
-    {
-        Zoom = MINZOOM;
-    }
-    if (Zoom > MAXZOOM)
-    {
-        Zoom = MAXZOOM;
-    }
+    Zoom = clamp(Zoom, MINZOOM, MAXZOOM);
 }
 
 void Camera::updateCameraVectors()

@@ -17,11 +17,33 @@ CameraActor::CameraActor(std::string name_, int id_, Transform transform_)
 
 Camera *CameraActor::GetCamera()
 {
-    cam.Position = transform.position;
-    cam.Front = transform.GetFront();
-    cam.Right = transform.GetRight();
-    cam.Up = transform.GetUp();
     return &cam;
+}
+
+void CameraActor::RefreshCamera(bool transformCallback)
+{
+    if (transformCallback)
+    {
+        cam.Position = transform.position;
+        cam.Yaw = transform.rotation.y + CAMERA_YAW;
+        cam.Pitch = clamp(transform.rotation.x, -CAMERA_MAX_PITCH, CAMERA_MAX_PITCH);
+        cam.updateCameraVectors();
+        cam.Right = transform.GetRight();
+        cam.Up = transform.GetUp();
+    }
+    else
+    {
+        transform.position = cam.Position;
+        transform.rotation.y = overflow(cam.Yaw - CAMERA_YAW, 360.0f);
+        transform.rotation.x = cam.Pitch;
+    }
+}
+
+void CameraActor::ResetTransform()
+{
+    transform.Reset();
+    transform.position = CAMERA_ORIGIN;
+    RefreshCamera(true);
 }
 
 RenderActor::RenderActor()

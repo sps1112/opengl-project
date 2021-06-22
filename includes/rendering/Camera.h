@@ -63,10 +63,10 @@ public:
 	void ProcessMouseMovement(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch = true);
 	// Processes Camera Zoom from scroll wheel
 	void ProcessMouseScroll(float yoffset);
-
-private:
 	// Updates front, right and up vectors from angles
 	void updateCameraVectors();
+
+private:
 };
 
 #endif // !CAMERA_H

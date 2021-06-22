@@ -157,12 +157,18 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                 ImGui::Text("        ");
                 ImGui::Text("TRANSFORM");
                 ImGui::Text("---------------------------");
-                ImGui::SliderFloat3("Position", &(cam->transform.position.x), -5.0f, 5.0f);
-                ImGui::SliderFloat3("Rotation", &(cam->transform.rotation.x), -180.0f, 180.0f);
+                if (ImGui::SliderFloat3("Position", &(cam->transform.position.x), -5.0f, 5.0f))
+                {
+                    cam->RefreshCamera(true);
+                }
+                if (ImGui::SliderFloat3("Rotation", &(cam->transform.rotation.x), -180.0f, 180.0f))
+                {
+                    cam->RefreshCamera(true);
+                }
                 ImGui::SliderFloat3("Scale", &(cam->transform.scale.x), 0.0001f, 10.0f);
                 if (ImGui::Button("Reset Transform"))
                 {
-                    cam->transform.Reset();
+                    cam->ResetTransform();
                 }
                 ImGui::Text("---------------------------");
                 ImGui::Text("---------------------------");
@@ -170,9 +176,10 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                 ImGui::Text("CAMERA");
                 ImGui::Text("---------------------------");
                 ImGui::Checkbox("Orthographic", &(cam->isOrtho));
-                ImGui::DragFloat("Camera Size", &(cam->camSize), 0.2f, 0.0f, 15.0f);
+                ImGui::SliderFloat("Camera Size", &(cam->camSize), 0.0f, 15.0f);
                 ImGui::Checkbox("Can Move", &(cam->canMove));
                 ImGui::Checkbox("Can Rotate", &(cam->canRotate));
+                ImGui::SliderFloat("FOV", &(cam->GetCamera()->Zoom), CAMERA_MINZOOM, CAMERA_MAXZOOM);
             }
             else
             {

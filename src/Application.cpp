@@ -98,8 +98,8 @@ void Draw()
 	Render Loop
 	1. New Frame :- Application
 	2. Process Scene:- Application
-		a. Process Data :- Scene
-		b. Get New Data :- Scene
+		a. Get New Data :- Scene
+		b. Process Data :- Scene
 		c. Refresh Last Frame :- Scene
 			i. Clear Screen
 			ii. Bind FBO
@@ -123,6 +123,7 @@ void Draw()
 		// New Frame
 		gui.NewFrame();
 		renderer.NewFrame();
+
 		// Process Scene
 		switch (currentMode)
 		{
@@ -133,8 +134,10 @@ void Draw()
 			DrawNormalScene();
 			break;
 		}
+
 		// Render GUI
 		ShowMainMenuBar();
+
 		// End Frame
 		gui.RenderGUI();
 		renderer.SwapBuffers();

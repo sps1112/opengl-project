@@ -63,6 +63,8 @@ public:
     float camSize;
     CameraActor(std::string name_, int id_, Transform transform_ = Transform(CAMERA_ORIGIN, Vec3(0.0f), Vec3(1.0f)));
     Camera *GetCamera();
+    void RefreshCamera(bool transformCallback = false);
+    void ResetTransform();
 
 private:
     Camera cam;

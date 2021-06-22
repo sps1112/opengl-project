@@ -70,9 +70,11 @@ void SceneData::DrawActor(RenderActor *actor, int actor_id, CameraActor *cam, Ve
 {
     Mat4 view = cam->GetCamera()->GetViewMatrix();
     Mat4 projection(1.0f);
+    screen_dimension.x = floor(screen_dimension.x, 0.0f);
+    screen_dimension.y = floor(screen_dimension.y, 0.0f);
     if (cam->isOrtho)
     {
-        float aspectRatio = ((float)screen_dimension.x) / screen_dimension.y;
+        float aspectRatio = (((float)screen_dimension.x) / ((float)screen_dimension.y));
         float orthoSize = cam->camSize;
         Vec2 camDimension(aspectRatio * orthoSize, orthoSize);
         projection = glm::ortho(-camDimension.x / 2.0f, camDimension.x / 2.0f, -camDimension.y / 2.0f, camDimension.y / 2.0f, CAMERA_NEAR_PLANE, CAMERA_FAR_PLANE);
@@ -136,6 +138,7 @@ Scene::Scene(std::string name)
     actorCount = 0;
     camCount = 0;
     AddActor(CAMERA_OBJECT_ACTOR);
+    is_camera_set = false;
 }
 
 void Scene::AddActor(TEMPLATE_ACTORS actor_choice)
@@ -189,18 +192,38 @@ void Scene::UpdateActor(RenderActor *actor)
 
 void Scene::DrawScene(Renderer &renderer)
 {
-    // Process Data
-    renderer.ProcessInput();
-    renderer.SetDraw(data.drawMode);
     // Get New Data
     int width = (int)renderer.GetCurrentWidth();
     int height = (int)renderer.GetCurrentHeight();
+
+    // Process Data
+    if (!is_camera_set)
+    {
+        renderer.SetCamera(cameraList[0].GetCamera());
+        is_camera_set = true;
+    }
+    if (cameraList[0].canMove || cameraList[0].canRotate)
+    {
+        cameraList[0].RefreshCamera();
+    }
+    if (renderer.CheckInput(KEY_SPACE))
+    {
+        cameraList[0].canMove = true;
+        cameraList[0].canRotate = true;
+    }
+    if (renderer.CheckInput(KEY_LFT_ALT))
+    {
+        cameraList[0].canMove = false;
+        cameraList[0].canRotate = false;
+    }
+    renderer.ProcessInput(cameraList[0].canMove);
+    renderer.ProcessMouse(cameraList[0].canRotate);
+    renderer.SetDraw(data.drawMode);
+
     // Refresh Last Frame
     renderer.SetColor(data.backgroundColor.x, data.backgroundColor.y, data.backgroundColor.z, 1.0f);
     // renderer.frameBuffer.NewFrame(width, height);
-    // Refresh Camera
-    renderer.SetCamera(cameraList[0].GetCamera());
-    renderer.ProcessInput(cameraList[0].canMove);
+
     // Render Objects
     for (int i = 0; i < actorCount; i++)
     {
