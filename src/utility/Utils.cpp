@@ -1,16 +1,16 @@
 #include <utility/Utils.h>
 
-void Log(const char *message)
+void log_message(const char *message)
 {
     std::cout << message << "\n";
 }
 
-void Log(std::string message)
+void log_message(std::string message)
 {
-    Log(message.c_str());
+    log_message(message.c_str());
 }
 
-void Log(const float x)
+void log_message(const float n)
 {
-    Log(std::to_string(x));
+    log_message(std::to_string(n));
 }

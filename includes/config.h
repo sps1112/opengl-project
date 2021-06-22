@@ -1,14 +1,16 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// All the Configuration details for the Project
+// All the Configuration Settings for the Project
 
 // OpenGL Settings
+
 #define OPENGL_MAJOR_VERSION 4
 #define OPENGL_MINOR_VERSION 6
 #define OPENGL_PROFILE_USED GLFW_OPENGL_CORE_PROFILE
 
 // Window Settings
+
 #define DEFAULT_WINDOW_HEIGHT 600
 #define DEFAULT_WINDOW_WIDTH 800
 #define DEFAULT_WINDOW_TITLE "OpenGL Window"
@@ -19,11 +21,13 @@
 #define WINDOW_SIZE_LIMITS Vec4(160, 120, 1000, 750)
 
 // Vector Settings
+
 #define WORLD_UP Vec3(0.0f, 1.0f, 0.0f)
 #define WORLD_RIGHT Vec3(1.0f, 0.0f, 0.0f)
 #define WORLD_FORWARD Vec3(0.0f, 0.0f, 1.0f)
 
 // Color Settings
+
 #define COLOR_BLACK Vec3(0.0f, 0.0f, 0.0f)
 #define COLOR_GRAY Vec3(0.1f, 0.1f, 0.1f)
 #define COLOR_RED Vec3(1.0f, 0.1f, 0.1f)
@@ -37,6 +41,7 @@
 #define DEFAULT_SHADER_COLOR COLOR_PURPLE
 
 // Camera Settings
+
 #define CAMERA_ORIGIN Vec3(0.0f, 0.0f, 5.0f)
 #define CAMERA_YAW -90.0f
 #define CAMERA_PITCH 0.0f
@@ -50,9 +55,11 @@
 #define CAMERA_NEAR_PLANE 0.01f
 
 // Scene Settings
+
 #define MAX_LOADED_SCENES_COUNT 3
 
 // Renderer Settings
+
 #define GAMMA_CORRECTION_ENABLED 1
 #define MAX_POINT_LIGHTS 6
 #define MAX_DIRECTIONAL_LIGHTS 4
@@ -60,6 +67,7 @@
 #define MAX_LIGHTS 12
 
 // Key Settings
+
 #define KEY_ESC GLFW_KEY_ESCAPE
 #define KEY_W GLFW_KEY_W
 #define KEY_S GLFW_KEY_S

@@ -14,14 +14,14 @@ void SceneData::AddPrimitive(std::string path, int id, int actor_id)
 {
     if (!prms.is_id_present(id))
     {
-        Log("Loading New Primitive");
-        Primitive prm(FileSystem::getPath(path));
+        log_message("Loading New Primitive");
+        Primitive prm(FileSystem::get_path(path));
         ActorData datapoint(prm, id, actor_id);
         prms.add_data(datapoint);
     }
     else
     {
-        Log("Primitive already present");
+        log_message("Primitive already present");
         prms.get_data_point(id)->add_actor(actor_id);
     }
 }
@@ -30,14 +30,14 @@ void SceneData::AddShader(std::string path1, std::string path2, int id, int acto
 {
     if (!shaders.is_id_present(id))
     {
-        Log("Loading New shader");
-        Shader shd(FileSystem::getPath(path1), FileSystem::getPath(path2));
+        log_message("Loading New shader");
+        Shader shd(FileSystem::get_path(path1), FileSystem::get_path(path2));
         ActorData datapoint(shd, id, actor_id);
         shaders.add_data(datapoint);
     }
     else
     {
-        Log("shader already loaded");
+        log_message("shader already loaded");
         shaders.get_data_point(id)->add_actor(actor_id);
     }
 }
@@ -46,14 +46,14 @@ void SceneData::AddTexture(int id, int actor_id)
 {
     if (!textures.is_id_present(id))
     {
-        Log("Loading new texture");
+        log_message("Loading new texture");
         Texture tex = get_from_template(GetTexTemplate(id));
         ActorData datapoint(tex, id, actor_id);
         textures.add_data(datapoint);
     }
     else
     {
-        Log("Texture already loaded");
+        log_message("Texture already loaded");
         textures.get_data_point(id)->add_actor(actor_id);
     }
 }

@@ -36,7 +36,7 @@ void Renderer::CreateWindow(const char *title, GLFWmonitor *monitor, GLFWwindow 
 #endif
     if (window == NULL)
     {
-        Log("Failed to create GLFW window");
+        log_message("Failed to create GLFW window");
     }
 }
 
@@ -75,7 +75,7 @@ int Renderer::CheckGLAD()
     int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     if (!status)
     {
-        Log("Failed to intialize GLAD");
+        log_message("Failed to intialize GLAD");
     }
     return status;
 }
@@ -474,7 +474,7 @@ void FrameBuffer::CheckStatus()
 {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
-        Log("ERROR::FRAMEBUFFER:: Framebuffer is not complete!!!");
+        log_message("ERROR::FRAMEBUFFER:: Framebuffer is not complete!!!");
     }
 }
 

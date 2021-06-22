@@ -2,8 +2,8 @@
 
 A list of common tasks to do and features to implemet in the Renderer.
 
-- [ ] Camera Movement
-- [ ] Camera UI
+- [X] Camera Movement
+- [X] Camera UI
 - [ ] Uniform Naming Convention
 - [ ] Model loading in Scene System
 - [ ] FrameRate UI
@@ -46,4 +46,4 @@ A list of common tasks to do and features to implemet in the Renderer.
   - [ ] Transform
 - [ ] Texture
   - [ ] Material
-- [ ] Application
+- [X] Application

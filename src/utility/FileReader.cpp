@@ -1,6 +1,6 @@
 #include <utility/FileReader.h>
 
-int GetCharArrayLength(char *charArray)
+int get_char_array_length(char *charArray)
 {
     int index = 0;
     while ((char)charArray[index] != '\0')
@@ -10,7 +10,7 @@ int GetCharArrayLength(char *charArray)
     return (index + 1);
 }
 
-int GetCharArrayLength(const char *charArray)
+int get_char_array_length(const char *charArray)
 {
     int index = 0;
     while ((char)charArray[index] != '\0')
@@ -20,9 +20,9 @@ int GetCharArrayLength(const char *charArray)
     return (index + 1);
 }
 
-char *ConvertToCharArray(const char *charArray)
+char *convert_to_char_array(const char *charArray)
 {
-    int length = GetCharArrayLength(charArray);
+    int length = get_char_array_length(charArray);
     char *newArray = new char[length];
     for (int i = 0; i < length; i++)
     {
@@ -31,30 +31,30 @@ char *ConvertToCharArray(const char *charArray)
     return newArray;
 }
 
-std::string ConvertToString(char *charArray)
+std::string convert_to_string(char *charArray)
 {
     std::string s = "";
-    for (int i = 0; i < GetCharArrayLength(charArray); i++)
+    for (int i = 0; i < get_char_array_length(charArray); i++)
     {
         s = s + charArray[i];
     }
     return s;
 }
 
-float ConvertToFloat(char *charArray)
+float convert_to_float(char *charArray)
 {
-    std::string s = ConvertToString(charArray);
+    std::string s = convert_to_string(charArray);
     std::stringstream ss(s);
     float value{0};
     ss >> value;
     return value;
 }
 
-bool CompareCharArray(char *a, char *b)
+bool compare_with_char_array(char *a, char *b)
 {
     bool isEqual = true;
-    int l1 = GetCharArrayLength(a);
-    int l2 = GetCharArrayLength(b);
+    int l1 = get_char_array_length(a);
+    int l2 = get_char_array_length(b);
     if (l1 != l2)
     {
         isEqual = false;
@@ -73,9 +73,9 @@ bool CompareCharArray(char *a, char *b)
     return isEqual;
 }
 
-char *GetLine(char *charList, int startIndex)
+char *get_line(char *charList, int startIndex)
 {
-    char *newLine = new char[GetCharArrayLength(charList)];
+    char *newLine = new char[get_char_array_length(charList)];
     int index = startIndex;
     int count = 0;
     while ((char)charList[index] != '\n' && (char)charList[index] != '\0')
@@ -87,11 +87,11 @@ char *GetLine(char *charList, int startIndex)
     return newLine;
 }
 
-char *GetLinePart(char *line, int startIndex, int endIndex)
+char *get_line_part(char *line, int startIndex, int endIndex)
 {
     int length = endIndex - startIndex;
     char *newLine = new char[length + 1];
-    if (length >= 0 && length <= GetCharArrayLength(line) && startIndex >= 0 && endIndex < GetCharArrayLength(line))
+    if (length >= 0 && length <= get_char_array_length(line) && startIndex >= 0 && endIndex < get_char_array_length(line))
     {
         for (int i = 0; i < length; i++)
         {
@@ -103,10 +103,10 @@ char *GetLinePart(char *line, int startIndex, int endIndex)
     return newLine;
 }
 
-int GetCharIndex(char *charList, char targetChar)
+int get_char_index(char *charList, char targetChar)
 {
     int targetIndex = -1;
-    int length = GetCharArrayLength(charList);
+    int length = get_char_array_length(charList);
     for (int i = 0; i < length; i++)
     {
         if (*(charList + i) == targetChar)
@@ -118,10 +118,10 @@ int GetCharIndex(char *charList, char targetChar)
     return targetIndex;
 }
 
-int GetOtherCharIndex(char *charList, int startIndex, char targetChar)
+int get_other_char_index(char *charList, int startIndex, char targetChar)
 {
     int otherIndex = -1;
-    int length = GetCharArrayLength(charList);
+    int length = get_char_array_length(charList);
     if (startIndex > 0 && startIndex < length)
     {
         for (int i = startIndex; i < length; i++)
@@ -136,7 +136,7 @@ int GetOtherCharIndex(char *charList, int startIndex, char targetChar)
     return otherIndex;
 }
 
-int GetLineEndIndex(char *charList, int startIndex)
+int get_line_end_index(char *charList, int startIndex)
 {
     int index = startIndex;
     while ((char)charList[index] != '\n')
@@ -146,15 +146,15 @@ int GetLineEndIndex(char *charList, int startIndex)
     return index;
 }
 
-int GetLineStartIndex(char *charList, int startIndex)
+int get_line_start_index(char *charList, int startIndex)
 {
-    return (GetLineEndIndex(charList, startIndex) + 1);
+    return (get_line_end_index(charList, startIndex) + 1);
 }
 
-int GetStartIndexString(char *mainCharArray, char *targetCharArray)
+int get_start_index_string(char *mainCharArray, char *targetCharArray)
 {
-    int mainLength = GetCharArrayLength(mainCharArray);
-    int targetLength = GetCharArrayLength(targetCharArray);
+    int mainLength = get_char_array_length(mainCharArray);
+    int targetLength = get_char_array_length(targetCharArray);
     if (mainLength >= targetLength)
     {
         int index = 0;
@@ -196,29 +196,29 @@ int GetStartIndexString(char *mainCharArray, char *targetCharArray)
         }
         return stringIndex;
     }
-    Log("INVALID TARGET STRING");
+    log_message("INVALID TARGET STRING");
     return -1;
 }
 
-int GetEndIndexString(char *mainCharArray, char *targetCharArray)
+int get_end_index_string(char *mainCharArray, char *targetCharArray)
 {
-    int mainLength = GetCharArrayLength(mainCharArray);
-    int targetLength = GetCharArrayLength(targetCharArray);
+    int mainLength = get_char_array_length(mainCharArray);
+    int targetLength = get_char_array_length(targetCharArray);
     if (mainLength >= targetLength)
     {
-        int index = GetStartIndexString(mainCharArray, targetCharArray);
+        int index = get_start_index_string(mainCharArray, targetCharArray);
         index += targetLength - 1;
         return index;
     }
-    Log("INVALID TARGET STRING");
+    log_message("INVALID TARGET STRING");
     return -1;
 }
 
-int SkipLines(char *charArray, int startIndex, int n)
+int skip_lines(char *charArray, int startIndex, int n)
 {
     for (int i = 0; i < n; i++)
     {
-        startIndex = GetLineStartIndex(charArray, startIndex);
+        startIndex = get_line_start_index(charArray, startIndex);
     }
     return startIndex;
 }

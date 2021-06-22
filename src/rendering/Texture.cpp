@@ -55,7 +55,7 @@ TEXTURE_TYPE template_textype[17] = {
 Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp)
 {
     std::string path = texture_folder_path + texture_file_name[template_];
-    return LoadTexture(template_textype[template_], FileSystem::getPath(path), (template_textype[template_] == TEXTURE_DIFFUSE), toClamp);
+    return LoadTexture(template_textype[template_], FileSystem::get_path(path), (template_textype[template_] == TEXTURE_DIFFUSE), toClamp);
 }
 
 Texture LoadTexture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse, bool toClamp)

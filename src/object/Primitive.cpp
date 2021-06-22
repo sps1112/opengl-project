@@ -75,19 +75,19 @@ void Primitive::SetupData(const char *path)
     pathString = statsStream.str();
     const char *fileData = pathString.c_str();
 
-    int pathLength = GetCharArrayLength(path);
+    int pathLength = get_char_array_length(path);
     // std::cout << path << std::endl;
-    char *extension = GetLine(ConvertToCharArray(path), pathLength - 4);
-    if (CompareCharArray(extension, ConvertToCharArray(".2d")))
+    char *extension = get_line(convert_to_char_array(path), pathLength - 4);
+    if (compare_with_char_array(extension, convert_to_char_array(".2d")))
     {
         is2D = true;
     }
-    else if (CompareCharArray(extension, ConvertToCharArray(".3d")))
+    else if (compare_with_char_array(extension, convert_to_char_array(".3d")))
     {
         is2D = false;
     }
-    vertexCount = GetVertexCount(ConvertToCharArray(fileData));
-    ProcessData(ConvertToCharArray(fileData));
+    vertexCount = GetVertexCount(convert_to_char_array(fileData));
+    ProcessData(convert_to_char_array(fileData));
 }
 
 int Primitive::GetVertexCount(char *fileData)
@@ -95,11 +95,11 @@ int Primitive::GetVertexCount(char *fileData)
     int count = 0;
     int lineStartIndex = 0;
     char firstChar = *(fileData + 0);
-    char *lineI = GetLine(fileData, lineStartIndex);
+    char *lineI = get_line(fileData, lineStartIndex);
     while (count == 0 || *(lineI + 0) != firstChar)
     {
-        lineStartIndex = GetLineStartIndex(fileData, lineStartIndex);
-        lineI = GetLine(fileData, lineStartIndex);
+        lineStartIndex = get_line_start_index(fileData, lineStartIndex);
+        lineI = get_line(fileData, lineStartIndex);
         count++;
     }
     count -= 2;
@@ -110,29 +110,29 @@ int Primitive::GetVertexCount(char *fileData)
 void Primitive::ProcessData(char *fileData)
 {
     int lineStartIndex = 0;
-    char *lineI = GetLine(fileData, lineStartIndex);
+    char *lineI = get_line(fileData, lineStartIndex);
     char targetChar = ' ';
-    char *whitespace = ConvertToCharArray(std::string(" ").c_str());
+    char *whitespace = convert_to_char_array(std::string(" ").c_str());
     if (is2D)
     {
         Vertex2D *vertexArray = new Vertex2D[vertexCount];
         for (int i = 0; i < vertexCount; i++)
         {
-            lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+            lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
             vertexArray[i].Position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
         }
         // Vertex Set
-        lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+        lineStartIndex = skip_lines(fileData, lineStartIndex, 2);
         for (int i = 0; i < vertexCount; i++)
         {
-            lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+            lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
             vertexArray[i].Color = GetVec3(fileData, 'c', is2D, lineStartIndex, i);
         }
         // Color Set
-        lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+        lineStartIndex = skip_lines(fileData, lineStartIndex, 2);
         for (int i = 0; i < vertexCount; i++)
         {
-            lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+            lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
             vertexArray[i].TexCoord = GetVec2(fileData, 't', is2D, lineStartIndex, i);
         }
         // Texture Set
@@ -141,39 +141,39 @@ void Primitive::ProcessData(char *fileData)
             vertices2D.push_back(vertexArray[i]);
         }
         // Setting Indices
-        lineStartIndex = SkipLines(fileData, lineStartIndex, 3);
+        lineStartIndex = skip_lines(fileData, lineStartIndex, 3);
         int i = 0;
         while (((char)fileData[lineStartIndex]) != '\0')
         {
-            lineI = GetLine(fileData, lineStartIndex);
+            lineI = get_line(fileData, lineStartIndex);
             // std::cout << lineI << std::endl;
 
             std::string target = "i " + std::to_string(i) + " ";
             char *val[3];
-            int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
+            int endIndex = get_end_index_string(lineI, convert_to_char_array(target.c_str()));
             for (int i = 0; i < 3; i++)
             {
-                int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-                lineI = GetLine(lineI, startIndex);
+                int startIndex = get_other_char_index(lineI, endIndex, targetChar);
+                lineI = get_line(lineI, startIndex);
                 if (i == 2)
                 {
                     val[i] = lineI;
                 }
                 else
                 {
-                    endIndex = GetEndIndexString(lineI, whitespace);
-                    val[i] = GetLinePart(lineI, 0, endIndex - 1);
+                    endIndex = get_end_index_string(lineI, whitespace);
+                    val[i] = get_line_part(lineI, 0, endIndex - 1);
                 }
             }
 
             unsigned int a, b, c;
-            a = (unsigned int)ConvertToFloat(val[0]);
-            b = (unsigned int)ConvertToFloat(val[1]);
-            c = (unsigned int)ConvertToFloat(val[2]);
+            a = (unsigned int)convert_to_float(val[0]);
+            b = (unsigned int)convert_to_float(val[1]);
+            c = (unsigned int)convert_to_float(val[2]);
             indices.push_back(a);
             indices.push_back(b);
             indices.push_back(c);
-            lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+            lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
             i++;
         }
         /*
@@ -194,53 +194,53 @@ void Primitive::ProcessData(char *fileData)
         Vertex3D *vertexArray = new Vertex3D[vertexCount];
         for (int i = 0; i < vertexCount; i++)
         {
-            lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+            lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
             vertexArray[i].Position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
         }
-        // Log("Position set");
-        lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+        // log_message("Position set");
+        lineStartIndex = skip_lines(fileData, lineStartIndex, 2);
         for (int i = 0; i < vertexCount; i++)
         {
-            lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+            lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
             vertexArray[i].Normal = GetVec3(fileData, 'n', is2D, lineStartIndex, i);
         }
-        // Log("Normal set");
-        lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+        // log_message("Normal set");
+        lineStartIndex = skip_lines(fileData, lineStartIndex, 2);
         for (int i = 0; i < vertexCount; i++)
         {
-            lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+            lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
             vertexArray[i].TexCoord = GetVec2(fileData, 't', is2D, lineStartIndex, i);
         }
-        // Log("Texture coords set");
-        lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+        // log_message("Texture coords set");
+        lineStartIndex = skip_lines(fileData, lineStartIndex, 2);
         if (CheckNextLine(fileData, lineStartIndex))
         {
             for (int i = 0; i < vertexCount; i++)
             {
-                lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+                lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
                 vertexArray[i].Color = GetVec3(fileData, 'c', is2D, lineStartIndex, i);
             }
         }
-        // Log("Color set");
-        lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+        // log_message("Color set");
+        lineStartIndex = skip_lines(fileData, lineStartIndex, 2);
         if (CheckNextLine(fileData, lineStartIndex))
         {
             for (int i = 0; i < vertexCount; i++)
             {
-                lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+                lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
                 vertexArray[i].Tangent = GetVec3(fileData, 'T', is2D, lineStartIndex, i);
             }
-            // Log("Tangent set");
+            // log_message("Tangent set");
         }
-        lineStartIndex = SkipLines(fileData, lineStartIndex, 2);
+        lineStartIndex = skip_lines(fileData, lineStartIndex, 2);
         if (CheckNextLine(fileData, lineStartIndex))
         {
             for (int i = 0; i < vertexCount; i++)
             {
-                lineStartIndex = SkipLines(fileData, lineStartIndex, 1);
+                lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
                 vertexArray[i].Bitangent = GetVec3(fileData, 'b', is2D, lineStartIndex, i);
             }
-            // Log("Bitangent set");
+            // log_message("Bitangent set");
         }
         for (int i = 0; i < vertexCount; i++)
         {
@@ -294,8 +294,8 @@ void Primitive::SetupPrimitive()
 glm::vec3 GetVec3(char *fileData, char itemType, bool is2D, int lineStartIndex, int vertexIndex)
 {
     char targetChar = ' ';
-    char *whitespace = ConvertToCharArray(std::string(" ").c_str());
-    char *lineI = GetLine(fileData, lineStartIndex);
+    char *whitespace = convert_to_char_array(std::string(" ").c_str());
+    char *lineI = get_line(fileData, lineStartIndex);
     std::string target = std::string(1, itemType) + " ";
     if (!is2D)
     {
@@ -306,33 +306,33 @@ glm::vec3 GetVec3(char *fileData, char itemType, bool is2D, int lineStartIndex, 
     }
     target += std::to_string(vertexIndex) + " ";
     char *val[3];
-    int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
+    int endIndex = get_end_index_string(lineI, convert_to_char_array(target.c_str()));
     for (int i = 0; i < 3; i++)
     {
-        int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-        lineI = GetLine(lineI, startIndex);
+        int startIndex = get_other_char_index(lineI, endIndex, targetChar);
+        lineI = get_line(lineI, startIndex);
         if (i == 2)
         {
             val[i] = lineI;
         }
         else
         {
-            endIndex = GetEndIndexString(lineI, whitespace);
-            val[i] = GetLinePart(lineI, 0, endIndex - 1);
+            endIndex = get_end_index_string(lineI, whitespace);
+            val[i] = get_line_part(lineI, 0, endIndex - 1);
         }
     }
     glm::vec3 a;
-    a.x = ConvertToFloat(val[0]);
-    a.y = ConvertToFloat(val[1]);
-    a.z = ConvertToFloat(val[2]);
+    a.x = convert_to_float(val[0]);
+    a.y = convert_to_float(val[1]);
+    a.z = convert_to_float(val[2]);
     return a;
 }
 
 glm::vec2 GetVec2(char *fileData, char itemType, bool is2D, int lineStartIndex, int vertexIndex)
 {
     char targetChar = ' ';
-    char *whitespace = ConvertToCharArray(std::string(" ").c_str());
-    char *lineI = GetLine(fileData, lineStartIndex);
+    char *whitespace = convert_to_char_array(std::string(" ").c_str());
+    char *lineI = get_line(fileData, lineStartIndex);
     std::string target = std::string(1, itemType) + " ";
     if (!is2D)
     {
@@ -343,30 +343,30 @@ glm::vec2 GetVec2(char *fileData, char itemType, bool is2D, int lineStartIndex, 
     }
     target += std::to_string(vertexIndex) + " ";
     char *val[2];
-    int endIndex = GetEndIndexString(lineI, ConvertToCharArray(target.c_str()));
+    int endIndex = get_end_index_string(lineI, convert_to_char_array(target.c_str()));
     for (int i = 0; i < 2; i++)
     {
-        int startIndex = GetOtherCharIndex(lineI, endIndex, targetChar);
-        lineI = GetLine(lineI, startIndex);
+        int startIndex = get_other_char_index(lineI, endIndex, targetChar);
+        lineI = get_line(lineI, startIndex);
         if (i == 1)
         {
             val[i] = lineI;
         }
         else
         {
-            endIndex = GetEndIndexString(lineI, whitespace);
-            val[i] = GetLinePart(lineI, 0, endIndex - 1);
+            endIndex = get_end_index_string(lineI, whitespace);
+            val[i] = get_line_part(lineI, 0, endIndex - 1);
         }
     }
     glm::vec2 a;
-    a.x = ConvertToFloat(val[0]);
-    a.y = ConvertToFloat(val[1]);
+    a.x = convert_to_float(val[0]);
+    a.y = convert_to_float(val[1]);
     return a;
 }
 
 bool CheckNextLine(char *fileData, int lineStartIndex)
 {
-    char testChar = ((char)fileData[SkipLines(fileData, lineStartIndex, 1)]);
+    char testChar = ((char)fileData[skip_lines(fileData, lineStartIndex, 1)]);
     bool status = (testChar != ' ' && testChar != '\0' && testChar != '\n');
     return status;
 }

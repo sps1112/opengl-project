@@ -30,13 +30,13 @@ int loadIndex = -1;								   // Index of last loaded Scene in Array
 int loadedSceneCount = 0;						   // Number of last loaded Scene
 int listIndex;									   // Index of Current Loaded Scene in Array
 
-// The States of the Application
-enum AppMode
+// States of the Application
+enum APP_MODE
 {
-	Empty_Scene,
-	Normal_Scene,
+	SCENE_EMPTY,
+	SCENE_NORMAL,
 };
-AppMode currentMode = Empty_Scene;
+APP_MODE currentMode = SCENE_EMPTY;
 
 // UI booleans
 bool showDemoUI = false;
@@ -44,30 +44,38 @@ bool overlayOpen = true;
 bool listOpen = true;
 
 // Method Declarations
-int SetupRenderer();
-void Draw();
-void DrawNormalScene();
-void DrawEmptyScene();
-void ShowMainMenuBar();
-void ShowFileMenu();
-void ShowEditMenu();
-void ShowViewMenu();
+
+// Sets up the Renderer
+int setup_renderer();
+// Draws the Application
+void draw_app();
+// Draws a Normal Scene
+void draw_normal_scene();
+// Draws an Empty Scene
+void draw_empty_scene();
+// Shows the Main Menu Bar
+void show_mainmenu_bar();
+// Shows the File Menu
+void show_file_menu();
+// Shows the Edit Menu
+void show_edit_menu();
+// Shows the View Menu
+void show_view_menu();
 
 // Main Function
 int main()
 {
-	if (SetupRenderer() == -1)
+	if (setup_renderer() == -1)
 	{
 		renderer.TerminateGLFW();
 		return -1;
 	}
-	Draw();
+	draw_app();
 	renderer.TerminateGLFW();
 	return 0;
 }
 
-// Setup Renderer Data
-int SetupRenderer()
+int setup_renderer()
 {
 	renderer.SetupGLFW();
 	renderer.CreateWindow(DEFAULT_WINDOW_TITLE);
@@ -85,8 +93,7 @@ int SetupRenderer()
 	return 0;
 }
 
-// Draw Method
-void Draw()
+void draw_app()
 {
 	// Setup GUI
 	GUI gui(renderer.window, OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION);
@@ -127,16 +134,16 @@ void Draw()
 		// Process Scene
 		switch (currentMode)
 		{
-		case Empty_Scene:
-			DrawEmptyScene();
+		case SCENE_EMPTY:
+			draw_empty_scene();
 			break;
-		case Normal_Scene:
-			DrawNormalScene();
+		case SCENE_NORMAL:
+			draw_normal_scene();
 			break;
 		}
 
 		// Render GUI
-		ShowMainMenuBar();
+		show_mainmenu_bar();
 
 		// End Frame
 		gui.RenderGUI();
@@ -151,7 +158,7 @@ void Draw()
 	gui.TerminateGUI();
 }
 
-void DrawEmptyScene()
+void draw_empty_scene()
 {
 	// Process Data
 	renderer.ProcessInput();
@@ -159,7 +166,7 @@ void DrawEmptyScene()
 	renderer.SetColor(DEFAULT_BACKGROUND_COLOR.r, DEFAULT_BACKGROUND_COLOR.g, DEFAULT_BACKGROUND_COLOR.b, 1.0f);
 }
 
-void DrawNormalScene()
+void draw_normal_scene()
 {
 	// Draw Scene
 	int sceneNumber = max(1, loadedSceneCount - (maxSceneCount - 1)) + currentSceneIndex;
@@ -181,34 +188,34 @@ void DrawNormalScene()
 	}
 }
 
-void ShowMainMenuBar()
+void show_mainmenu_bar()
 {
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			ShowFileMenu();
+			show_file_menu();
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Edit"))
 		{
-			ShowEditMenu();
+			show_edit_menu();
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("View"))
 		{
-			ShowViewMenu();
+			show_view_menu();
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
 }
 
-void ShowFileMenu()
+void show_file_menu()
 {
-	if (ImGui::MenuItem("New Scene")) // Add New Scene
+	if (ImGui::MenuItem("New Scene")) // Adds a New Scene
 	{
-		currentMode = Normal_Scene;
+		currentMode = SCENE_NORMAL;
 		Scene nextScene("New Scene");
 		loadIndex = (loadIndex + 1) % maxSceneCount;
 		loadedSceneCount++;
@@ -233,7 +240,7 @@ void ShowFileMenu()
 				std::string name = "Scene " + std::to_string(i);
 				if (ImGui::MenuItem(name.c_str()))
 				{
-					currentMode = Normal_Scene;
+					currentMode = SCENE_NORMAL;
 					currentSceneIndex = (i - startIndex) % maxSceneCount;
 				}
 			}
@@ -247,17 +254,17 @@ void ShowFileMenu()
 	ImGui::Separator();
 	if (ImGui::MenuItem("Close Scene")) // Close Current Scene
 	{
-		currentMode = Empty_Scene;
+		currentMode = SCENE_EMPTY;
 	}
-	if (ImGui::MenuItem("Quit", "Escape"))
+	if (ImGui::MenuItem("Quit", "Escape")) // Quits Application
 	{
 		renderer.QuitWindow();
 	}
 }
 
-void ShowEditMenu()
+void show_edit_menu()
 {
-	if (currentMode == Normal_Scene)
+	if (currentMode == SCENE_NORMAL)
 	{
 		if (ImGui::BeginMenu("Edit Current Scene.."))
 		{
@@ -272,9 +279,9 @@ void ShowEditMenu()
 	}
 }
 
-void ShowViewMenu()
+void show_view_menu()
 {
-	if (currentMode == Normal_Scene)
+	if (currentMode == SCENE_NORMAL)
 	{
 		if (ImGui::BeginMenu("SetView"))
 		{
