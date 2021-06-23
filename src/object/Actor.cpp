@@ -36,6 +36,7 @@ void CameraActor::RefreshCamera(bool transformCallback)
         transform.position = cam.Position;
         transform.rotation.y = overflow(cam.Yaw - CAMERA_YAW, 360.0f);
         transform.rotation.x = cam.Pitch;
+        transform.rotation.z = 0;
     }
 }
 

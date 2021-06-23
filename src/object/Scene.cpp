@@ -47,7 +47,7 @@ void SceneData::AddTexture(int id, int actor_id)
     if (!textures.is_id_present(id))
     {
         log_message("Loading new texture");
-        Texture tex = get_from_template(GetTexTemplate(id));
+        Texture tex = get_from_template(get_tex_template(id));
         ActorData datapoint(tex, id, actor_id);
         textures.add_data(datapoint);
     }
@@ -174,7 +174,7 @@ void Scene::UpdateActor(RenderActor *actor)
     {
         data.RemoveActor(actor->id, SHADER_DATA);
         data.RemoveActor(actor->id, TEXTURE_DATA);
-        actor->mat.albedo.tex = GetTexTemplate((actor->mat.albedo.texID - 1));
+        actor->mat.albedo.tex = get_tex_template((actor->mat.albedo.texID - 1));
         actor->mat.albedo.col = COLOR_WHITE;
         actor->mat.type = ((actor->mat.type == COLOR_2D) ? TEXTURE_2D : ((actor->mat.type == COLOR_3D) ? TEXTURE_3D : actor->mat.type));
         data.AddShader(GetVSPath(actor->mat.type), GetFSPath(actor->mat.type), static_cast<int>(actor->mat.type), actor->id);

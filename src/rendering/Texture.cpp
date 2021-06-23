@@ -1,20 +1,20 @@
 #include <rendering/Texture.h>
 
-std::string texture_type_strings[] = {
+std::string textureTypeStrings[] = {
     "texture_diffuse",
     "texture_specular",
     "texture_emmision",
     "texture_normal",
     "texture_height"};
 
-TEXTURE_TEMPLATES GetTexTemplate(int i)
+TEXTURE_TEMPLATES get_tex_template(int i)
 {
-    return static_cast<TEXTURE_TEMPLATES>(i);
+    return (static_cast<TEXTURE_TEMPLATES>(i));
 }
 
-std::string texture_folder_path = "resources/textures/";
+std::string textureFolderPath = "resources/textures/";
 
-std::string texture_file_name[17] = {
+std::string textureFileNames[17] = {
     "awesomeface.png",
     "wall.jpg",
     "brickwall.jpg",
@@ -33,7 +33,7 @@ std::string texture_file_name[17] = {
     "grass.png",
     "matrix.jpg"};
 
-TEXTURE_TYPE template_textype[17] = {
+TEXTURE_TYPE templateTextureTypes[17] = {
     TEXTURE_DIFFUSE,
     TEXTURE_DIFFUSE,
     TEXTURE_DIFFUSE,
@@ -54,22 +54,22 @@ TEXTURE_TYPE template_textype[17] = {
 
 Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp)
 {
-    std::string path = texture_folder_path + texture_file_name[template_];
-    return LoadTexture(template_textype[template_], FileSystem::get_path(path), (template_textype[template_] == TEXTURE_DIFFUSE), toClamp);
+    std::string path = textureFolderPath + textureFileNames[template_];
+    return load_texture(templateTextureTypes[template_], FileSystem::get_path(path), (templateTextureTypes[template_] == TEXTURE_DIFFUSE), toClamp);
 }
 
-Texture LoadTexture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse, bool toClamp)
+Texture load_texture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse, bool toClamp)
 {
     Texture newTexture;
-    newTexture.id = LoadTextureFromPath((path.c_str()), isDiffuse, toClamp);
-    newTexture.type = texture_type_strings[type];
+    newTexture.id = load_texture_from_path((path.c_str()), isDiffuse, toClamp);
+    newTexture.type = textureTypeStrings[type];
     newTexture.path = path;
     return newTexture;
 }
 
-unsigned int LoadTextureFromPath(const char *path, bool isDiffuse, bool toClamp)
+unsigned int load_texture_from_path(const char *path, bool isDiffuse, bool toClamp)
 {
-    unsigned int textureID = GenerateTexture();
+    unsigned int textureID = generate_texture();
     bool gammaCorrection = false;
 #if GAMMA_CORRECTION_ENABLED
     gammaCorrection = true;
@@ -98,7 +98,7 @@ unsigned int LoadTextureFromPath(const char *path, bool isDiffuse, bool toClamp)
             format = GL_RGBA;
             otherFormat = (gammaCorrection && isDiffuse) ? GL_SRGB_ALPHA : format;
         }
-        BindTexture(textureID);
+        bind_texture(textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, otherFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -118,42 +118,42 @@ unsigned int LoadTextureFromPath(const char *path, bool isDiffuse, bool toClamp)
     return textureID;
 }
 
-unsigned int LoadTextureFromPath(const std::string &path, bool isDiffuse, bool toClamp)
+unsigned int load_texture_from_path(const std::string &path, bool isDiffuse, bool toClamp)
 {
-    return LoadTextureFromPath(path.c_str(), isDiffuse, toClamp);
+    return load_texture_from_path(path.c_str(), isDiffuse, toClamp);
 }
 
-unsigned int GenerateTexture()
+unsigned int generate_texture()
 {
     unsigned int id;
     glGenTextures(1, &id);
     return id;
 }
 
-void BindTexture(unsigned int id)
+void bind_texture(unsigned int id)
 {
     glBindTexture(GL_TEXTURE_2D, id);
 }
 
-void UnBindTexture()
+void unbind_texture()
 {
     glActiveTexture(GL_TEXTURE0);
 }
 
-void SetActiveTexture(int index)
+void set_active_texture(int index)
 {
     glActiveTexture(GL_TEXTURE0 + index);
 }
 
-void BindCubemap(unsigned int id)
+void bind_cubemap(unsigned int id)
 {
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
 }
 
-unsigned int LoadCubemapFromPath(std::string directory, std::string extension)
+unsigned int load_cubemap_from_path(std::string directory, std::string extension)
 {
-    unsigned int textureID = GenerateTexture();
-    BindCubemap(textureID);
+    unsigned int textureID = generate_texture();
+    bind_cubemap(textureID);
     std::string names[6] = {
         "right", "left",
         "top", "bottom",

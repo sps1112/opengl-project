@@ -25,7 +25,7 @@ void Primitive::Draw(Shader &shader)
     unsigned int emmisionNR = 1;
     for (unsigned int i = 0; i < textures.size(); i++)
     {
-        SetActiveTexture(i);
+        set_active_texture(i);
         string number;
         string name = textures[i].type;
         if (name == "texture_diffuse")
@@ -49,9 +49,9 @@ void Primitive::Draw(Shader &shader)
             number = std::to_string(emmisionNR++);
         }
         shader.setInt(("material." + name + number).c_str(), i);
-        BindTexture(textures[i].id);
+        bind_texture(textures[i].id);
     }
-    UnBindTexture();
+    unbind_texture();
 
     // draw mesh
     if (is2D)

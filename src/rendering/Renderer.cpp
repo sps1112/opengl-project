@@ -87,7 +87,7 @@ void Renderer::SetupFrameBuffer()
     frameBuffer.BindFBO();
 
     // Generate Texture
-    frameBuffer.textureColorBuffer = GenerateTexture();
+    frameBuffer.textureColorBuffer = generate_texture();
     frameBuffer.RefreshTexture(width, height);
     frameBuffer.AttachTexture();
 
@@ -440,14 +440,14 @@ void FrameBuffer::FreeRBO()
 
 void FrameBuffer::RefreshTexture(int width, int height)
 {
-    BindTexture(textureColorBuffer);
+    bind_texture(textureColorBuffer);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,
                  width, height, 0,
                  GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    UnBindTexture();
+    unbind_texture();
 }
 
 void FrameBuffer::RefreshRBO(int width, int height)

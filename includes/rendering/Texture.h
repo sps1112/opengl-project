@@ -8,6 +8,7 @@
 #include <config.h>
 #include <utility/FileSystem.h>
 
+// Standard Headers
 #include <iostream>
 
 // Types of Textures
@@ -21,7 +22,7 @@ enum TEXTURE_TYPE
 };
 
 // Texture typestrings
-extern std::string texture_type_strings[5];
+extern std::string textureTypeStrings[5];
 
 // Template Textures
 enum TEXTURE_TEMPLATES
@@ -44,11 +45,11 @@ enum TEXTURE_TEMPLATES
     GRASS_TEX,
     MATRIX_TEX,
 };
-TEXTURE_TEMPLATES GetTexTemplate(int i);
+TEXTURE_TEMPLATES get_tex_template(int i);
 
-extern std::string texture_folder_path;
-extern std::string texture_file_name[17];
-extern TEXTURE_TYPE template_textype[17];
+extern std::string textureFolderPath;
+extern std::string textureFileNames[17];
+extern TEXTURE_TYPE templateTextureTypes[17];
 
 // Texture Struct
 struct Texture
@@ -61,29 +62,30 @@ struct Texture
 // Texture Loading
 
 // Loads a Texture from type and path
-Texture LoadTexture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse = true, bool toClamp = false);
+Texture load_texture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse = true, bool toClamp = false);
 // Loads a Texture and returns id
-unsigned int LoadTextureFromPath(const char *path, bool isDiffuse = true, bool toClamp = false);
+unsigned int load_texture_from_path(const char *path, bool isDiffuse = true, bool toClamp = false);
 // Loads a Texture and returns id
-unsigned int LoadTextureFromPath(const std::string &path, bool isDiffuse = true, bool toClamp = false);
-
+unsigned int load_texture_from_path(const std::string &path, bool isDiffuse = true, bool toClamp = false);
+// Gets Texture from a defined Template
 Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp = false);
+
 // Generating Textures
 
 // Generates a Texture and returns its id
-unsigned int GenerateTexture();
+unsigned int generate_texture();
 // Binds a Texture to current memory
-void BindTexture(unsigned int id);
+void bind_texture(unsigned int id);
 // UnBinds the currently bound texture
-void UnBindTexture();
+void unbind_texture();
 // Sets Active texture via id
-void SetActiveTexture(int index);
+void set_active_texture(int index);
 
 // CubeMap Textures
 
 // Binds cubemap to memory
-void BindCubemap(unsigned int id);
-// Loads cubemapr from path
-unsigned int LoadCubemapFromPath(std::string directory, std::string extension);
+void bind_cubemap(unsigned int id);
+// Loads cubemap from path
+unsigned int load_cubemap_from_path(std::string directory, std::string extension);
 
 #endif // !TEXTURE_H

@@ -150,6 +150,7 @@ void draw_app()
 		renderer.SwapBuffers();
 	}
 	// Free Data
+
 	// Free frame buffer
 	renderer.frameBuffer.FreeFBO();
 	renderer.frameBuffer.FreeRBO();
