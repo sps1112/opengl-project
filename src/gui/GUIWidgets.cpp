@@ -190,7 +190,7 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                     ImGui::SliderFloat3("Scale", &(selectedActor->transform.scale.x), 0.0001f, 10.0f);
                     if (ImGui::Button("Reset Transform"))
                     {
-                        selectedActor->transform.Reset();
+                        selectedActor->transform.reset_to_origin();
                     }
                     ShowSectionHeader("MATERIAL");
                     ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));

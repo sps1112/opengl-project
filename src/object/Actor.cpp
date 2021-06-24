@@ -28,8 +28,8 @@ void CameraActor::RefreshCamera(bool transformCallback)
         cam.Yaw = transform.rotation.y + CAMERA_YAW;
         cam.Pitch = clamp(transform.rotation.x, -CAMERA_MAX_PITCH, CAMERA_MAX_PITCH);
         cam.updateCameraVectors();
-        cam.Right = transform.GetRight();
-        cam.Up = transform.GetUp();
+        cam.Right = transform.get_right();
+        cam.Up = transform.get_up();
     }
     else
     {
@@ -42,7 +42,7 @@ void CameraActor::RefreshCamera(bool transformCallback)
 
 void CameraActor::ResetTransform()
 {
-    transform.Reset();
+    transform.reset_to_origin();
     transform.position = CAMERA_ORIGIN;
     RefreshCamera(true);
 }

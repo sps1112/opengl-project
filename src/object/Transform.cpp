@@ -14,14 +14,14 @@ Transform::Transform(Vec3 pos, Vec3 rot, Vec3 scl)
     scale = scl;
 }
 
-void Transform::Reset()
+void Transform::reset_to_origin()
 {
     position = Vec3(0.0f);
     rotation = Vec3(0.0f);
     scale = Vec3(1.0f);
 }
 
-Vec3 Transform::GetFront()
+Vec3 Transform::get_front()
 {
     Vec3 front = -WORLD_FORWARD;
     Mat4 rotMat(1.0f);
@@ -31,7 +31,7 @@ Vec3 Transform::GetFront()
     return glm::normalize(front);
 }
 
-Vec3 Transform::GetRight()
+Vec3 Transform::get_right()
 {
     Vec3 right = WORLD_RIGHT;
     Mat4 rotMat(1.0f);
@@ -41,7 +41,7 @@ Vec3 Transform::GetRight()
     return glm::normalize(right);
 }
 
-Vec3 Transform::GetUp()
+Vec3 Transform::get_up()
 {
     Vec3 up = WORLD_UP;
     Mat4 rotMat(1.0f);

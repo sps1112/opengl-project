@@ -17,13 +17,13 @@ public:
     // Constructor for the Transform Class. Sets the position/rotation/scale at initialisation
     Transform(Vec3 pos, Vec3 rot, Vec3 scl);
     // Resets the transform the object and sets position at origin
-    void Reset();
+    void reset_to_origin();
     // Gets Local Front Vector
-    Vec3 GetFront();
+    Vec3 get_front();
     // Gets Local Right Vector
-    Vec3 GetRight();
+    Vec3 get_right();
     // Gets Local Up Vector
-    Vec3 GetUp();
+    Vec3 get_up();
 
 private:
 };
