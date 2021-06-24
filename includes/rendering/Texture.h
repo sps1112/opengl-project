@@ -85,7 +85,9 @@ struct Texture
     unsigned int id;
     std::string type;
     std::string path;
+    // Texture Struct Empty Constructor
     Texture() {}
+    // Texture Struct Constructor
     Texture(unsigned int id_, std::string type_, std::string path_) : id(id_), type(type_), path(path_) {}
 };
 

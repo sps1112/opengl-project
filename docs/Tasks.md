@@ -29,7 +29,7 @@ A list of common tasks to do and features to implemet in the Renderer.
 
 - [X] Config
 - [X] Utils
-- [X] FileReader
+  - [X] FileReader
 - [X] FileSystem
 - [X] CustomMath
   - [ ] Camera
@@ -46,5 +46,5 @@ A list of common tasks to do and features to implemet in the Renderer.
     - [ ] Primitive
   - [X] Transform
 - [X] Texture
-  - [ ] Material
+  - [X] Material
 - [X] Application

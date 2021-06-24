@@ -158,7 +158,7 @@ void Scene::AddActor(TEMPLATE_ACTORS actor_choice)
         switch (newActor.type)
         {
         case PRIMITIVE_ACTOR:
-            data.AddShader(GetVSPath(newActor.mat.type), GetFSPath(newActor.mat.type), static_cast<int>(newActor.mat.type), actorCount);
+            data.AddShader(templateShaders[newActor.mat.type].get_vs_path(), templateShaders[newActor.mat.type].get_fs_path(), static_cast<int>(newActor.mat.type), actorCount);
             data.AddPrimitive(actor_file_path, static_cast<int>(actor_choice), actorCount);
             break;
 
@@ -174,10 +174,9 @@ void Scene::UpdateActor(RenderActor *actor)
     {
         data.RemoveActor(actor->id, SHADER_DATA);
         data.RemoveActor(actor->id, TEXTURE_DATA);
-        actor->mat.albedo.tex = get_tex_template((actor->mat.albedo.texID - 1));
         actor->mat.albedo.col = COLOR_WHITE;
-        actor->mat.type = ((actor->mat.type == COLOR_2D) ? TEXTURE_2D : ((actor->mat.type == COLOR_3D) ? TEXTURE_3D : actor->mat.type));
-        data.AddShader(GetVSPath(actor->mat.type), GetFSPath(actor->mat.type), static_cast<int>(actor->mat.type), actor->id);
+        actor->mat.type = ((actor->mat.type == COLOR_2D_SHADER) ? TEXTURE_2D_SHADER : ((actor->mat.type == COLOR_3D_SHADER) ? TEXTURE_3D_SHADER : actor->mat.type));
+        data.AddShader(templateShaders[actor->mat.type].get_vs_path(), templateShaders[actor->mat.type].get_fs_path(), static_cast<int>(actor->mat.type), actor->id);
         data.AddTexture(actor->mat.albedo.texID - 1, actor->id);
     }
     else if (actor->mat.albedo.texID == 0)
@@ -185,8 +184,8 @@ void Scene::UpdateActor(RenderActor *actor)
         data.RemoveActor(actor->id, SHADER_DATA);
         data.RemoveActor(actor->id, TEXTURE_DATA);
         actor->mat.albedo.col = DEFAULT_SHADER_COLOR;
-        actor->mat.type = ((actor->mat.type == TEXTURE_2D) ? COLOR_2D : ((actor->mat.type == TEXTURE_3D) ? COLOR_3D : actor->mat.type));
-        data.AddShader(GetVSPath(actor->mat.type), GetFSPath(actor->mat.type), static_cast<int>(actor->mat.type), actor->id);
+        actor->mat.type = ((actor->mat.type == TEXTURE_2D_SHADER) ? COLOR_2D_SHADER : ((actor->mat.type == TEXTURE_3D_SHADER) ? COLOR_3D_SHADER : actor->mat.type));
+        data.AddShader(templateShaders[actor->mat.type].get_vs_path(), templateShaders[actor->mat.type].get_fs_path(), static_cast<int>(actor->mat.type), actor->id);
     }
 }
 

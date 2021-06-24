@@ -2,24 +2,28 @@
 #define MATERIAL_H
 
 // Header declarations
-#include <utility/Utils.h>
 #include <utility/CustomMath.h>
 #include <rendering/Texture.h>
 #include <config.h>
 
-// Color data types
-using Colorf = Vec3;
+// Color Data types
+
+// A color represented as a Vector3 i.e. (R,G,B)
+using ColorF = Vec3;
+// A color representeed as a Vector4 i.e. (R,G,B,A)
+using ColorA = Vec4;
 
 // Types of Template Shaders
 enum SHADER_TYPE
 {
-    COLOR_2D,
-    TEXTURE_2D,
+    COLOR_2D_SHADER,
+    TEXTURE_2D_SHADER,
     LIGHT_SHADER,
-    COLOR_3D,
-    COLR_3D_MAT,
-    TEXTURE_3D,
-    MODEL_3D,
+    COLOR_3D_SHADER,
+    TEXTURE_3D_SHADER,
+    MATERIAL_3D_SHADER,
+    MODEL_3D_SHADER,
+    SCENE_3D_SHADER,
     FBO_SHADER,
     SKYBOX_SHADER,
     BLENDING_SHADER,
@@ -27,24 +31,46 @@ enum SHADER_TYPE
     REFRACATION_SHADER,
 };
 
-// File Name for Shader Files
-extern std::string shader_type_strings[12];
-// Shader folder directory
-extern std::string shader_directory;
+// Shader folder directory path
+extern std::string shaderDirectory;
 
-// Get Vertex Shader file Path
-std::string GetVSPath(SHADER_TYPE type);
-// Get Fragment Shader file Path
-std::string GetFSPath(SHADER_TYPE type);
+// The Template Shader struct including all the data for a Shader's Template
+struct TemplateShader
+{
+    SHADER_TYPE type;
+    std::string name;
+    // Template Struct Constructor
+    TemplateShader(SHADER_TYPE type_, std::string fileName) : type(type_), name(fileName) {}
+
+    // Gets Path to the Vertex Shader file
+    std::string get_vs_path()
+    {
+        return (shaderDirectory + name + ".vs");
+    }
+
+    // Gets Path to the Fragment Shader file
+    std::string get_fs_path()
+    {
+        return (shaderDirectory + name + ".fs");
+    }
+};
+
+// All the Templates of the defined Shaders
+extern TemplateShader templateShaders[13];
 
 // Material field struct
 struct MatField
 {
-    Colorf col;
-    TEXTURE_TEMPLATES tex;
+    ColorF col;
     int texID;
+    // Default MatField Constructor
     MatField() : col(COLOR_GRAY), texID(0) {}
-    MatField(Colorf col_) : col(col_), texID(0) {}
+    // Matfield Struct Constructor
+    MatField(ColorF col_) : col(col_), texID(0) {}
+    TEXTURE_TEMPLATES get_template()
+    {
+        return get_tex_template(texID);
+    }
 };
 
 // Material Struct
@@ -54,21 +80,21 @@ struct Material
     MatField specular;
     MatField emmision;
     SHADER_TYPE type;
-
+    // Default Material struct Constructor
     Material()
     {
         albedo = MatField();
         emmision = MatField(COLOR_BLACK);
-        type = COLOR_2D;
+        type = COLOR_2D_SHADER;
     }
-
-    Material(Colorf albedo_, Colorf emmision_, SHADER_TYPE type_)
+    // Material struct Constructor
+    Material(ColorF albedo_, ColorF emmision_, SHADER_TYPE type_)
     {
         albedo = MatField(albedo_);
         emmision = MatField(emmision_);
         type = type_;
     }
-
+    // Material Copy Constructor
     Material(const Material &mat)
     {
         albedo = mat.albedo;
@@ -85,9 +111,12 @@ enum MATERIAL_TEMPLATES
     LIGHT_MAT,
     TEX_2D_MAT,
     TEX_3D_MAT,
+    STANDARD_3D_MAT,
+    MODEL_3D_MAT,
+    SCENE_3D_MAT,
 };
 
 // Template Material instances
-extern Material material_template[5];
+extern Material material_template[8];
 
 #endif // !MATERIAL_H
