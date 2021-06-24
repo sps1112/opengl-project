@@ -52,11 +52,32 @@ TEXTURE_TEMPLATES get_tex_template(int i);
 // Path to the texture folder
 extern std::string textureFolderPath;
 
-// File names of the defined texture templates
-extern std::string textureFileNames[17];
+// Struct holding Data for each template
+struct TemplateTexture
+{
+    TEXTURE_TEMPLATES template_;
+    std::string name;
+    TEXTURE_TYPE type;
+    bool toClamp;
 
-// Type of texture file for each defined template
-extern TEXTURE_TYPE templateTextureTypes[17];
+    // Template Texture Constructor
+    TemplateTexture(TEXTURE_TEMPLATES templateTex, std::string fileName, TEXTURE_TYPE texType, bool toClamp_ = false)
+        : template_(templateTex), name(fileName), type(texType), toClamp(toClamp_) {}
+
+    // Returns path to the Texture file
+    std::string get_path()
+    {
+        return (textureFolderPath + name);
+    }
+
+    // Checks whether the texture is a Diffuse Texture
+    bool is_diffuse()
+    {
+        return (type == TEXTURE_DIFFUSE);
+    }
+};
+// Data for all the defined Texture templates
+extern TemplateTexture templateTextures[17];
 
 // Texture Struct
 struct Texture
@@ -64,6 +85,8 @@ struct Texture
     unsigned int id;
     std::string type;
     std::string path;
+    Texture() {}
+    Texture(unsigned int id_, std::string type_, std::string path_) : id(id_), type(type_), path(path_) {}
 };
 
 // Texture Loading
@@ -75,7 +98,7 @@ unsigned int load_texture_from_path(const std::string &path, bool isDiffuse = tr
 // Loads a Texture from type and path
 Texture load_texture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse = true, bool toClamp = false);
 // Gets Texture from a defined Template
-Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp = false);
+Texture get_from_template(TEXTURE_TEMPLATES template_);
 
 // Generating Textures
 

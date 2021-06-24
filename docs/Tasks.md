@@ -45,6 +45,6 @@ A list of common tasks to do and features to implemet in the Renderer.
           - [ ] Scene
     - [ ] Primitive
   - [ ] Transform
-- [ ] Texture
+- [X] Texture
   - [ ] Material
 - [X] Application

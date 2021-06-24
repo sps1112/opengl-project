@@ -16,45 +16,25 @@ TEXTURE_TEMPLATES get_tex_template(int i)
 // Path to the texture folder
 std::string textureFolderPath = "resources/textures/";
 
-// File names of the defined texture templates
-std::string textureFileNames[17] = {
-    "awesomeface.png",
-    "wall.jpg",
-    "brickwall.jpg",
-    "brickwall_normal.jpg",
-    "bricks2.jpg",
-    "bricks2_normal.jpg",
-    "bricks2_disp.jpg",
-    "container.jpg",
-    "container2.png",
-    "container2_specular.png",
-    "container2_specular_color.png",
-    "marble.jpg",
-    "metal.png",
-    "wood.png",
-    "window.png",
-    "grass.png",
-    "matrix.jpg"};
-
-// Type of texture file for each defined template
-TEXTURE_TYPE templateTextureTypes[17] = {
-    TEXTURE_DIFFUSE,
-    TEXTURE_DIFFUSE,
-    TEXTURE_DIFFUSE,
-    TEXTURE_NORMAL,
-    TEXTURE_DIFFUSE,
-    TEXTURE_NORMAL,
-    TEXTURE_HEIGHT,
-    TEXTURE_DIFFUSE,
-    TEXTURE_DIFFUSE,
-    TEXTURE_SPECULAR,
-    TEXTURE_SPECULAR,
-    TEXTURE_DIFFUSE,
-    TEXTURE_DIFFUSE,
-    TEXTURE_DIFFUSE,
-    TEXTURE_DIFFUSE,
-    TEXTURE_DIFFUSE,
-    TEXTURE_EMMISION};
+// Data for all the defined Texture templates
+TemplateTexture templateTextures[] = {
+    TemplateTexture(FACE_TEX, "awesomeface.png", TEXTURE_DIFFUSE),
+    TemplateTexture(WALL_TEX, "wall.jpg", TEXTURE_DIFFUSE),
+    TemplateTexture(BRICK_WALL_TEX, "brickwall.jpg", TEXTURE_DIFFUSE),
+    TemplateTexture(BRICK_WALL_NORMAL, "brickwall_normal.jpg", TEXTURE_NORMAL),
+    TemplateTexture(REDBRICK_WALL_TEX, "bricks2.jpg", TEXTURE_DIFFUSE),
+    TemplateTexture(REDBRICK_WALL_NORMAL, "bricks2_normal.jpg", TEXTURE_NORMAL),
+    TemplateTexture(REDBRICK_WALL_DIS, "bricks2_disp.jpg", TEXTURE_HEIGHT),
+    TemplateTexture(CONTAINER_TEX, "container.jpg", TEXTURE_DIFFUSE),
+    TemplateTexture(CONTAINER_BORDER_TEX, "container2.png", TEXTURE_DIFFUSE),
+    TemplateTexture(CONTAINER_BORDER_SPEC, "container2_specular.png", TEXTURE_SPECULAR),
+    TemplateTexture(CONTAINER_BORDER_SPEC_COL, "container2_specular_color.png", TEXTURE_SPECULAR),
+    TemplateTexture(MARBLE_TEX, "marble.jpg", TEXTURE_DIFFUSE),
+    TemplateTexture(METAL_TEX, "metal.png", TEXTURE_DIFFUSE),
+    TemplateTexture(WOOD_TEX, "wood.png", TEXTURE_DIFFUSE),
+    TemplateTexture(WINDOW_TEX, "window.png", TEXTURE_DIFFUSE, true),
+    TemplateTexture(GRASS_TEX, "grass.png", TEXTURE_DIFFUSE, true),
+    TemplateTexture(MATRIX_TEX, "matrix.jpg", TEXTURE_EMMISION)};
 
 unsigned int load_texture_from_path(const char *path, bool isDiffuse, bool toClamp)
 {
@@ -114,17 +94,14 @@ unsigned int load_texture_from_path(const std::string &path, bool isDiffuse, boo
 
 Texture load_texture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse, bool toClamp)
 {
-    Texture newTexture;
-    newTexture.id = load_texture_from_path((path.c_str()), isDiffuse, toClamp);
-    newTexture.type = textureTypeStrings[type];
-    newTexture.path = path;
+    Texture newTexture((load_texture_from_path(path.c_str(), isDiffuse, toClamp)), textureTypeStrings[type], path);
     return newTexture;
 }
 
-Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp)
+Texture get_from_template(TEXTURE_TEMPLATES template_)
 {
-    std::string path = textureFolderPath + textureFileNames[template_];
-    return load_texture(templateTextureTypes[template_], FileSystem::get_path(path), (templateTextureTypes[template_] == TEXTURE_DIFFUSE), toClamp);
+    TemplateTexture tex = templateTextures[template_];
+    return load_texture(tex.type, FileSystem::get_path(tex.get_path()), tex.is_diffuse(), tex.toClamp);
 }
 
 unsigned int generate_texture()
