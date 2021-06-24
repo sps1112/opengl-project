@@ -45,10 +45,17 @@ enum TEXTURE_TEMPLATES
     GRASS_TEX,
     MATRIX_TEX,
 };
+
+// Returns Texture Template from int id
 TEXTURE_TEMPLATES get_tex_template(int i);
 
+// Path to the texture folder
 extern std::string textureFolderPath;
+
+// File names of the defined texture templates
 extern std::string textureFileNames[17];
+
+// Type of texture file for each defined template
 extern TEXTURE_TYPE templateTextureTypes[17];
 
 // Texture Struct
@@ -61,12 +68,12 @@ struct Texture
 
 // Texture Loading
 
-// Loads a Texture from type and path
-Texture load_texture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse = true, bool toClamp = false);
 // Loads a Texture and returns id
 unsigned int load_texture_from_path(const char *path, bool isDiffuse = true, bool toClamp = false);
 // Loads a Texture and returns id
 unsigned int load_texture_from_path(const std::string &path, bool isDiffuse = true, bool toClamp = false);
+// Loads a Texture from type and path
+Texture load_texture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse = true, bool toClamp = false);
 // Gets Texture from a defined Template
 Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp = false);
 

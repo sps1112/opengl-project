@@ -1,5 +1,6 @@
 #include <rendering/Texture.h>
 
+// Texture typestrings
 std::string textureTypeStrings[] = {
     "texture_diffuse",
     "texture_specular",
@@ -12,8 +13,10 @@ TEXTURE_TEMPLATES get_tex_template(int i)
     return (static_cast<TEXTURE_TEMPLATES>(i));
 }
 
+// Path to the texture folder
 std::string textureFolderPath = "resources/textures/";
 
+// File names of the defined texture templates
 std::string textureFileNames[17] = {
     "awesomeface.png",
     "wall.jpg",
@@ -33,6 +36,7 @@ std::string textureFileNames[17] = {
     "grass.png",
     "matrix.jpg"};
 
+// Type of texture file for each defined template
 TEXTURE_TYPE templateTextureTypes[17] = {
     TEXTURE_DIFFUSE,
     TEXTURE_DIFFUSE,
@@ -52,21 +56,6 @@ TEXTURE_TYPE templateTextureTypes[17] = {
     TEXTURE_DIFFUSE,
     TEXTURE_EMMISION};
 
-Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp)
-{
-    std::string path = textureFolderPath + textureFileNames[template_];
-    return load_texture(templateTextureTypes[template_], FileSystem::get_path(path), (templateTextureTypes[template_] == TEXTURE_DIFFUSE), toClamp);
-}
-
-Texture load_texture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse, bool toClamp)
-{
-    Texture newTexture;
-    newTexture.id = load_texture_from_path((path.c_str()), isDiffuse, toClamp);
-    newTexture.type = textureTypeStrings[type];
-    newTexture.path = path;
-    return newTexture;
-}
-
 unsigned int load_texture_from_path(const char *path, bool isDiffuse, bool toClamp)
 {
     unsigned int textureID = generate_texture();
@@ -78,7 +67,7 @@ unsigned int load_texture_from_path(const char *path, bool isDiffuse, bool toCla
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
 
-    // setup data
+    // Setup texture data
     if (data)
     {
         GLenum format;
@@ -121,6 +110,21 @@ unsigned int load_texture_from_path(const char *path, bool isDiffuse, bool toCla
 unsigned int load_texture_from_path(const std::string &path, bool isDiffuse, bool toClamp)
 {
     return load_texture_from_path(path.c_str(), isDiffuse, toClamp);
+}
+
+Texture load_texture(TEXTURE_TYPE type, const std::string &path, bool isDiffuse, bool toClamp)
+{
+    Texture newTexture;
+    newTexture.id = load_texture_from_path((path.c_str()), isDiffuse, toClamp);
+    newTexture.type = textureTypeStrings[type];
+    newTexture.path = path;
+    return newTexture;
+}
+
+Texture get_from_template(TEXTURE_TEMPLATES template_, bool toClamp)
+{
+    std::string path = textureFolderPath + textureFileNames[template_];
+    return load_texture(templateTextureTypes[template_], FileSystem::get_path(path), (templateTextureTypes[template_] == TEXTURE_DIFFUSE), toClamp);
 }
 
 unsigned int generate_texture()

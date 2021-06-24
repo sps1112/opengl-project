@@ -16,6 +16,7 @@ A list of common tasks to do and features to implemet in the Renderer.
 - [ ] Reflect/Reflect Shaders
 - [ ] GUI widgets
 - [ ] Single Mesh Class for Primitive and Model
+- [ ] Framebuffer rendering
 - [ ] Code Efficiency
 - [ ] Adding Shadows
 - [ ] Post Processing
