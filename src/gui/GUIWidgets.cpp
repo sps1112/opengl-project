@@ -73,13 +73,37 @@ int AddActorUI(Scene *currentScene)
         {
             currentScene->AddActor(CUBE_3D);
         }
-        if (ImGui::MenuItem("Sphere"))
+        if (ImGui::MenuItem("Plane"))
         {
-            currentScene->AddActor(SPHERE_MODEL);
+            currentScene->AddActor(PLANE_3D);
         }
         if (ImGui::MenuItem("Backpack"))
         {
             currentScene->AddActor(BACKPACK_MODEL);
+        }
+        if (ImGui::MenuItem("Cyborg"))
+        {
+            currentScene->AddActor(CYBORG_MODEL);
+        }
+        if (ImGui::MenuItem("Nanosuit"))
+        {
+            currentScene->AddActor(NANOSUIT_MODEL);
+        }
+        if (ImGui::MenuItem("Planet"))
+        {
+            currentScene->AddActor(PLANET_MODEL);
+        }
+        if (ImGui::MenuItem("Rock"))
+        {
+            currentScene->AddActor(ROCK_MODEL);
+        }
+        if (ImGui::MenuItem("Sphere"))
+        {
+            currentScene->AddActor(SPHERE_MODEL);
+        }
+        if (ImGui::MenuItem("Teapot"))
+        {
+            currentScene->AddActor(TEAPOT_MODEL);
         }
         ImGui::EndMenu();
     }
@@ -190,11 +214,22 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                     {
                         selectedActor->transform.reset_to_origin();
                     }
-                    ShowSectionHeader("MATERIAL");
-                    ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
-                    if (ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18))
+                    switch (selectedActor->type)
                     {
-                        currentScene->UpdateActor(selectedActor);
+                    case PRIMITIVE_ACTOR:
+                        ShowSectionHeader("MATERIAL");
+                        ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
+                        if (ImGui::Combo("Texture", &(selectedActor->mat.albedo.texID), texComboItems, 18))
+                        {
+                            currentScene->UpdateActor(selectedActor);
+                        }
+                        break;
+                    case MODEL_ACTOR:
+                        ShowSectionHeader("MATERIAL");
+                        ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
+                        break;
+                    default:
+                        break;
                     }
                 }
             }

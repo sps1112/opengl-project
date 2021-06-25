@@ -31,7 +31,12 @@ enum TEMPLATE_ACTORS
     PLANE_3D,
     CUBEMAP_3D,
     BACKPACK_MODEL,
+    CYBORG_MODEL,
+    NANOSUIT_MODEL,
+    PLANET_MODEL,
+    ROCK_MODEL,
     SPHERE_MODEL,
+    TEAPOT_MODEL,
     NORMAL_LIGHT_ACTOR,
     POINT_LIGHT_ACTOR,
     DIR_LIGHT_ACTOR,
@@ -90,12 +95,12 @@ public:
     LightActor();
 };
 
-extern ACTOR_TYPES actor_types[14];
+extern ACTOR_TYPES actor_types[19];
 
 extern std::string resource_dir;
 
-extern std::string template_actor_filepath[14];
+extern std::string template_actor_filepath[19];
 
-extern MATERIAL_TEMPLATES default_actor_materials[14];
+extern MATERIAL_TEMPLATES default_actor_materials[19];
 
 #endif // !ACTOR_H
