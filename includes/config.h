@@ -60,6 +60,7 @@
 
 // Renderer Settings
 
+#define BLINN_PHONG_ENABLE 1
 #define GAMMA_CORRECTION_ENABLED 1
 #define MAX_POINT_LIGHTS 6
 #define MAX_DIRECTIONAL_LIGHTS 4

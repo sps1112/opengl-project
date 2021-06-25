@@ -8,7 +8,7 @@
 extern char *texComboItems[18];
 
 // Shows a Simple Overlay
-void ShowSimpleOverlay(bool *p_open, int sceneNumber);
+void ShowSimpleOverlay(bool *p_open, std::string text, int position = 1);
 // Add Actor UI window
 int AddActorUI(Scene *currentScene);
 // Shows a section header in the UI

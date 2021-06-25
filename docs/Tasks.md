@@ -5,11 +5,12 @@ A list of common tasks to do and features to implemet in the Renderer.
 - [X] Camera Movement
 - [X] Camera UI
 - [X] Model loading in Scene System
-- [ ] FrameRate UI
-- [ ] Actor UI 
+- [X] FrameRate UI
 - [ ] Uniform Naming Convention
-- [ ] 3D Materials (Specular workflow)
 - [ ] Lights in Scenes
+- [ ] 3D Materials (Specular workflow)
+- [ ] Actor UI (with Face culling)
+- [ ] Editable Config file
 - [ ] Custom Shaders (Outline)
 - [ ] Implement blending
 - [ ] Adding Skybox
@@ -23,7 +24,6 @@ A list of common tasks to do and features to implemet in the Renderer.
 - [ ] Anti Aliasing
 - [ ] Add Console
 - [ ] PBR Implementation
-
 
 ### Classes to Optimize
 

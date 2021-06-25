@@ -77,6 +77,7 @@ ACTOR_TYPES actor_types[] = {
     PRIMITIVE_ACTOR,
     PRIMITIVE_ACTOR,
     PRIMITIVE_ACTOR,
+    PRIMITIVE_ACTOR,
     MODEL_ACTOR,
     MODEL_ACTOR,
     MODEL_ACTOR,
@@ -98,6 +99,7 @@ std::string template_actor_filepath[] = {
     "primitives/2D/rectangle.2d",
     "primitives/2D/quad.2d",
     "primitives/3D/cube.3d",
+    "primitives/2D/triangle.2d",
     "primitives/3D/quad.3d",
     "primitives/3D/plane.3d",
     "primitives/3D/cubemap.3d",
@@ -115,8 +117,9 @@ std::string template_actor_filepath[] = {
     " "};
 
 MATERIAL_TEMPLATES default_actor_materials[] = {
-    COLOR_3D_MAT,
-    COLOR_3D_MAT,
+    COLOR_2D_MAT,
+    COLOR_2D_MAT,
+    COLOR_2D_MAT,
     COLOR_3D_MAT,
     COLOR_3D_MAT,
     COLOR_3D_MAT,

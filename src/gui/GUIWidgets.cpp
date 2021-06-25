@@ -20,10 +20,10 @@ char *texComboItems[] = {
     "grass",
     "matrix"};
 
-void ShowSimpleOverlay(bool *p_open, int sceneNumber)
+void ShowSimpleOverlay(bool *p_open, std::string text, int position)
 {
     const float DISTANCE = 25.0f;
-    static int corner = 1;
+    static int corner = position;
     ImGuiIO &io = ImGui::GetIO();
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
     if (corner != -1)
@@ -36,7 +36,7 @@ void ShowSimpleOverlay(bool *p_open, int sceneNumber)
     ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
     if (ImGui::Begin("Example: Simple overlay", p_open, window_flags))
     {
-        ImGui::Text("Scene %d\n", sceneNumber);
+        ImGui::Text(text.c_str());
         if (ImGui::BeginPopupContextWindow())
         {
             if (ImGui::MenuItem("Custom", NULL, corner == -1))
@@ -61,17 +61,29 @@ int AddActorUI(Scene *currentScene)
 {
     if (ImGui::BeginMenu("Add Actor.."))
     {
-        if (ImGui::MenuItem("Triangle"))
+        if (ImGui::MenuItem("Triangle(2D)"))
         {
             currentScene->AddActor(TRIANGLE_2D);
         }
-        if (ImGui::MenuItem("Rectangle"))
+        if (ImGui::MenuItem("Rectangle(2D)"))
         {
             currentScene->AddActor(RECTANGLE_2D);
+        }
+        if (ImGui::MenuItem("Quad(2D)"))
+        {
+            currentScene->AddActor(QUAD_2D);
         }
         if (ImGui::MenuItem("Cube"))
         {
             currentScene->AddActor(CUBE_3D);
+        }
+        if (ImGui::MenuItem("Triangle(3D)"))
+        {
+            currentScene->AddActor(TRIANGLE_3D);
+        }
+        if (ImGui::MenuItem("Quad(3D)"))
+        {
+            currentScene->AddActor(QUAD_3D);
         }
         if (ImGui::MenuItem("Plane"))
         {

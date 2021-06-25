@@ -39,6 +39,8 @@ enum APP_MODE
 APP_MODE currentMode = SCENE_EMPTY;
 
 // UI booleans
+bool lockFramerate = true;
+bool showFramerate = false;
 bool showDemoUI = false;
 bool overlayOpen = true;
 bool listOpen = true;
@@ -147,7 +149,7 @@ void draw_app()
 
 		// End Frame
 		gui.RenderGUI();
-		renderer.SwapBuffers();
+		renderer.SwapBuffers(lockFramerate);
 	}
 	// Free Data
 
@@ -165,6 +167,10 @@ void draw_empty_scene()
 	renderer.ProcessInput();
 	// Clear Screen
 	renderer.SetColor(DEFAULT_BACKGROUND_COLOR.r, DEFAULT_BACKGROUND_COLOR.g, DEFAULT_BACKGROUND_COLOR.b, 1.0f);
+	if (showFramerate)
+	{
+		ShowSimpleOverlay(&showFramerate, "FrameRate: " + std::to_string((int)(1.0f / renderer.deltaTime)), 3);
+	}
 }
 
 void draw_normal_scene()
@@ -181,11 +187,15 @@ void draw_normal_scene()
 	}
 	if (overlayOpen)
 	{
-		ShowSimpleOverlay(&overlayOpen, sceneNumber);
+		ShowSimpleOverlay(&overlayOpen, ("Scene " + std::to_string(sceneNumber) + "\n"), 1);
 	}
 	if (listOpen)
 	{
 		ShowAppLayout(&listOpen, &(loadedScenes[listIndex]));
+	}
+	if (showFramerate)
+	{
+		ShowSimpleOverlay(&showFramerate, "\nFrameRate: " + std::to_string((int)(1.0f / renderer.deltaTime)), 3);
 	}
 }
 
@@ -265,18 +275,24 @@ void show_file_menu()
 
 void show_edit_menu()
 {
-	if (currentMode == SCENE_NORMAL)
+	if (ImGui::BeginMenu("Edit Renderer.."))
 	{
-		if (ImGui::BeginMenu("Edit Current Scene.."))
+		ImGui::Checkbox("Show Framerate", &(showFramerate));
+		ImGui::Checkbox("Lock Framerate", &(lockFramerate));
+		ImGui::EndMenu();
+	}
+	if (ImGui::BeginMenu("Edit Current Scene.."))
+	{
+		if (currentMode == SCENE_NORMAL)
 		{
 			ImGui::ColorEdit4("Background Color", &(loadedScenes[listIndex]).data.backgroundColor.x);
 			ImGui::Combo("Draw Mode", &(loadedScenes[listIndex].data.drawMode), drawComboItems, 3);
-			ImGui::EndMenu();
 		}
-	}
-	else
-	{
-		ImGui::MenuItem("(No Scene Open)", NULL, false, false);
+		else
+		{
+			ImGui::MenuItem("(No Scene Open)", NULL, false, false);
+		}
+		ImGui::EndMenu();
 	}
 }
 

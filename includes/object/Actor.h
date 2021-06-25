@@ -27,6 +27,7 @@ enum TEMPLATE_ACTORS
     RECTANGLE_2D,
     QUAD_2D,
     CUBE_3D,
+    TRIANGLE_3D,
     QUAD_3D,
     PLANE_3D,
     CUBEMAP_3D,
@@ -95,12 +96,12 @@ public:
     LightActor();
 };
 
-extern ACTOR_TYPES actor_types[19];
+extern ACTOR_TYPES actor_types[20];
 
 extern std::string resource_dir;
 
-extern std::string template_actor_filepath[19];
+extern std::string template_actor_filepath[20];
 
-extern MATERIAL_TEMPLATES default_actor_materials[19];
+extern MATERIAL_TEMPLATES default_actor_materials[20];
 
 #endif // !ACTOR_H
