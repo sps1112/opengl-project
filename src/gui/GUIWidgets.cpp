@@ -77,12 +77,10 @@ int AddActorUI(Scene *currentScene)
         {
             currentScene->AddActor(SPHERE_MODEL);
         }
-        /*
         if (ImGui::MenuItem("Backpack"))
-		{
-			loadedScenes[listIndex].AddActor("resources/models/backpack/backpack.obj", MODEL_OBJECT);
-		}
-        */
+        {
+            currentScene->AddActor(BACKPACK_MODEL);
+        }
         ImGui::EndMenu();
     }
     return (currentScene->actorCount);

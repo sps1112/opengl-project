@@ -4,10 +4,10 @@ A list of common tasks to do and features to implemet in the Renderer.
 
 - [X] Camera Movement
 - [X] Camera UI
-- [ ] Uniform Naming Convention
-- [ ] Model loading in Scene System
+- [X] Model loading in Scene System
 - [ ] FrameRate UI
 - [ ] Actor UI 
+- [ ] Uniform Naming Convention
 - [ ] 3D Materials (Specular workflow)
 - [ ] Lights in Scenes
 - [ ] Custom Shaders (Outline)

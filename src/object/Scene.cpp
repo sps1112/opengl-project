@@ -60,6 +60,18 @@ void SceneData::AddTexture(int id, int actor_id)
 
 void SceneData::AddModel(std::string path, int id, int actor_id)
 {
+    if (!models.is_id_present(id))
+    {
+        log_message("Loading New Model");
+        Model mod(FileSystem::get_path(path));
+        ActorData datapoint(mod, id, actor_id);
+        models.add_data(datapoint);
+    }
+    else
+    {
+        log_message("Model already present");
+        models.get_data_point(id)->add_actor(actor_id);
+    }
 }
 
 void SceneData::AddLight()
@@ -112,6 +124,13 @@ void SceneData::DrawActor(RenderActor *actor, int actor_id, CameraActor *cam, Ve
         prms.get_data_point_from_actor(actor_id)->data.Draw(shaders.get_data_point_from_actor(actor_id)->data);
         break;
 
+    case MODEL_ACTOR:
+        shaders.get_data_point_from_actor(actor_id)->data.use();
+        shaders.get_data_point_from_actor(actor_id)->data.setVec3("matColor", actor->mat.albedo.col);
+        shaders.get_data_point_from_actor(actor_id)->data.SetMatrices(model, view, projection);
+        models.get_data_point_from_actor(actor_id)->data.Draw(shaders.get_data_point_from_actor(actor_id)->data);
+        break;
+
     default:
         break;
     }
@@ -159,9 +178,12 @@ void Scene::AddActor(TEMPLATE_ACTORS actor_choice)
         {
         case PRIMITIVE_ACTOR:
             data.AddShader(templateShaders[newActor.mat.type].get_vs_path(), templateShaders[newActor.mat.type].get_fs_path(), static_cast<int>(newActor.mat.type), actorCount);
-            data.AddPrimitive(actor_file_path, static_cast<int>(actor_choice), actorCount);
+            data.AddPrimitive(newActor.path, static_cast<int>(actor_choice), actorCount);
             break;
-
+        case MODEL_ACTOR:
+            data.AddShader(templateShaders[newActor.mat.type].get_vs_path(), templateShaders[newActor.mat.type].get_fs_path(), static_cast<int>(newActor.mat.type), actorCount);
+            data.AddModel(newActor.path, static_cast<int>(actor_choice), actorCount);
+            break;
         default:
             break;
         }
