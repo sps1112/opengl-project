@@ -21,14 +21,14 @@ using namespace std;
 
 struct Vertex2D
 {
-    glm::vec3 Position;
+    glm::vec3 position;
     glm::vec3 Color;
     glm::vec2 TexCoord;
 };
 
 struct Vertex3D
 {
-    glm::vec3 Position;
+    glm::vec3 position;
     glm::vec3 Normal;
     glm::vec2 TexCoord;
     glm::vec3 Color;

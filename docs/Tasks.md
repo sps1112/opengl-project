@@ -32,7 +32,7 @@ A list of common tasks to do and features to implemet in the Renderer.
   - [X] FileReader
 - [X] FileSystem
 - [X] CustomMath
-  - [ ] Camera
+  - [X] Camera
   - [ ] Light
     - [ ] Shader
   - [ ] Renderer

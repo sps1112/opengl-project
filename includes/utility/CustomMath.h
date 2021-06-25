@@ -9,15 +9,14 @@
 #include <external/glm/glm/gtx/quaternion.hpp>
 
 // Constant values
-#define PI_VAL 3.14159265
+#define PI_VAL 3.14159265 // Custom Value of PI
 
 // Custom Vector Math Definitions
-
-using Vec2 = glm::vec2;
-using Vec3 = glm::vec3;
-using Vec4 = glm::vec4;
-using Mat3 = glm::mat3;
-using Mat4 = glm::mat4;
+using Vec2 = glm::vec2; // Vector2 data type as (x,y)
+using Vec3 = glm::vec3; // Vector3 data type as (x,y,z)
+using Vec4 = glm::vec4; // Vector4 data type as (x,y,z,w)
+using Mat3 = glm::mat3; // A 3x3 Matrix
+using Mat4 = glm::mat4; // A 4x4 Matrix
 
 // Custom Functions
 

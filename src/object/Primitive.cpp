@@ -119,7 +119,7 @@ void Primitive::ProcessData(char *fileData)
         for (int i = 0; i < vertexCount; i++)
         {
             lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
-            vertexArray[i].Position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
+            vertexArray[i].position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
         }
         // Vertex Set
         lineStartIndex = skip_lines(fileData, lineStartIndex, 2);
@@ -195,7 +195,7 @@ void Primitive::ProcessData(char *fileData)
         for (int i = 0; i < vertexCount; i++)
         {
             lineStartIndex = skip_lines(fileData, lineStartIndex, 1);
-            vertexArray[i].Position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
+            vertexArray[i].position = GetVec3(fileData, 'v', is2D, lineStartIndex, i);
         }
         // log_message("Position set");
         lineStartIndex = skip_lines(fileData, lineStartIndex, 2);

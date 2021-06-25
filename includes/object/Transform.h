@@ -9,9 +9,9 @@
 class Transform
 {
 public:
-    Vec3 position;
-    Vec3 rotation;
-    Vec3 scale;
+    Vec3 position; // Position of the Actor
+    Vec3 rotation; // Rotation of the Actor
+    Vec3 scale;    // Scale of the Actor
     // Standard Constructor for the Transform Class. Sets position at origin
     Transform();
     // Constructor for the Transform Class. Sets the position/rotation/scale at initialisation

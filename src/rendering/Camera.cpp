@@ -1,86 +1,86 @@
 #include <rendering/Camera.h>
 
-Camera::Camera(Vec3 position, Vec3 up, float yaw, float pitch) : Front(Vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+Camera::Camera(Vec3 position_, Vec3 up, float yaw_, float pitch_) : front(Vec3(0.0f, 0.0f, -1.0f)), moveSpeed(CAMERA_SPEED), mouseSensitivity(CAMERA_SENSITIVITY), fovZoom(CAMERA_ZOOM)
 {
-    Position = position;
-    WorldUp = up;
-    Yaw = yaw;
-    Pitch = pitch;
-    updateCameraVectors();
+    position = position_;
+    worldUp = up;
+    yaw = yaw_;
+    pitch = pitch_;
+    update_camera_vectors();
 }
 
-Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(Vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
+Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw_, float pitch_) : front(Vec3(0.0f, 0.0f, -1.0f)), moveSpeed(CAMERA_SPEED), mouseSensitivity(CAMERA_SENSITIVITY), fovZoom(CAMERA_ZOOM)
 {
-    Position = Vec3(posX, posY, posZ);
-    WorldUp = Vec3(upX, upY, upZ);
-    Yaw = yaw;
-    Pitch = pitch;
-    updateCameraVectors();
+    position = Vec3(posX, posY, posZ);
+    worldUp = Vec3(upX, upY, upZ);
+    yaw = yaw_;
+    pitch = pitch_;
+    update_camera_vectors();
 }
 
-Mat4 Camera::GetViewMatrix()
+Mat4 Camera::get_view_matrix()
 {
-    return glm::lookAt(Position, Position + Front, Up);
+    return glm::lookAt(position, position + front, up);
 }
 
-void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
+void Camera::process_keyboard(CAMERA_MOVE_DIR direction, float deltaTime)
 {
-    float velocity = MovementSpeed * deltaTime;
-    if (direction == FORWARD)
+    float velocity = moveSpeed * deltaTime;
+    if (direction == FORWARD_DIR)
     {
-        Position += Front * velocity;
+        position += front * velocity;
     }
-    if (direction == BACKWARD)
+    if (direction == BACKWARD_DIR)
     {
-        Position += -Front * velocity;
+        position += -front * velocity;
     }
-    if (direction == LEFT)
+    if (direction == LEFT_DIR)
     {
-        Position += -Right * velocity;
+        position += -right * velocity;
     }
-    if (direction == RIGHT)
+    if (direction == RIGHT_DIR)
     {
-        Position += Right * velocity;
+        position += right * velocity;
     }
-    if (direction == UP)
+    if (direction == UP_DIR)
     {
-        Position += Up * velocity;
+        position += up * velocity;
     }
-    if (direction == DOWN)
+    if (direction == DOWN_DIR)
     {
-        Position += -Up * velocity;
+        position += -up * velocity;
     }
-    // Position.y = 0.0f; //for FPS CAMERA
+    // position.y = 0.0f; //for FPS CAMERA
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch)
+void Camera::process_mouse(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch)
 {
-    xoffset *= MouseSensitivity * deltaTime * 60;
-    yoffset *= MouseSensitivity * deltaTime * 60;
+    xoffset *= mouseSensitivity * deltaTime * 60;
+    yoffset *= mouseSensitivity * deltaTime * 60;
 
-    Yaw += xoffset;
-    Pitch += yoffset;
+    yaw += xoffset;
+    pitch += yoffset;
 
     if (constrainPitch)
     {
-        Pitch = clamp(Pitch, -CAMERA_MAX_PITCH, CAMERA_MAX_PITCH);
+        pitch = clamp(pitch, -CAMERA_MAX_PITCH, CAMERA_MAX_PITCH);
     }
-    updateCameraVectors();
+    update_camera_vectors();
 }
 
-void Camera::ProcessMouseScroll(float yoffset)
+void Camera::process_scroll(float yoffset)
 {
-    Zoom -= (float)yoffset;
-    Zoom = clamp(Zoom, MINZOOM, MAXZOOM);
+    fovZoom -= (float)yoffset;
+    fovZoom = clamp(fovZoom, CAMERA_MINZOOM, CAMERA_MAXZOOM);
 }
 
-void Camera::updateCameraVectors()
+void Camera::update_camera_vectors()
 {
-    glm::vec3 front;
-    front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-    front.y = sin(glm::radians(Pitch));
-    front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-    Front = glm::normalize(front);
-    Right = glm::normalize(glm::cross(Front, WorldUp));
-    Up = glm::normalize(glm::cross(Right, Front));
+    glm::vec3 frontLocal;
+    frontLocal.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    frontLocal.y = sin(glm::radians(pitch));
+    frontLocal.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    front = glm::normalize(frontLocal);
+    right = glm::normalize(glm::cross(front, worldUp));
+    up = glm::normalize(glm::cross(right, front));
 }

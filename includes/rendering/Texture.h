@@ -55,10 +55,10 @@ extern std::string textureFolderPath;
 // Struct holding Data for each template
 struct TemplateTexture
 {
-    TEXTURE_TEMPLATES template_;
-    std::string name;
-    TEXTURE_TYPE type;
-    bool toClamp;
+    TEXTURE_TEMPLATES template_; // The corresponding template of this struct
+    std::string name;            // File Name of the Texture
+    TEXTURE_TYPE type;           // Type of texture file
+    bool toClamp;                // Whether the Texture is to be clamped at the edges
 
     // Template Texture Constructor
     TemplateTexture(TEXTURE_TEMPLATES templateTex, std::string fileName, TEXTURE_TYPE texType, bool toClamp_ = false)
@@ -82,9 +82,9 @@ extern TemplateTexture templateTextures[17];
 // Texture Struct
 struct Texture
 {
-    unsigned int id;
-    std::string type;
-    std::string path;
+    unsigned int id;  // The ID of the loaded texture
+    std::string type; // The type of texture loaded
+    std::string path; // Path to the texture file
     // Texture Struct Empty Constructor
     Texture() {}
     // Texture Struct Constructor

@@ -8,7 +8,7 @@ CameraActor::CameraActor(std::string name_, int id_, Transform transform_)
     name = name_;
     id = id_;
     cam = Camera(transform_.position);
-    transform = Transform(cam.Position, Vec3(0.0f), Vec3(1.0f));
+    transform = Transform(cam.position, Vec3(0.0f), Vec3(1.0f));
     canMove = false;
     canRotate = false;
     isOrtho = false;
@@ -24,18 +24,18 @@ void CameraActor::RefreshCamera(bool transformCallback)
 {
     if (transformCallback)
     {
-        cam.Position = transform.position;
-        cam.Yaw = transform.rotation.y + CAMERA_YAW;
-        cam.Pitch = clamp(transform.rotation.x, -CAMERA_MAX_PITCH, CAMERA_MAX_PITCH);
-        cam.updateCameraVectors();
-        cam.Right = transform.get_right();
-        cam.Up = transform.get_up();
+        cam.position = transform.position;
+        cam.yaw = transform.rotation.y + CAMERA_YAW;
+        cam.pitch = clamp(transform.rotation.x, -CAMERA_MAX_PITCH, CAMERA_MAX_PITCH);
+        cam.update_camera_vectors();
+        cam.right = transform.get_right();
+        cam.up = transform.get_up();
     }
     else
     {
-        transform.position = cam.Position;
-        transform.rotation.y = overflow(cam.Yaw - CAMERA_YAW, 360.0f);
-        transform.rotation.x = cam.Pitch;
+        transform.position = cam.position;
+        transform.rotation.y = overflow(cam.yaw - CAMERA_YAW, 360.0f);
+        transform.rotation.x = cam.pitch;
         transform.rotation.z = 0;
     }
 }

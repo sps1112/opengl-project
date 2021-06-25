@@ -148,7 +148,7 @@ void Renderer::SetCamera(Camera *camera)
 
 float Renderer::GetZoom()
 {
-    return rCamera.camera->Zoom;
+    return rCamera.camera->fovZoom;
 }
 
 Camera *Renderer::GetCamera()
@@ -196,27 +196,27 @@ void Renderer::ProcessInput(bool moveStatus)
     {
         if (CheckInput(KEY_W))
         {
-            rCamera.camera->ProcessKeyboard(FORWARD, deltaTime);
+            rCamera.camera->process_keyboard(FORWARD_DIR, deltaTime);
         }
         if (CheckInput(KEY_S))
         {
-            rCamera.camera->ProcessKeyboard(BACKWARD, deltaTime);
+            rCamera.camera->process_keyboard(BACKWARD_DIR, deltaTime);
         }
         if (CheckInput(KEY_A))
         {
-            rCamera.camera->ProcessKeyboard(LEFT, deltaTime);
+            rCamera.camera->process_keyboard(LEFT_DIR, deltaTime);
         }
         if (CheckInput(KEY_D))
         {
-            rCamera.camera->ProcessKeyboard(RIGHT, deltaTime);
+            rCamera.camera->process_keyboard(RIGHT_DIR, deltaTime);
         }
         if (CheckInput(KEY_Q))
         {
-            rCamera.camera->ProcessKeyboard(UP, deltaTime);
+            rCamera.camera->process_keyboard(UP_DIR, deltaTime);
         }
         if (CheckInput(KEY_E))
         {
-            rCamera.camera->ProcessKeyboard(DOWN, deltaTime);
+            rCamera.camera->process_keyboard(DOWN_DIR, deltaTime);
         }
     }
 }
@@ -226,7 +226,7 @@ void Renderer::ProcessMouse(bool rotateStatus)
     if (rotateStatus)
     {
         SetCursor(false);
-        rCamera.camera->ProcessMouseMovement(rCamera.xOff, rCamera.yOff, deltaTime);
+        rCamera.camera->process_mouse(rCamera.xOff, rCamera.yOff, deltaTime);
     }
     else
     {
@@ -391,7 +391,7 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 // callback for the mouse scroll wheel
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    rCamera.camera->ProcessMouseScroll(yoffset);
+    rCamera.camera->process_scroll(yoffset);
 }
 
 FrameBuffer::FrameBuffer()

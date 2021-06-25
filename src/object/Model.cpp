@@ -68,7 +68,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
         vector.x = mesh->mVertices[i].x;
         vector.y = mesh->mVertices[i].y;
         vector.z = mesh->mVertices[i].z;
-        vertex.Position = vector;
+        vertex.position = vector;
 
         // Normal
         if (mesh->HasNormals())

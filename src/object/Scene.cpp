@@ -80,7 +80,7 @@ void SceneData::AddLight()
 
 void SceneData::DrawActor(RenderActor *actor, int actor_id, CameraActor *cam, Vec2 screen_dimension)
 {
-    Mat4 view = cam->GetCamera()->GetViewMatrix();
+    Mat4 view = cam->GetCamera()->get_view_matrix();
     Mat4 projection(1.0f);
     screen_dimension.x = floor(screen_dimension.x, 0.0f);
     screen_dimension.y = floor(screen_dimension.y, 0.0f);
@@ -93,7 +93,7 @@ void SceneData::DrawActor(RenderActor *actor, int actor_id, CameraActor *cam, Ve
     }
     else
     {
-        projection = glm::perspective(glm::radians(cam->GetCamera()->Zoom), ((float)screen_dimension.x) / ((float)screen_dimension.y), CAMERA_NEAR_PLANE, CAMERA_FAR_PLANE);
+        projection = glm::perspective(glm::radians(cam->GetCamera()->fovZoom), ((float)screen_dimension.x) / ((float)screen_dimension.y), CAMERA_NEAR_PLANE, CAMERA_FAR_PLANE);
     }
     Vec3 actorPos(actor->transform.position);
     Vec3 actorRot(actor->transform.rotation);
@@ -171,17 +171,15 @@ void Scene::AddActor(TEMPLATE_ACTORS actor_choice)
     else
     {
         actorCount++;
-        std::string actor_file_path = resource_dir + template_actor_filepath[actor_choice];
         RenderActor newActor("Object" + std::to_string(actorCount), actor_choice, actorCount);
         actorList.push_back(newActor);
+        data.AddShader(templateShaders[newActor.mat.type].get_vs_path(), templateShaders[newActor.mat.type].get_fs_path(), static_cast<int>(newActor.mat.type), actorCount);
         switch (newActor.type)
         {
         case PRIMITIVE_ACTOR:
-            data.AddShader(templateShaders[newActor.mat.type].get_vs_path(), templateShaders[newActor.mat.type].get_fs_path(), static_cast<int>(newActor.mat.type), actorCount);
             data.AddPrimitive(newActor.path, static_cast<int>(actor_choice), actorCount);
             break;
         case MODEL_ACTOR:
-            data.AddShader(templateShaders[newActor.mat.type].get_vs_path(), templateShaders[newActor.mat.type].get_fs_path(), static_cast<int>(newActor.mat.type), actorCount);
             data.AddModel(newActor.path, static_cast<int>(actor_choice), actorCount);
             break;
         default:

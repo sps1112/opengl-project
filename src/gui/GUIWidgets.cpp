@@ -203,7 +203,7 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                 ImGui::SliderFloat("Camera Size", &(cam->camSize), 0.0f, 15.0f);
                 ImGui::Checkbox("Can Move", &(cam->canMove));
                 ImGui::Checkbox("Can Rotate", &(cam->canRotate));
-                ImGui::SliderFloat("FOV", &(cam->GetCamera()->Zoom), CAMERA_MINZOOM, CAMERA_MAXZOOM);
+                ImGui::SliderFloat("FOV", &(cam->GetCamera()->fovZoom), CAMERA_MINZOOM, CAMERA_MAXZOOM);
             }
             else
             {

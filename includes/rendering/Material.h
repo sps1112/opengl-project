@@ -37,8 +37,8 @@ extern std::string shaderDirectory;
 // The Template Shader struct including all the data for a Shader's Template
 struct TemplateShader
 {
-    SHADER_TYPE type;
-    std::string name;
+    SHADER_TYPE type; // The type of shader template
+    std::string name; // Name of the shader file
     // Template Struct Constructor
     TemplateShader(SHADER_TYPE type_, std::string fileName) : type(type_), name(fileName) {}
 
@@ -61,8 +61,8 @@ extern TemplateShader templateShaders[13];
 // Material field struct
 struct MatField
 {
-    ColorF col;
-    int texID;
+    ColorF col; // The Color of the field
+    int texID;  // The ID of texture
     // Default MatField Constructor
     MatField() : col(COLOR_GRAY), texID(0) {}
     // Matfield Struct Constructor
@@ -76,10 +76,10 @@ struct MatField
 // Material Struct
 struct Material
 {
-    MatField albedo;
-    MatField specular;
-    MatField emmision;
-    SHADER_TYPE type;
+    MatField albedo;   // The albedo/diffuse channel for the Material
+    MatField specular; // The specular channel for the Material
+    MatField emmision; // The emission channel for the Material
+    SHADER_TYPE type;  // The type of Shader file
     // Default Material struct Constructor
     Material()
     {

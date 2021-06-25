@@ -19,11 +19,11 @@
 #include <iostream>
 #include <vector>
 
-// Renderer Settings
+// Default Renderer
 Renderer renderer(OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 
 // Scene Settings
-Scene *loadedScenes;
+Scene *loadedScenes;							   // All the Loaded Scenes
 const int maxSceneCount = MAX_LOADED_SCENES_COUNT; // Max Number of Scene loaded
 int currentSceneIndex = 0;						   // Index of  Current Scene in UI
 int loadIndex = -1;								   // Index of last loaded Scene in Array
@@ -36,11 +36,11 @@ enum APP_MODE
 	SCENE_EMPTY,
 	SCENE_NORMAL,
 };
-APP_MODE currentMode = SCENE_EMPTY;
+APP_MODE currentMode = SCENE_EMPTY; // Current Mode of the Application
 
 // UI booleans
-bool lockFramerate = true;
-bool showFramerate = false;
+bool lockFramerate = true;	// Whether the Framerate should be locked
+bool showFramerate = false; // Whether the Framerate should be shown
 bool showDemoUI = false;
 bool overlayOpen = true;
 bool listOpen = true;
@@ -98,7 +98,7 @@ int setup_renderer()
 void draw_app()
 {
 	// Setup GUI
-	GUI gui(renderer.window, OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION);
+	GUI gui(renderer.window, OPENGL_MAJOR_VERSION, OPENGL_MINOR_VERSION); // GUI class
 	loadedScenes = new Scene[maxSceneCount];
 
 	// Start Render Loop

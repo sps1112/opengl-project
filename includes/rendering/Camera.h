@@ -10,24 +10,15 @@
 #include <iostream>
 
 // Camera movement directions
-enum Camera_Movement
+enum CAMERA_MOVE_DIR
 {
-	FORWARD,
-	BACKWARD,
-	LEFT,
-	RIGHT,
-	UP,
-	DOWN
+	FORWARD_DIR,
+	BACKWARD_DIR,
+	LEFT_DIR,
+	RIGHT_DIR,
+	UP_DIR,
+	DOWN_DIR
 };
-
-// Default values
-const float YAW = CAMERA_YAW;
-const float PITCH = CAMERA_PITCH;
-const float SPEED = CAMERA_SPEED;
-const float SENSITIVITY = CAMERA_SENSITIVITY;
-const float ZOOM = CAMERA_ZOOM;
-const float MAXZOOM = CAMERA_MAXZOOM;
-const float MINZOOM = CAMERA_MINZOOM;
 
 // Camera Class
 class Camera
@@ -36,35 +27,35 @@ public:
 	// DATA SETUP
 
 	// VECTOR DATA
-	Vec3 Position; // World POS of camera
-	Vec3 Front;	   // Forward Direction from camera
-	Vec3 Right;	   // Right from Camera
-	Vec3 Up;	   // Up from Camera
-	Vec3 WorldUp;  // Direction of world Up
+	Vec3 position; // World POS of camera
+	Vec3 front;	   // Forward Direction from camera
+	Vec3 right;	   // Right from Camera
+	Vec3 up;	   // Up from Camera
+	Vec3 worldUp;  // Direction of world Up
 
 	// ANGLE DATA
-	float Yaw;	 // angle from top
-	float Pitch; // angle from side
+	float yaw;	 // angle from top
+	float pitch; // angle from side
 
 	// MOTION DATA
-	float MovementSpeed;
-	float MouseSensitivity;
-	float Zoom;
+	float moveSpeed;		// Movement speed of the Camera
+	float mouseSensitivity; // Mouse sensitivity of the Camera
+	float fovZoom;			// Field of View of the Camera
 
 	// Vector constructor
-	Camera(Vec3 position = Vec3(0.0f, 0.0f, 0.0f), Vec3 up = Vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
+	Camera(Vec3 position_ = Vec3(0.0f, 0.0f, 0.0f), Vec3 up = Vec3(0.0f, 1.0f, 0.0f), float yaw_ = CAMERA_YAW, float pitch_ = CAMERA_PITCH);
 	// Component constructor
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw_, float pitch_);
 	// Returns view matrix
-	Mat4 GetViewMatrix();
+	Mat4 get_view_matrix();
 	// Processes camera movement from keyboard
-	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
+	void process_keyboard(CAMERA_MOVE_DIR direction, float deltaTime);
 	// Process Camera rotation from mouse
-	void ProcessMouseMovement(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch = true);
+	void process_mouse(float xoffset, float yoffset, float deltaTime, GLboolean constrainPitch = true);
 	// Processes Camera Zoom from scroll wheel
-	void ProcessMouseScroll(float yoffset);
+	void process_scroll(float yoffset);
 	// Updates front, right and up vectors from angles
-	void updateCameraVectors();
+	void update_camera_vectors();
 
 private:
 };
