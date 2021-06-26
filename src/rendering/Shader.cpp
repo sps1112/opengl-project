@@ -180,7 +180,7 @@ void Shader::SetMatrices(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 
 void Shader::SetLight(NormalLight light, float angleVal)
 {
-    SetPointLight(GetWorldPosition(light.position, angleVal, glm::vec3(0.2f)),
+    SetPointLight(get_world_pos(&Transform(light.position, Vec3(0.0f, angleVal, 0.0f), Vec3(0.2f))),
                   light.ambient, light.diffuse, light.specular);
 }
 
@@ -190,7 +190,7 @@ void Shader::SetLights(NormalLight lights[], int count, float angleVal)
     {
         std::string lightName = "lights[" + std::to_string(i) + "].";
         NormalLight light = lights[i];
-        glm::vec3 newLightPos = GetWorldPosition(light.position, angleVal, glm::vec3(0.2f));
+        glm::vec3 newLightPos = get_world_pos(&Transform(light.position, Vec3(0.0f, angleVal, 0.0f), Vec3(0.2f)));
         SetPointLight(newLightPos, light.ambient, light.diffuse, light.specular, lightName);
     }
 }
@@ -201,7 +201,7 @@ void Shader::SetLights(int count, glm::vec3 positions[],
 {
     for (int i = 0; i < count; i++)
     {
-        glm::vec3 newLightPos = GetWorldPosition(positions[i], angleVal, glm::vec3(0.2f));
+        glm::vec3 newLightPos = get_world_pos(&Transform(positions[i], Vec3(0.0f, angleVal, 0.0f), Vec3(0.2f)));
         std::string lightName = "lights[" + std::to_string(i) + "].";
         SetPointLight(newLightPos,
                       ambient, diffuse, specular, lightName);
@@ -224,7 +224,7 @@ void Shader::SetPointLight(glm::vec3 position,
 
 void Shader::SetPointLight(PointLight light, float angleVal)
 {
-    SetPointLight(GetWorldPosition(light.position, angleVal, glm::vec3(0.2f)),
+    SetPointLight(get_world_pos(&Transform(light.position, Vec3(0.0f, angleVal, 0.0f), Vec3(0.2f))),
                   light.ambient, light.diffuse, light.specular,
                   "pointLight.", light.constant, light.linear, light.quadratic);
 }
@@ -235,7 +235,7 @@ void Shader::SetPointLights(PointLight lights[], int count, float angleVal)
     for (int i = 0; i < count; i++)
     {
         PointLight light = lights[i];
-        glm::vec3 newLightPos = GetWorldPosition(light.position, angleVal, glm::vec3(0.2f));
+        glm::vec3 newLightPos = get_world_pos(&Transform(light.position, Vec3(0.0f, angleVal, 0.0f), Vec3(0.2f)));
         std::string lightName = "pointLights[" + std::to_string(i) + "].";
         SetPointLight(newLightPos,
                       light.ambient, light.diffuse, light.specular, lightName,
@@ -311,7 +311,7 @@ void Shader::SetScene(glm::vec3 lightColor, float angleVal, glm::vec3 pointLight
 
     for (int i = 0; i < numberOfLights; i++)
     {
-        glm::vec3 newLightPos = GetWorldPosition(pointLightPositions[i], angleVal, glm::vec3(0.2f));
+        glm::vec3 newLightPos = get_world_pos(&Transform(pointLightPositions[i], Vec3(0.0f, angleVal, 0.0f), Vec3(0.2f)));
         std::string lightName = "pointLights[" + std::to_string(i) + "].";
         SetPointLight(newLightPos,
                       lightColor * 0.05f, lightColor * 0.4f, lightColor,

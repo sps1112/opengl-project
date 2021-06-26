@@ -10,6 +10,7 @@ A list of common tasks to do and features to implemet in the Renderer.
 - [ ] Lights in Scenes
 - [ ] 3D Materials (Specular workflow)
 - [ ] Actor UI (with Face culling)
+- [ ] Select Multiple Objects
 - [ ] Editable Config file
 - [ ] Custom Shaders (Outline)
 - [ ] Implement blending
@@ -33,8 +34,6 @@ A list of common tasks to do and features to implemet in the Renderer.
 - [X] FileSystem
 - [X] CustomMath
   - [X] Camera
-  - [ ] Light
-    - [ ] Shader
   - [ ] Renderer
     - [ ] GUI
       - [ ] GUIWidgets
@@ -47,4 +46,6 @@ A list of common tasks to do and features to implemet in the Renderer.
   - [X] Transform
 - [X] Texture
   - [X] Material
+    - [ ] Light
+      - [ ] Shader
 - [X] Application

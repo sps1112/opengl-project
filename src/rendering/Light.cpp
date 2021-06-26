@@ -1,83 +1,68 @@
 #include <rendering/Light.h>
 
-Light::Light()
+Light::Light(ColorF lightColor)
 {
-    ambient = Vec3(0.2f);
-    diffuse = Vec3(0.5f);
-    specular = Vec3(0.6f);
+    type = LIGHT_COLOR;
+    diffuse = lightColor;
 }
 
-NormalLight::NormalLight(Vec3 position, Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular)
+BaseLight::BaseLight(ColorF lightColor, float diffuseFactor)
+{
+    type = LIGHT_BASE;
+    ambient = lightColor * 0.1f;
+    diffuse = lightColor * diffuseFactor;
+    specular = DEFAULT_LIGHT_COLOR * 0.5f;
+}
+
+NormalLight::NormalLight(Vec3 position_, ColorF lightColor, float diffuseFactor)
 {
     type = LIGHT_NORMAL;
-    ambient = lightAmbient;
-    diffuse = lightDiffuse;
-    specular = lightSpecular;
-    this->position = position;
+    position = position_;
+    ambient = lightColor * 0.1f;
+    diffuse = lightColor * diffuseFactor;
+    specular = DEFAULT_LIGHT_COLOR * 0.5f;
 }
 
-PointLight::PointLight()
-{
-    ambient = Vec3(0.2f);
-    diffuse = Vec3(0.5f);
-    specular = Vec3(0.6);
-}
-
-PointLight::PointLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
-                       Vec3 position, float constant, float linear, float quadratic)
-{
-    type = LIGHT_POINT;
-    ambient = lightAmbient;
-    diffuse = lightDiffuse;
-    specular = lightSpecular;
-    this->position = position;
-    this->constant = constant;
-    this->linear = linear;
-    this->quadratic = quadratic;
-}
-
-DirectionalLight::DirectionalLight()
-{
-    ambient = Vec3(0.2f);
-    diffuse = Vec3(0.5f);
-    specular = Vec3(0.6);
-}
-
-DirectionalLight::DirectionalLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
-                                   Vec3 lightDir)
+DirectionalLight::DirectionalLight(Vec3 direction_, ColorF lightColor, float diffuseFactor)
 {
     type = LIGHT_DIRECTION;
-    ambient = lightAmbient;
-    diffuse = lightDiffuse;
-    specular = lightSpecular;
-    this->direction = lightDir;
+    direction = direction_;
+    ambient = lightColor * 0.1f;
+    diffuse = lightColor * diffuseFactor;
+    specular = DEFAULT_LIGHT_COLOR * 0.5f;
 }
 
-SpotLight::SpotLight()
+PointLight::PointLight(Vec3 position_, ColorF lightColor, float diffuseFactor,
+                       float constant_, float linear_, float quadratic_)
 {
-    ambient = Vec3(0.2f);
-    diffuse = Vec3(0.5f);
-    specular = Vec3(0.6);
+    type = LIGHT_POINT;
+    position = position_;
+    ambient = lightColor * 0.1f;
+    diffuse = lightColor * diffuseFactor;
+    specular = DEFAULT_LIGHT_COLOR * 0.5f;
+    constant = constant_;
+    linear = linear_;
+    quadratic = quadratic_;
 }
 
-SpotLight::SpotLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
-                     Vec3 position, Vec3 lightDir, float lightCutoff, float lightOuterCutoff)
+SpotLight::SpotLight(Vec3 position_, ColorF lightColor, Vec3 direction_, float diffuseFactor,
+                     float cutoff_, float outerCutoff_)
 {
     type = LIGHT_SPOTLIGHT;
-    ambient = lightAmbient;
-    diffuse = lightDiffuse;
-    specular = lightSpecular;
-    this->position = position;
-    this->direction = lightDir;
-    cutoff = lightCutoff;
-    outerCutoff = lightOuterCutoff;
+    position = position_;
+    ambient = lightColor * 0.1f;
+    diffuse = lightColor * diffuseFactor;
+    specular = DEFAULT_LIGHT_COLOR * 0.5f;
+    direction = direction_;
+    cutoff = cutoff_;
+    outerCutoff = outerCutoff_;
 }
 
-Vec3 GetWorldPosition(Vec3 position, float angleVal, Vec3 scale)
+Vec3 get_world_pos(Transform *transform)
 {
     Mat4 lightModel(1.0f);
-    lightModel = glm::rotate(lightModel, glm::radians(angleVal), Vec3(0.0f, 1.0f, 0.0f));
-    lightModel = glm::translate(lightModel, position);
-    lightModel = glm::scale(lightModel, scale);
+    lightModel = glm::rotate(lightModel, glm::radians(transform->rotation.y), Vec3(0.0f, 1.0f, 0.0f));
+    lightModel = glm::translate(lightModel, transform->position);
+    lightModel = glm::scale(lightModel, transform->scale);
     return (lightModel * Vec4(1.0f));
 }

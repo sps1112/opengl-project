@@ -25,6 +25,8 @@
 #define WORLD_UP Vec3(0.0f, 1.0f, 0.0f)
 #define WORLD_RIGHT Vec3(1.0f, 0.0f, 0.0f)
 #define WORLD_FORWARD Vec3(0.0f, 0.0f, 1.0f)
+#define WORLD_ORIGIN Vec3(0.0f)
+#define WORLD_LEFT_DIAGONAL Vec3(-1.0f, -1.0f, -1.0f)
 
 // Color Settings
 
@@ -39,6 +41,7 @@
 #define DEFAULT_BACKGROUND_COLOR COLOR_BLACK
 #define DEFAULT_SCENE_COLOR COLOR_GRAY
 #define DEFAULT_SHADER_COLOR COLOR_PURPLE
+#define DEFAULT_LIGHT_COLOR COLOR_WHITE
 
 // Camera Settings
 

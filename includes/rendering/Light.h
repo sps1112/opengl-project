@@ -3,82 +3,96 @@
 
 // Header declarations
 #include <utility/CustomMath.h>
+#include <rendering/Material.h>
+#include <object/Transform.h>
+#include <config.h>
 
 // Types of Light sources
 enum LIGHT_TYPE
 {
+    LIGHT_COLOR,
+    LIGHT_BASE,
     LIGHT_NORMAL,
     LIGHT_POINT,
     LIGHT_DIRECTION,
     LIGHT_SPOTLIGHT,
 };
 
-// Base Light Class
+// A simple light with a Color Value
 class Light
 {
 public:
-    LIGHT_TYPE type;
-    Vec3 ambient;
-    Vec3 diffuse;
-    Vec3 specular;
-    Light();
+    ColorF diffuse;  // Color of the Light Source
+    LIGHT_TYPE type; // Type of Light Source
+    // Light Class Constructor
+    Light(ColorF lightColor = DEFAULT_LIGHT_COLOR);
 
 private:
 };
 
-// Normal Point Light Source
-class NormalLight : public Light
+// A Light Source for the Phong Model
+class BaseLight : public Light
 {
 public:
-    Vec3 position;
-    NormalLight(Vec3 position = Vec3(0.0f),
-                Vec3 lightAmbient = Vec3(0.2f),
-                Vec3 lightDiffuse = Vec3(0.5f),
-                Vec3 lightSpecular = Vec3(0.6f));
+    ColorF ambient;  // Ambient Lighting Color
+    ColorF specular; // Specular Lighting Color
+    // Base Light Class Constructor
+    BaseLight(ColorF lightColor = DEFAULT_LIGHT_COLOR, float diffuseFactor = 0.6f);
 
 private:
 };
 
-// Point Light with Attenuation
+// A Normal Light Source positioned at a Point in Space
+class NormalLight : public BaseLight
+{
+public:
+    Vec3 position; // Position of Light Source
+    // Normal Light Class Constructor
+    NormalLight(Vec3 position_ = WORLD_ORIGIN, ColorF lightColor = DEFAULT_LIGHT_COLOR, float diffuseFactor = 0.6f);
+
+private:
+};
+
+// A Directional Light Source with parallel light rays coming from a direction
+class DirectionalLight : public BaseLight
+{
+public:
+    Vec3 direction; // Direction of the Light Rays
+    // Directional Light Class Constructor
+    DirectionalLight(Vec3 direction_ = WORLD_LEFT_DIAGONAL, ColorF lightColor = DEFAULT_LIGHT_COLOR, float diffuseFactor = 0.6f);
+
+private:
+};
+
+// A Point Light Source with Attenuation
 class PointLight : public NormalLight
 {
 public:
-    float constant;
-    float linear;
-    float quadratic;
-    PointLight();
-    PointLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
-               Vec3 position, float constant = 1.0f, float linear = 0.22f, float quadratic = 0.2f);
+    float constant;  // Attenuation Constant Term
+    float linear;    // Attenuation Linear Term
+    float quadratic; // Attenuation Quadratic Term
+    // Point Light Class Constructor
+    PointLight(Vec3 position_ = WORLD_ORIGIN, ColorF lightColor = DEFAULT_LIGHT_COLOR, float diffuseFactor = 0.6f,
+               float constant_ = 1.0f, float linear_ = 0.22f, float quadratic_ = 0.2f);
 
 private:
 };
 
-// Directional Light Source
-class DirectionalLight : public Light
-{
-public:
-    Vec3 direction;
-    DirectionalLight();
-    DirectionalLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
-                     Vec3 lightDir);
-
-private:
-};
-
-// Spot Light Source
+// A Spot Light with cutoff angles
 class SpotLight : public NormalLight
 {
 public:
-    Vec3 direction;
-    float cutoff;
-    float outerCutoff;
-    SpotLight();
-    SpotLight(Vec3 lightAmbient, Vec3 lightDiffuse, Vec3 lightSpecular,
-              Vec3 position, Vec3 lightDir, float lightCutoff, float lightOuterCutoff);
+    Vec3 direction;    // Direction of the Spot Light
+    float cutoff;      // Inner cutoff angle
+    float outerCutoff; // Outer cutoff angle
+    // Spot Light Class Constructor
+    SpotLight(Vec3 position_ = CAMERA_ORIGIN, ColorF lightColor = DEFAULT_LIGHT_COLOR, Vec3 direction_ = -WORLD_FORWARD, float diffuseFactor = 0.6f,
+              float cutoff_ = 15.0f, float outerCutoff_ = 22.5f);
 
 private:
 };
 
-Vec3 GetWorldPosition(Vec3 position, float angleVal, Vec3 scale);
+// Returns the World Position of the Light Source
+Vec3 get_world_pos(Transform *transform);
 
 #endif // !LIGHT_H
