@@ -162,7 +162,7 @@ Scene::Scene(std::string name)
 
 void Scene::AddActor(TEMPLATE_ACTORS actor_choice)
 {
-    if (actor_types[actor_choice] == CAMERA_ACTOR)
+    if (actorTemplates[actor_choice].type == CAMERA_ACTOR)
     {
         camCount++;
         CameraActor newActor("Main Camera", camCount);
@@ -181,6 +181,9 @@ void Scene::AddActor(TEMPLATE_ACTORS actor_choice)
             break;
         case MODEL_ACTOR:
             data.AddModel(newActor.path, static_cast<int>(actor_choice), actorCount);
+            break;
+        case LIGHT_ACTOR:
+
             break;
         default:
             break;

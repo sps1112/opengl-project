@@ -38,12 +38,37 @@ enum TEMPLATE_ACTORS
     ROCK_MODEL,
     SPHERE_MODEL,
     TEAPOT_MODEL,
+    COLOR_LIGHT_ACTOR,
+    BASE_LIGHT_ACTOR,
     NORMAL_LIGHT_ACTOR,
     POINT_LIGHT_ACTOR,
     DIR_LIGHT_ACTOR,
     SPT_LIGHT_ACTOR,
     CAMERA_OBJECT_ACTOR,
 };
+
+extern std::string resource_dir;
+
+struct ActorTemplate
+{
+    TEMPLATE_ACTORS templateType;
+    ACTOR_TYPES type;
+    std::string path;
+    MATERIAL_TEMPLATES matTemplate;
+    ActorTemplate()
+    {
+    }
+
+    ActorTemplate(TEMPLATE_ACTORS template_, ACTOR_TYPES type_, std::string path_, MATERIAL_TEMPLATES mat_)
+    {
+        templateType = template_;
+        type = type_;
+        path = path_;
+        matTemplate = mat_;
+    }
+};
+
+extern ActorTemplate actorTemplates[22];
 
 // Actor Class
 class Actor
@@ -89,19 +114,4 @@ public:
 
 private:
 };
-
-class LightActor : public RenderActor
-{
-public:
-    LightActor();
-};
-
-extern ACTOR_TYPES actor_types[20];
-
-extern std::string resource_dir;
-
-extern std::string template_actor_filepath[20];
-
-extern MATERIAL_TEMPLATES default_actor_materials[20];
-
 #endif // !ACTOR_H

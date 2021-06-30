@@ -117,6 +117,10 @@ int AddActorUI(Scene *currentScene)
         {
             currentScene->AddActor(TEAPOT_MODEL);
         }
+        if (ImGui::MenuItem("Color Light"))
+        {
+            currentScene->AddActor(COLOR_LIGHT_ACTOR);
+        }
         ImGui::EndMenu();
     }
     return (currentScene->actorCount);
