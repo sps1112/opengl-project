@@ -17,6 +17,7 @@ if(ASSIMP_FOUND)
 endif() 
 
 include_directories(includes)
+include_directories(includes/external)
 include_directories(configuration)
 if(WIN32)
 link_directories(lib)
@@ -26,29 +27,35 @@ add_executable(
     opengl-project
 
     src/Application.cpp
-    src/glad.c
-    src/stb_image.cpp
-    src/Shader.cpp
-    src/Camera.cpp
-    src/Mesh.cpp
-    src/Model.cpp
-    src/FileSystem.cpp
-    src/Utils.cpp
-    src/Primitive.cpp
-    src/FileReader.cpp
-    src/Renderer.cpp
-    src/GUI.cpp
-    src/Texture.cpp
-    src/CustomMath.cpp
-    src/Light.cpp
+    src/external/glad.c
+    src/external/stb_image.cpp
+    src/rendering/Shader.cpp
+    src/rendering/Camera.cpp
+    src/rendering/Renderer.cpp
+    src/rendering/Texture.cpp
+    src/rendering/Light.cpp
+    src/rendering/Material.cpp
+    src/object/Actor.cpp
+    src/object/Mesh.cpp
+    src/object/Model.cpp
+    src/object/Primitive.cpp
+    src/object/Scene.cpp
+    src/object/Transform.cpp
+    src/utility/FileSystem.cpp
+    src/utility/Utils.cpp
+    src/utility/FileReader.cpp
+    src/utility/CustomMath.cpp
+    src/gui/GUI.cpp
+    src/gui/GUIWidgets.cpp
+    src/gui/ObjectUI.cpp
 
-    includes/imgui/imgui.cpp
-    includes/imgui/imgui_draw.cpp
-    includes/imgui/imgui_demo.cpp
-    includes/imgui/imgui_widgets.cpp
-    includes/imgui/imgui_tables.cpp
-    includes/imgui/imgui_impl_glfw.cpp
-    includes/imgui/imgui_impl_opengl3.cpp
+    includes/external/imgui/imgui.cpp
+    includes/external/imgui/imgui_draw.cpp
+    includes/external/imgui/imgui_demo.cpp
+    includes/external/imgui/imgui_widgets.cpp
+    includes/external/imgui/imgui_tables.cpp
+    includes/external/imgui/imgui_impl_glfw.cpp
+    includes/external/imgui/imgui_impl_opengl3.cpp
 )
 
 target_link_libraries(opengl-project ${CMAKE_DL_LIBS})
