@@ -105,12 +105,12 @@ void SceneData::DrawActor(RenderActor *actor, int actor_id, CameraActor *cam, Ve
     model = glm::rotate(model, glm::radians(actorRot.x), glm::vec3(1.0f, 0.0f, 0.0f));
     model = glm::scale(model, actorScale);
 
+    shaders.get_data_point_from_actor(actor_id)->data.use();
+    shaders.get_data_point_from_actor(actor_id)->data.setVec3("matColor", actor->mat.albedo.col);
+    shaders.get_data_point_from_actor(actor_id)->data.SetMatrices(model, view, projection);
     switch (actor->type)
     {
     case PRIMITIVE_ACTOR:
-        shaders.get_data_point_from_actor(actor_id)->data.use();
-        shaders.get_data_point_from_actor(actor_id)->data.setVec3("matColor", actor->mat.albedo.col);
-        shaders.get_data_point_from_actor(actor_id)->data.SetMatrices(model, view, projection);
         if (textures.get_data_count_from_actor(actor_id) > 0)
         {
             std::vector<Texture> prmTexs;
@@ -125,9 +125,6 @@ void SceneData::DrawActor(RenderActor *actor, int actor_id, CameraActor *cam, Ve
         break;
 
     case MODEL_ACTOR:
-        shaders.get_data_point_from_actor(actor_id)->data.use();
-        shaders.get_data_point_from_actor(actor_id)->data.setVec3("matColor", actor->mat.albedo.col);
-        shaders.get_data_point_from_actor(actor_id)->data.SetMatrices(model, view, projection);
         models.get_data_point_from_actor(actor_id)->data.Draw(shaders.get_data_point_from_actor(actor_id)->data);
         break;
 

@@ -6,6 +6,7 @@ A list of common tasks to do and features to implemet in the Renderer.
 - [X] Camera UI
 - [X] Model loading in Scene System
 - [X] FrameRate UI
+- [ ] Abstract Classes, Inheritance, Polymorphism
 - [ ] Uniform Naming Convention
 - [ ] Lights in Scenes
 - [ ] 3D Materials (Specular workflow)
