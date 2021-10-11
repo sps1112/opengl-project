@@ -6,7 +6,7 @@ Light::Light(ColorF lightColor)
     diffuse = lightColor;
 }
 
-BaseLight::BaseLight(ColorF lightColor, float diffuseFactor)
+BaseLight::BaseLight(ColorF lightColor, float diffuseFactor) : Light(lightColor)
 {
     type = LIGHT_BASE;
     ambient = lightColor * 0.1f;
@@ -14,7 +14,7 @@ BaseLight::BaseLight(ColorF lightColor, float diffuseFactor)
     specular = DEFAULT_LIGHT_COLOR * 0.5f;
 }
 
-NormalLight::NormalLight(Vec3 position_, ColorF lightColor, float diffuseFactor)
+NormalLight::NormalLight(Vec3 position_, ColorF lightColor, float diffuseFactor) : BaseLight(lightColor, diffuseFactor)
 {
     type = LIGHT_NORMAL;
     position = position_;
@@ -23,7 +23,7 @@ NormalLight::NormalLight(Vec3 position_, ColorF lightColor, float diffuseFactor)
     specular = DEFAULT_LIGHT_COLOR * 0.5f;
 }
 
-DirectionalLight::DirectionalLight(Vec3 direction_, ColorF lightColor, float diffuseFactor)
+DirectionalLight::DirectionalLight(Vec3 direction_, ColorF lightColor, float diffuseFactor) : BaseLight(lightColor, diffuseFactor)
 {
     type = LIGHT_DIRECTION;
     direction = direction_;
@@ -33,7 +33,7 @@ DirectionalLight::DirectionalLight(Vec3 direction_, ColorF lightColor, float dif
 }
 
 PointLight::PointLight(Vec3 position_, ColorF lightColor, float diffuseFactor,
-                       float constant_, float linear_, float quadratic_)
+                       float constant_, float linear_, float quadratic_) : NormalLight(position, lightColor, diffuseFactor)
 {
     type = LIGHT_POINT;
     position = position_;
@@ -46,7 +46,7 @@ PointLight::PointLight(Vec3 position_, ColorF lightColor, float diffuseFactor,
 }
 
 SpotLight::SpotLight(Vec3 position_, ColorF lightColor, Vec3 direction_, float diffuseFactor,
-                     float cutoff_, float outerCutoff_)
+                     float cutoff_, float outerCutoff_) : NormalLight(position, lightColor, diffuseFactor)
 {
     type = LIGHT_SPOTLIGHT;
     position = position_;

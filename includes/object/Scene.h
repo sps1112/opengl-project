@@ -238,7 +238,7 @@ public:
     void AddShader(std::string path1, std::string path2, int id, int actor_id);
     void AddTexture(int id, int actor_id);
     void AddModel(std::string path, int id, int actor_id);
-    void AddLight();
+    void AddLight(Light *light);
     void DrawActor(RenderActor *actor, int actor_id, CameraActor *cam, Vec2 screen_dimension);
     void RemoveActor(int actor_id, DataTypes type);
 

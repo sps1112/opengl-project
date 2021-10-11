@@ -74,7 +74,7 @@ void SceneData::AddModel(std::string path, int id, int actor_id)
     }
 }
 
-void SceneData::AddLight()
+void SceneData::AddLight(Light *light)
 {
 }
 
@@ -127,7 +127,9 @@ void SceneData::DrawActor(RenderActor *actor, int actor_id, CameraActor *cam, Ve
     case MODEL_ACTOR:
         models.get_data_point_from_actor(actor_id)->data.Draw(shaders.get_data_point_from_actor(actor_id)->data);
         break;
-
+    case LIGHT_ACTOR:
+        prms.get_data_point_from_actor(actor_id)->data.Draw(shaders.get_data_point_from_actor(actor_id)->data);
+        break;
     default:
         break;
     }
@@ -180,7 +182,15 @@ void Scene::AddActor(TEMPLATE_ACTORS actor_choice)
             data.AddModel(newActor.path, static_cast<int>(actor_choice), actorCount);
             break;
         case LIGHT_ACTOR:
-
+            actorList[actorList.size() - 1].transform.scale = glm::vec3(0.35f);
+            data.AddPrimitive(resource_dir + "primitives/3D/cube.3d", static_cast<int>(actor_choice), actorCount);
+            Light *lightActor;
+            switch (newActor.actor_template)
+            {
+            case COLOR_LIGHT_ACTOR:
+                lightActor = new BaseLight();
+                break;
+            }
             break;
         default:
             break;

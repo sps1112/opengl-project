@@ -117,6 +117,10 @@ int AddActorUI(Scene *currentScene)
         {
             currentScene->AddActor(TEAPOT_MODEL);
         }
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("Add Light.."))
+    {
         if (ImGui::MenuItem("Color Light"))
         {
             currentScene->AddActor(COLOR_LIGHT_ACTOR);
@@ -243,6 +247,10 @@ void ShowAppLayout(bool *p_open, Scene *currentScene)
                     case MODEL_ACTOR:
                         ShowSectionHeader("MATERIAL");
                         ImGui::ColorEdit3("Material Color", &(selectedActor->mat.albedo.col.r));
+                        break;
+                    case LIGHT_ACTOR:
+                        ShowSectionHeader("LIGHT");
+                        ImGui::ColorEdit3("Diffuse Color", &(selectedActor->mat.albedo.col.r));
                         break;
                     default:
                         break;
